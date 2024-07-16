@@ -1,0 +1,55 @@
+<?php
+
+namespace App\Http\Controllers;
+
+use App\Models\Executivo;
+use Illuminate\Http\Request;
+use Inertia\Inertia;
+use Inertia\Response;
+
+class ExecutivoController extends Controller
+{
+    //
+    public function create():Response
+    {
+        return Inertia::render('Executivo', [
+            'status' => session('status'),
+        ]);
+
+    }
+
+    public function store (Request $request)    
+    {
+        
+        // Validação dos dados
+        $validated = $request->validate([
+        'nome' => 'required|string|max:125',
+        'cpfCnpj' => 'required|string|max:20',
+        'missao' => 'nullable|string|max:1000',
+        'setorAtividade' => 'required|string|max:120',
+        'formaJuridica' => 'required|string|max:120',
+        'enquadramentoTributario' => 'nullable|string|max:120',
+        'visao' => 'nullable|string|max:100',
+        'valores'=>'nullable|string|max:100',
+        'fonteRecursos' => 'nullable|string|max:1000',
+         ]);
+       
+       // Criação do Executivo
+       Executivo::create([
+        'id_user' => auth()->id(),
+        'nome_empresa' => $validated['nome'],
+        'cpf_cnpj' => $validated['cpfCnpj'],
+        'missao' => $validated['missao'],
+        'setor_atividade' => $validated['setorAtividade'],
+        'forma_juridica' => $validated['formaJuridica'],
+        'enquadramento_tributario' => $validated['enquadramentoTributario'],
+        'visao'=>$validated['visao'],
+        'valores'=>$validated['valores'],
+        'fonte_recursos' => $validated['fonteRecursos'],
+    ]); 
+
+
+    // Redirecionamento após sucesso
+    return redirect()->route('plano_executivo')->with('success', 'Executivo criado com sucesso.');
+    }
+}
