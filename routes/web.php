@@ -28,7 +28,8 @@ Route::get('/Executivo', [ExecutivoController::class, 'create'])
     Route::post('/Executivo', [ExecutivoController::class, 'store'])
     ->middleware(['auth', 'verified']);
 
-Route::get('/Mercado',[MercadoController::class,'create']);
+Route::get('/Mercado',[MercadoController::class,'create'])->name('plano_mercado');
+Route::post('/Mercado',[MercadoController::class,'store'])->name('plano_mercado');
 
 
  Route::get('/Empreendedor',[EmpreendedorController::class,'create'])

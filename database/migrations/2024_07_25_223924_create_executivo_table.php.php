@@ -13,7 +13,6 @@ return new class extends Migration
     {
         Schema::create('executivo', function (Blueprint $table) {
             $table->increments('id');
-            $table->unsignedBigInteger('id_user');
             $table->string('fonte_recursos');
             $table->string('visao');
             $table->string('valores');
@@ -23,10 +22,8 @@ return new class extends Migration
             $table->string('nome_empresa');
             $table->timestamps();
 
-            $table->foreign('id_user')
-                  ->references('id') 
-                  ->on('users')
-                  ->onDelete('cascade');
+            $table->unsignedBigInteger('id_plano')->nullable();
+            $table->foreign('id_plano')->references('id')->on('plano_negocios')->onDelete('cascade');
         });
     }
 
@@ -35,6 +32,9 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('executivo');
+        Schema::table('executivo', function (Blueprint $table) {
+            $table->dropForeign(['id_plano']);
+            $table->dropColumn('id_plano');
+        });
     }
 };

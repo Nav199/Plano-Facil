@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Executivo;
+use App\Models\Plano;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 use Inertia\Response;
@@ -33,10 +34,14 @@ class ExecutivoController extends Controller
         'valores'=>'nullable|string|max:100',
         'fonteRecursos' => 'nullable|string|max:1000',
          ]);
+
+         $plano = Plano::create([
+            'id_user' => auth()->id(),
+            'nome' => $validated['nome'],
+        ]);
        
        // Criação do Executivo
-       Executivo::create([
-        'id_user' => auth()->id(),
+       Executivo::create([ 
         'nome_empresa' => $validated['nome'],
         'cpf_cnpj' => $validated['cpfCnpj'],
         'missao' => $validated['missao'],
@@ -46,10 +51,11 @@ class ExecutivoController extends Controller
         'visao'=>$validated['visao'],
         'valores'=>$validated['valores'],
         'fonte_recursos' => $validated['fonteRecursos'],
+        'id_plano' => $plano->id,
     ]); 
-
+ 
 
     // Redirecionamento após sucesso
-    return redirect()->route('plano_executivo')->with('success', 'Executivo criado com sucesso.');
+    return redirect()->route('plano_mercado')->with('success', 'Executivo criado com sucesso.');
     }
 }

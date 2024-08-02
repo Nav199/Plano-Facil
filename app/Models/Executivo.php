@@ -12,6 +12,11 @@ class Executivo extends Model
     protected $table = 'executivo';
 
     protected $fillable = [
-        'id_user', 'fonte_recursos', 'visao', 'valores', 'missao', 'setor_atividade', 'cpf_cnpj', 'nome_empresa',
+         'fonte_recursos', 'visao', 'valores', 'missao', 'setor_atividade', 'cpf_cnpj', 'nome_empresa', 'id_plano',
     ];
+
+    public function planoNegocios()
+    {
+        return $this->belongsTo(Plano::class, 'id_plano');
+    }
 }
