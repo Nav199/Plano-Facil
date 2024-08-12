@@ -13,14 +13,14 @@ return new class extends Migration
     {
         //
         Schema::create('clientes', function (Blueprint $table) {
-            $table->id();
-            $table->unsignedBigInteger('id_mercado');
+            $table->increments('id');
+            $table->unsignedBigInteger('id_plano');
             $table->string('perfil',40);
             $table->string('Comportamento',60);
             $table->string('area',40);
             $table->timestamps();
 
-            $table->foreign('id_mercado')->references('id')->on('plano_mercado')->onDelete('cascade');
+            $table->foreign('id_plano')->references('id')->on('plano_negocios')->onDelete('cascade');
         });
     }
 
@@ -33,3 +33,4 @@ return new class extends Migration
         Schema::dropIfExists('clientes');
     }
 };
+

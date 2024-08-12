@@ -12,20 +12,20 @@ const Mercado = () => {
       área: ''
     },
     concorrente: {
-      qualidade: '',
-      nome: '',
-      preco: '',
-      pagamento: '',
-      localizacao: '',
-      garantias: '',
-      servico: ''
+      qualidade_concorrente: '',
+      nome_concorrente: '',
+      preco_concorrente: '',
+      pagamento_concorrente: '',
+      localizacao_concorrente: '',
+      garantias_concorrente: '',
+      servico_concorrente: ''
     },
     fornecedor: {
-      descricao: '',
-      nome: '',
-      preco: '',
-      pagamento: '',
-      localizacao: ''
+      descricao_fornecedor: '',
+      nome_fornecedor: '',
+      preco_fornecedor: '',
+      pagamento_fornecedor: '',
+      localizacao_fornecedor: ''
     }
   });
 

@@ -11,11 +11,11 @@ class Cliente extends Model
     protected $table = 'clientes';
 
     protected $fillable = [
-        'id', 'id_mercado','perfil','Comportamento','area',
+        'id', 'id_plano','perfil','Comportamento','area',
     ];
 
-    public function mercado()
+    public function plano()
     {
-        return $this->belongsTo(Mercado::class,'id_mercado');
+        return $this->belongsTo(Plano::class,'id_plano');
     }
 }

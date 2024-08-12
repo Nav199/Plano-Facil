@@ -11,7 +11,7 @@ const Executivo = () => {
     enquadramentoTributario: '',
     fonteRecursos: '',
     valores:'',
-    visao: '', // Adicione o campo visao aqui
+    visao: '', 
   });
 
   const handleChange = (e) => {

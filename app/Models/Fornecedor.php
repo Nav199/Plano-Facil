@@ -12,10 +12,10 @@ class Fornecedor extends Model
     protected $table = 'fornecedor';
 
     protected $fillable = [
-        'id', 'id_mercado','descricao','nome','preco','pagamento','localizacao'
+        'id', 'id_plano','descricao','nome','preco','pagamento','localizacao'
     ];
-    public function mercado()
+    public function plano()
     {
-        return $this->belongsTo(Mercado::class,'id_mercado');
+        return $this->belongsTo(Plano::class,'id_plano');
     }
 }

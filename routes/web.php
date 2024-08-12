@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\EmpreendedorController;
 use App\Http\Controllers\ExecutivoController;
+use App\Http\Controllers\MarketingController;
 use App\Http\Controllers\MercadoController;
 use App\Http\Controllers\ProfileController;
 use Illuminate\Foundation\Application;
@@ -28,14 +29,11 @@ Route::get('/Executivo', [ExecutivoController::class, 'create'])
     Route::post('/Executivo', [ExecutivoController::class, 'store'])
     ->middleware(['auth', 'verified']);
 
-Route::get('/Mercado',[MercadoController::class,'create'])->name('plano_mercado');
-Route::post('/Mercado',[MercadoController::class,'store'])->name('plano_mercado');
+Route::get('/Mercado/{id}',[MercadoController::class,'create'])->name('plano_mercado');
+Route::post('/Mercado/{id}',[MercadoController::class,'store'])->name('plano_mercado');
 
-
- Route::get('/Empreendedor',[EmpreendedorController::class,'create'])
- ->middleware(['auth', 'verified'])
- ->name('socios');
- 
+Route::get('/Marketing',[MarketingController::class,'create'])->name('plano_marketing');
+Route::post('/Marketing',[MarketingController::class,'store'])->name('plano_marketing');
 Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');

@@ -10,10 +10,10 @@ class Concorrente extends Model
     use HasFactory;
     protected $table = 'concorrente';
     protected $fillable = [
-        'id', 'id_mercado','qualidade','nome','pagamento','preco','garantias','servico','localizacao'
+        'id', 'id_plano','qualidade','nome','pagamento','preco','garantias','servico','localizacao'
     ];
-    public function mercado()
+    public function plano()
     {
-        return $this->belongsTo(Mercado::class,'id_mercado');
+        return $this->belongsTo(Plano::class,'id_plano');
     }
 }

@@ -11,13 +11,16 @@ return new class extends Migration
      */
     public function up(): void
     {
-        //
-        Schema::create('plano_mercado', function (Blueprint $table) {
-            $table->id();
-            $table->unsignedBigInteger('id_plano');
+        Schema::create('marketing', function (Blueprint $table) {
+            $table->increments('id');
+            $table->string('produto', 40);
+            $table->string('preco', 40);
+            $table->string('estrategia_promo', 60);
+            $table->string('estrategia_comer',60);
+            $table->string('localizacao', 40);
             $table->timestamps();
 
-            $table->foreign('id_plano')->references('id')->on('plano_negocios')->onDelete('cascade');
+            
         });
     }
 
@@ -27,6 +30,5 @@ return new class extends Migration
     public function down(): void
     {
         //
-        Schema::dropIfExists('plano_mercado');
     }
 };
