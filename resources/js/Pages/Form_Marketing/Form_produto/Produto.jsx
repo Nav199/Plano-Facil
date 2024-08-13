@@ -11,9 +11,9 @@ const Produto = ({ index, product, handleProductChange, removeProduct }) => {
   // Função para tratar a entrada de preço
   const handlePriceChange = (e) => {
     const value = e.target.value.replace(/[^\d]/g, ''); 
-    const formattedValue = formatPrice(value / 100); 
-    handleProductChange(index, 'price', formattedValue);
+    handleProductChange(index, 'price', parseFloat(value) / 100); 
   };
+  
 
 
 
