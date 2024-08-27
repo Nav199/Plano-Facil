@@ -1,31 +1,33 @@
-import React, { useState } from 'react';
-import NecessidadePessoalTable from './Form_Necessidade/Necessidade';
+import React from 'react';
+import { useForm } from '@inertiajs/react';
+import Necessidade from './Form_Operacional/Form_Necessidade/Necessidade';
 
-const Operacional = () => {
-  const [capacidadeProdutiva, setCapacidadeProdutiva] = useState('');
-  const [volumeProducao, setVolumeProducao] = useState('');
-  const [processosOperacionais, setProcessosOperacionais] = useState('');
-  const [pessoal, setPessoal] = useState([{ cargo: '', qualificacao: '' }]);
+const Operacional = ({ planoId }) => {
+  const { data, setData, post, processing, errors } = useForm({
+    capacidadeProdutiva: '',
+    volumeProducao: '',
+    processosOperacionais: '',
+    pessoal: [{ cargo: '', qualificacao: '' }],
+  });
 
   const handlePessoalChange = (index, key, value) => {
-    const updatedPessoal = [...pessoal];
+    const updatedPessoal = [...data.pessoal];
     updatedPessoal[index][key] = value;
-    setPessoal(updatedPessoal);
+    setData('pessoal', updatedPessoal);
   };
 
   const addRow = () => {
-    setPessoal([...pessoal, { cargo: '', qualificacao: '' }]);
+    setData('pessoal', [...data.pessoal, { cargo: '', qualificacao: '' }]);
   };
 
   const removeRow = (index) => {
-    const updatedPessoal = pessoal.filter((_, i) => i !== index);
-    setPessoal(updatedPessoal);
+    const updatedPessoal = data.pessoal.filter((_, i) => i !== index);
+    setData('pessoal', updatedPessoal);
   };
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    
-    console.log({ capacidadeProdutiva, volumeProducao, processosOperacionais, pessoal });
+    post(route('plano_operacional', { id: planoId })); // Passa o id_plano na URL
   };
 
   return (
@@ -39,8 +41,9 @@ const Operacional = () => {
           <input
             type="text"
             id="capacidadeProdutiva"
-            value={capacidadeProdutiva}
-            onChange={(e) => setCapacidadeProdutiva(e.target.value)}
+            name="capacidadeProdutiva"
+            value={data.capacidadeProdutiva}
+            onChange={(e) => setData('capacidadeProdutiva', e.target.value)}
             className="mt-1 p-2 w-full border-gray-300 rounded-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
           />
           <p className="text-sm text-gray-500 mt-1">
@@ -54,8 +57,9 @@ const Operacional = () => {
           <input
             type="text"
             id="volumeProducao"
-            value={volumeProducao}
-            onChange={(e) => setVolumeProducao(e.target.value)}
+            name="volumeProducao"
+            value={data.volumeProducao}
+            onChange={(e) => setData('volumeProducao', e.target.value)}
             className="mt-1 p-2 w-full border-gray-300 rounded-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
           />
           <p className="text-sm text-gray-500 mt-1">
@@ -68,13 +72,14 @@ const Operacional = () => {
           </label>
           <textarea
             id="processosOperacionais"
-            value={processosOperacionais}
-            onChange={(e) => setProcessosOperacionais(e.target.value)}
+            name="processosOperacionais"
+            value={data.processosOperacionais}
+            onChange={(e) => setData('processosOperacionais', e.target.value)}
             className="mt-1 p-2 w-full border-gray-300 rounded-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
           ></textarea>
         </div>
-        <NecessidadePessoalTable
-          pessoal={pessoal}
+        <Necessidade
+          pessoal={data.pessoal}
           handlePessoalChange={handlePessoalChange}
           addRow={addRow}
           removeRow={removeRow}
@@ -82,6 +87,7 @@ const Operacional = () => {
         <button
           type="submit"
           className="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded"
+          disabled={processing}
         >
           Enviar
         </button>

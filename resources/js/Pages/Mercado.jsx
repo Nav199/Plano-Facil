@@ -38,7 +38,7 @@ const Mercado = () => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    post(route('plano_mercado'));
+    post(route('plano_mercado',{id}));
   };
 
   return (

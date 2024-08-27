@@ -4,6 +4,7 @@ use App\Http\Controllers\EmpreendedorController;
 use App\Http\Controllers\ExecutivoController;
 use App\Http\Controllers\MarketingController;
 use App\Http\Controllers\MercadoController;
+use App\Http\Controllers\OperacionalController;
 use App\Http\Controllers\ProfileController;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
@@ -34,6 +35,11 @@ Route::post('/Mercado/{id}',[MercadoController::class,'store'])->name('plano_mer
 
 Route::get('/Marketing',[MarketingController::class,'create'])->name('plano_marketing');
 Route::post('/Marketing',[MarketingController::class,'store'])->name('plano_marketing');
+
+Route::get('/Operacional/{id}',[OperacionalController::class,'create'])->name('plano_operacional');
+Route::post('/Operacional/{id}',[OperacionalController::class,'store'])->name('plano_operacional');
+
+
 Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');

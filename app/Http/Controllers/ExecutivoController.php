@@ -56,6 +56,6 @@ class ExecutivoController extends Controller
  
 
     // Redirecionamento após sucesso
-    return redirect()->route('plano_mercado',[$plano->id])->with('success', 'Executivo criado com sucesso.');
+    return redirect()->route('plano_operacional',[$plano->id])->with('success', 'Executivo criado com sucesso.');
     }
 }

@@ -18,6 +18,7 @@ const Necessidade = ({ pessoal, handlePessoalChange, addRow, removeRow }) => {
               <td className="border p-2">
                 <input
                   type="text"
+                  name={`pessoal[${index}].cargo`}
                   value={row.cargo}
                   onChange={(e) => handlePessoalChange(index, 'cargo', e.target.value)}
                   className="w-full p-2 border-gray-300 rounded-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
@@ -26,6 +27,7 @@ const Necessidade = ({ pessoal, handlePessoalChange, addRow, removeRow }) => {
               <td className="border p-2">
                 <input
                   type="text"
+                  name={`pessoal[${index}].qualificacao`}
                   value={row.qualificacao}
                   onChange={(e) => handlePessoalChange(index, 'qualificacao', e.target.value)}
                   className="w-full p-2 border-gray-300 rounded-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
