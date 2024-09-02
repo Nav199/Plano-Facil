@@ -11,7 +11,7 @@ class Cliente extends Model
     protected $table = 'clientes';
 
     protected $fillable = [
-        'id', 'id_plano','perfil','Comportamento','area',
+        'id', 'id_plano','perfil','comportamento','area',
     ];
 
     public function plano()

@@ -1,6 +1,6 @@
 import React from 'react';
 
-const Client_form = ({ onChange }) => {
+const Client_form = ({ onChange }) => { 
     const handleChange = (e) => {
         const { name, value } = e.target;
         onChange(name, value);

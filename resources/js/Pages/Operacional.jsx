@@ -5,7 +5,7 @@ import Necessidade from './Form_Operacional/Form_Necessidade/Necessidade';
 const Operacional = ({ planoId }) => {
   const { data, setData, post, processing, errors } = useForm({
     capacidadeProdutiva: '',
-    volumeProducao: '',
+    volumeProducao: '', 
     processosOperacionais: '',
     pessoal: [{ cargo: '', qualificacao: '' }],
   });
@@ -27,7 +27,7 @@ const Operacional = ({ planoId }) => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    post(route('plano_operacional', { id: planoId })); // Passa o id_plano na URL
+    post(route('plano_operacional', { id: planoId })); 
   };
 
   return (

@@ -33,7 +33,7 @@ Route::get('/Executivo', [ExecutivoController::class, 'create'])
 Route::get('/Mercado/{id}',[MercadoController::class,'create'])->name('plano_mercado');
 Route::post('/Mercado/{id}',[MercadoController::class,'store'])->name('plano_mercado');
 
-Route::get('/Marketing',[MarketingController::class,'create'])->name('plano_marketing');
+Route::get('/Marketing/{id}',[MarketingController::class,'create'])->name('plano_marketing');
 Route::post('/Marketing',[MarketingController::class,'store'])->name('plano_marketing');
 
 Route::get('/Operacional/{id}',[OperacionalController::class,'create'])->name('plano_operacional');

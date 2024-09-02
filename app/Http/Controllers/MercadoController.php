@@ -5,75 +5,79 @@ namespace App\Http\Controllers;
 use App\Models\Cliente;
 use App\Models\Concorrente;
 use App\Models\Fornecedor;
-use App\Models\Mercado;
-use Illuminate\Auth\Events\Validated;
-use Illuminate\Http\Request;
+use App\Models\Plano;
+use Illuminate\Http\Request; 
 use Inertia\Inertia;
-use Inertia\Response;
 
 class MercadoController extends Controller
 {
-    public function create():Response
+    public function create($id)
     {
-        return Inertia::render('Mercado',[
-            'status'=>session('status')
-            
+        return Inertia::render('Mercado', [
+            'planoId' => $id,
+            'status' => session('status')
         ]);
-    }
-
-    public function store(Request $request,$id)
+    } 
+ 
+    public function store(Request $request, $id)
     { 
-        //validação de dados
-       dd( $request->all());
-
-       // Validação dos dados
-       $validated = $request->validate([
-        'client.perfil' => 'required|string|max:255',
-        'client.comportamento' => 'required|string|max:255',
-        'client.area' => 'required|string|max:255',
-
-        'concorrente.qualidade' => 'required|string|max:255',
-        'concorrente.nome' => 'required|string|max:255',
-        'concorrente.preco' => 'required|numeric',
-        'concorrente.pagamento' => 'required|string|max:255',
-        'concorrente.localizacao' => 'required|string|max:255',
-        'concorrente.garantias' => 'nullable|string|max:255',
-        'concorrente.servico' => 'nullable|string|max:255',
-
-        'fornecedor.descricao' => 'required|string|max:255',
-        'fornecedor.nome' => 'required|string|max:255',
-        'fornecedor.preco' => 'required|numeric',
-        'fornecedor.pagamento' => 'required|string|max:255',
-        'fornecedor.localizacao' => 'required|string|max:255',
-        'id_plano' => $id,
-    ]);
-
-
-    // Criando as entradas associadas
-    Cliente::create([
-        'perfil' => $validated['client']['perfil'],
-        'comportamento' => $validated['client']['comportamento'],
-        'area' => $validated['client']['area'],
-    ]);
-
-    Concorrente::create([
-        'qualidade' => $validated['concorrente']['qualidade'],
-        'nome' => $validated['concorrente']['nome'],
-        'preco' => $validated['concorrente']['preco'],
-        'pagamento' => $validated['concorrente']['pagamento'],
-        'localizacao' => $validated['concorrente']['localizacao'],
-        'garantias' => $validated['concorrente']['garantias'],
-        'servico' => $validated['concorrente']['servico'],
-    ]);
-
-    Fornecedor::create([
-        'descricao' => $validated['fornecedor']['descricao'],
-        'nome' => $validated['fornecedor']['nome'],
-        'preco' => $validated['fornecedor']['preco'],
-        'pagamento' => $validated['fornecedor']['pagamento'],
-        'localizacao' => $validated['fornecedor']['localizacao'],
-    ]);
-
-    return redirect()->back()->with('success', 'Plano de mercado salvo com sucesso!');
-}
+       
+    
+        // Validação dos dados
+        $validated = $request->validate([
+            'client.perfil' => 'required|string|max:255',
+            'client.comportamento' => 'required|string|max:255',
+            
+            'client.área' => 'required|string|max:255',
+            
+        
+            'concorrente.qualidade_concorrente' => 'required|string|max:255',
+            'concorrente.nome_concorrente' => 'required|string|max:255',
+            'concorrente.preco_concorrente' => 'required|numeric',
+            'concorrente.pagamento_concorrente' => 'required|string|max:255',
+            'concorrente.localizacao_concorrente' => 'required|string|max:255',
+            'concorrente.garantias_concorrente' => 'nullable|string|max:255',
+            'concorrente.servico_concorrente' => 'nullable|string|max:255',
+            
+            // Alterado para corresponder ao nome correto enviado
+            'fornecedor.descricao_fornecedor' => 'required|string|max:255',
+            'fornecedor.nome_fornecedor' => 'required|string|max:255',
+            'fornecedor.preco_fornecedor' => 'required|numeric',
+            'fornecedor.pagamento_fornecedor' => 'required|string|max:255',
+            'fornecedor.localizacao_fornecedor' => 'required|string|max:255',
+        ]);
+        
+        $plano = Plano::findOrFail($id);
+    
+        // Criando as entradas associadas
+        Cliente::create([
+            'perfil' => $validated['client']['perfil'],
+            'comportamento' => $validated['client']['comportamento'],
+            'area' => $validated['client']['área'], 
+            'id_plano' => $plano->id
+        ]);
+    
+        Concorrente::create([
+            'qualidade' => $validated['concorrente']['qualidade_concorrente'], 
+            'nome' => $validated['concorrente']['nome_concorrente'], 
+            'preco' => $validated['concorrente']['preco_concorrente'], 
+            'pagamento' => $validated['concorrente']['pagamento_concorrente'], 
+            'localizacao' => $validated['concorrente']['localizacao_concorrente'], 
+            'garantias' => $validated['concorrente']['garantias_concorrente'] ?? null, 
+            'servico' => $validated['concorrente']['servico_concorrente'] ?? null, 
+            'id_plano' => $plano->id
+        ]);
+    
+        Fornecedor::create([
+            'descricao' => $validated['fornecedor']['descricao_fornecedor'], 
+            'nome' => $validated['fornecedor']['nome_fornecedor'], 
+            'preco' => $validated['fornecedor']['preco_fornecedor'], 
+            'pagamento' => $validated['fornecedor']['pagamento_fornecedor'], 
+            'localizacao' => $validated['fornecedor']['localizacao_fornecedor'], 
+            'id_plano' => $plano->id
+        ]);
+    
+        return redirect()->route('plano_marketing', [$id])->with('success', 'Dados de mercado salvos com sucesso!');
+    }
+    
 }

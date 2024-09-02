@@ -4,7 +4,7 @@ import Client_Form from './Form_Mercado/Client_Form';
 import Concorrente_Form from './Form_Mercado/Concorrente_Form';
 import Fornecedor_Form from './Form_Mercado/Fornecedor_Form';
 
-const Mercado = () => {
+const Mercado = ({ planoId }) => {
   const { data, setData, post, processing, errors } = useForm({
     client: {
       perfil: '',
@@ -38,7 +38,7 @@ const Mercado = () => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    post(route('plano_mercado',{id}));
+    post(route('plano_mercado',{ id: planoId }));
   };
 
   return (
