@@ -19,4 +19,9 @@ class Plano extends Model
     {
         return $this->hasMany(Executivo::class, 'id_plano');
     }
+
+    public function investimento_fixo()
+    {
+        return $this->hasMany(InvestimentoFixo::class,'id_plano');
+    }
 }

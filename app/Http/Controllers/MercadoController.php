@@ -7,7 +7,7 @@ use App\Models\Concorrente;
 use App\Models\Fornecedor;
 use App\Models\Plano;
 use Illuminate\Http\Request; 
-use Inertia\Inertia;
+use Inertia\Inertia; 
 
 class MercadoController extends Controller
 {

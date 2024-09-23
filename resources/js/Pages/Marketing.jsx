@@ -2,7 +2,7 @@ import React from 'react';
 import { useForm } from '@inertiajs/react';
 import Produto from './Form_Marketing/Form_produto/Produto';
 
-const Marketing = () => {
+const Marketing = ({ planoId }) => {
   const { data, setData, post, processing, errors } = useForm({
     produtos: [{ name: '', price: '' }],
     estrategia_promo: '',
@@ -27,9 +27,9 @@ const Marketing = () => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    post(route('plano_marketing'));
+    post(route('plano_marketing',{id: planoId}));
   };
-
+ 
   return (
     <div className="container mx-auto p-4">
       <h1 className="text-2xl font-bold mb-4">Formulário de Marketing</h1>

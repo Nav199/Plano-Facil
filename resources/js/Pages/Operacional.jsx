@@ -18,7 +18,7 @@ const Operacional = ({ planoId }) => {
 
   const addRow = () => {
     setData('pessoal', [...data.pessoal, { cargo: '', qualificacao: '' }]);
-  };
+  }; 
 
   const removeRow = (index) => {
     const updatedPessoal = data.pessoal.filter((_, i) => i !== index);
