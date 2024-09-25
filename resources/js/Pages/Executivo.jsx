@@ -1,5 +1,6 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { useForm } from '@inertiajs/react';
+import axios from 'axios';
 
 const Executivo = () => {
   const { data, setData, post, processing, errors, reset } = useForm({
@@ -10,14 +11,30 @@ const Executivo = () => {
     formaJuridica: '',
     enquadramentoTributario: '',
     fonteRecursos: '',
-    valores:'',
-    visao: '', 
+    valores: '',
+    visao: '',
   });
+
+  const [cnaeOptions, setCnaeOptions] = useState([]);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
     setData(name, value);
   };
+
+  useEffect(() => {
+    const fetchCnae = async () => {
+      try {
+        const response = await axios.get('/cnae');
+        // Mapeia o array de objetos CNAE para um formato mais conveniente
+        setCnaeOptions(response.data);
+      } catch (error) {
+        console.error('Erro ao buscar os dados de CNAE:', error);
+      }
+    };
+
+    fetchCnae();
+  }, []);
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -72,11 +89,12 @@ const Executivo = () => {
               className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2"
               required
             >
-              <option value="">Selecione...</option>
-              <option value="Agropecuária">Agropecuária</option>
-              <option value="Indústria">Indústria</option>
-              <option value="Comércio">Comércio</option>
-              <option value="Prestação de serviços">Prestação de serviços</option>
+             <option value="">Selecione...</option>
+            {cnaeOptions.map((cnae, index) => (
+              <option key={index} value={cnae.CNAE}>
+                {cnae.Descrição}
+              </option>
+            ))}
             </select>
             {errors.setorAtividade && <div className="text-red-600">{errors.setorAtividade}</div>}
           </div>

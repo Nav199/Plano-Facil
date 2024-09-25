@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\CnaeController;
 use App\Http\Controllers\EmpreendedorController;
 use App\Http\Controllers\ExecutivoController;
 use App\Http\Controllers\InvestimentoFController;
@@ -42,6 +43,16 @@ Route::post('/Operacional/{id}',[OperacionalController::class,'store'])->name('p
 
 Route::get('/Investimento Fixo/{id}',[InvestimentoFController::class,'create'])->name('Investimento-Fixo');
 Route::post('/Investimento Fixo/{id}',[InvestimentoFController::class,'store'])->name('Investimento-Fixo');
+
+
+
+
+
+
+// rota da Tabela Cnae
+Route::get('/cnae', [CnaeController::class, 'index']);
+
+
 
 Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
