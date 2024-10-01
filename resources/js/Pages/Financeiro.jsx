@@ -1,5 +1,5 @@
 import React from 'react'
-import Inves from './pages_financeiro/Inves'
+import Inves from './Inves'
 
 const Financeiro = () => {
   return (

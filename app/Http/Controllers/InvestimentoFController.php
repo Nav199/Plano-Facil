@@ -3,10 +3,11 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use App\Models\InvestimentoFixo;
+use Illuminate\Support\Facades\DB;
 use App\Models\Plano;
 use App\Service\CalculosService;
 use Inertia\Inertia;
+use Inertia\Response;
 
 class InvestimentoFController extends Controller
 {
@@ -17,68 +18,63 @@ class InvestimentoFController extends Controller
         $this->calculosService = $calculosService;
     }
 
-    public function create($id)
+    public function create($id): Response
     {
-        return Inertia::render('Financeiro', [
+        return Inertia::render('Inves', [
             'planoId' => $id,
             'status' => session('status')
         ]);
     }
 
-    public function store(Request $request,$id)
+    public function store(Request $request, $id)
 {
-    // Validação
-    $validatedData = $request->validate([
-        'imoveis' => 'required|array',
-        'maquinas' => 'required|array',
-        'equipamentos' => 'required|array',
-        'veiculos' => 'required|array',
-        'moveis_utensilios' => 'required|array',
-        'computadores' => 'required|array',
-    ]);
+    try {
+        // Validação
+        $validatedData = $request->validate([
+            'imoveis' => 'required|array',
+            'maquinas' => 'required|array',
+            'equipamentos' => 'required|array',
+            'veiculos' => 'required|array',
+            'moveisUtensilios' => 'required|array',
+            'computadores' => 'required|array',
+        ]);
 
-    // Calcular os subtotais e o total geral
-    $subtotalImoveis = $this->calculosService->calcularSubtotal($validatedData['imoveis']);
-    $subtotalMaquinas = $this->calculosService->calcularSubtotal($validatedData['maquinas']);
-    $subtotalEquipamentos = $this->calculosService->calcularSubtotal($validatedData['equipamentos']);
-    $subtotalVeiculos = $this->calculosService->calcularSubtotal($validatedData['veiculos']);
-    $subtotalMoveisUtensilios = $this->calculosService->calcularSubtotal($validatedData['moveis_utensilios']);
-    $subtotalComputadores = $this->calculosService->calcularSubtotal($validatedData['computadores']);
+        // Verifica se o plano existe
+        $plano = Plano::find($id);
+        if (!$plano) {
+            return redirect()->back()->withErrors(['message' => 'Plano não encontrado'])->withInput();
+        }
 
-    $totalGeral = $this->calculosService->calcularTotal(
-        $validatedData['imoveis'],
-        $validatedData['maquinas'],
-        $validatedData['equipamentos'],
-        $validatedData['veiculos'],
-        $validatedData['moveis_utensilios'],
-        $validatedData['computadores']
-    );
+        // Função para salvar cada item em sua respectiva tabela
+        $this->salvarItens($validatedData['imoveis'], 'imoveis', $plano->id);
+        $this->salvarItens($validatedData['maquinas'], 'maquina', $plano->id);
+        $this->salvarItens($validatedData['equipamentos'], 'equipamento', $plano->id);
+        $this->salvarItens($validatedData['veiculos'], 'veiculo', $plano->id);
+        $this->salvarItens($validatedData['moveisUtensilios'], 'moveis', $plano->id);
+        $this->salvarItens($validatedData['computadores'], 'computador', $plano->id);
 
-    $plano = Plano::findOrFail($id);
+        // Responder com sucesso
+        return redirect()->route('estoque',[$id])->with('status', 'Operacional criado com sucesso!');
+    } catch (\Illuminate\Validation\ValidationException $e) {
+        // Captura erros de validação
+        return redirect()->back()->withErrors($e->validator)->withInput()->with('status', 'Erro de validação: ' . implode(', ', $e->errors()));
+    } catch (\Exception $e) {
+        // Retornar um erro em caso de falha
+        return redirect()->back()->withErrors(['message' => 'Erro ao salvar: ' . $e->getMessage()])->withInput();
+    }
+}
 
-    // Salvar os dados no banco de dados
-    $investimentoFixo = new InvestimentoFixo();
-    $investimentoFixo->imoveis = json_encode($validatedData['imoveis']);
-    $investimentoFixo->maquinas = json_encode($validatedData['maquinas']);
-    $investimentoFixo->equipamentos = json_encode($validatedData['equipamentos']);
-    $investimentoFixo->veiculos = json_encode($validatedData['veiculos']);
-    $investimentoFixo->moveis_utensilios = json_encode($validatedData['moveis_utensilios']);
-    $investimentoFixo->computadores = json_encode($validatedData['computadores']);
-    $investimentoFixo->subtotal_imoveis = $subtotalImoveis;
-    $investimentoFixo->subtotal_maquinas = $subtotalMaquinas;
-    $investimentoFixo->subtotal_equipamentos = $subtotalEquipamentos;
-    $investimentoFixo->subtotal_veiculos = $subtotalVeiculos;
-    $investimentoFixo->subtotal_moveis_utensilios = $subtotalMoveisUtensilios;
-    $investimentoFixo->subtotal_computadores = $subtotalComputadores;
-    $investimentoFixo->total_geral = $totalGeral;
-    $investimentoFixo->id_plano = $plano->id;
-    $investimentoFixo->save();
-
-    // Responder com sucesso
-    return response()->json([
-        'message' => 'Investimento fixo salvo com sucesso!',
-        'investimentoFixo' => $investimentoFixo
-    ], 201);
+private function salvarItens($itens, $tipo, $planoId)
+{
+    foreach ($itens as $item) {
+        \DB::table($tipo)->insert([
+            'descricao' => $item['descricao'],
+            'quantidade' => $item['quantidade'],
+            'valor_unitario' => $item['valorUnitario'],
+            'total' => $item['quantidade'] * $item['valorUnitario'],
+            'id_plano' => $planoId,
+        ]);
+    }
 }
 
 }

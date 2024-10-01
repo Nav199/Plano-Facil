@@ -12,7 +12,7 @@ class Marketing extends Model
     protected $table='marketing';
 
     protected $fillable = [
-        'produto','preco','estrategia_promo','estrategia_comer','localizacao'
+        'produto','preco','estrategia_promo','estrategia_comer','localizacao','id_plano'
     ];
 
     

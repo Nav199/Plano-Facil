@@ -2,20 +2,22 @@
 namespace App\Http\Controllers;
 
 use App\Models\Marketing;
+use App\Models\Plano;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 use Inertia\Response;
 
 class MarketingController extends Controller
 {
-    public function create(): Response
+    public function create($id): Response
     {
         return Inertia::render('Marketing', [
+            'planoId'=>$id,
             'status' => session('status')
-        ]);
+        ]); 
     }
 
-    public function store(Request $request)
+    public function store(Request $request,$id)
     {
        
         $validated = $request->validate([
@@ -25,16 +27,17 @@ class MarketingController extends Controller
             'estrategia_comer' => 'required|string|min:1',
             'localizacao' => 'required|string|min:1'
         ]);
-        
+        $plano = Plano::findOrFail($id);
         Marketing::create([
             'produto' => implode(',', array_column($validated['produtos'], 'name')),
             'preco' => implode(',', array_column($validated['produtos'], 'price')),
             'estrategia_promo' => $validated['estrategia_promo'],
             'estrategia_comer' => $validated['estrategia_comer'],
             'localizacao' => $validated['localizacao'],
+            'id_plano' => $plano->id
         ]);
         
 
-        return redirect()->route('plano_marketing')->with('status', 'Marketing cadastrado com sucesso!');
+        return redirect()->route('plano_operacional', [$id])->with('status', 'Marketing cadastrado com sucesso!');
     }
 }

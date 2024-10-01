@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\CnaeController;
 use App\Http\Controllers\EmpreendedorController;
+use App\Http\Controllers\EstoqueController;
 use App\Http\Controllers\ExecutivoController;
 use App\Http\Controllers\InvestimentoFController;
 use App\Http\Controllers\MarketingController;
@@ -40,14 +41,12 @@ Route::post('/Marketing/{id}',[MarketingController::class,'store'])->name('plano
 
 Route::get('/Operacional/{id}',[OperacionalController::class,'create'])->name('plano_operacional');
 Route::post('/Operacional/{id}',[OperacionalController::class,'store'])->name('plano_operacional');
+ 
+Route::get('/investimento-fixo/{id}', [InvestimentoFController::class, 'create'])->name('investimento-fixo');
+Route::post('/investimento-fixo/{id}', [InvestimentoFController::class, 'store'])->name('investimento-fixo');
 
-Route::get('/Investimento Fixo/{id}',[InvestimentoFController::class,'create'])->name('Investimento-Fixo');
-Route::post('/Investimento Fixo/{id}',[InvestimentoFController::class,'store'])->name('Investimento-Fixo');
-
-
-
-
-
+Route::get('/estoque/{id}',[EstoqueController::class,'create'])->name('estoque');
+Route::post('/estoque/{id}',[EstoqueController::class,'store'])->name('estoque-store');
 
 // rota da Tabela Cnae
 Route::get('/cnae', [CnaeController::class, 'index']);

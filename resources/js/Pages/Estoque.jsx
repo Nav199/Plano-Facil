@@ -1,94 +1,132 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import { useForm } from '@inertiajs/react';
 
-const Estoque = () => {
-  const [items, setItems] = useState([{ descricao: '', quantidade: 0, valorUnitario: 0, total: 0 }]);
+const Estoque = ({ planoId }) => {
+  const { data, setData, post, processing, errors } = useForm({
+    items: [{ descricao: '', quantidade: '', valorUnitario: '', total: 0 }],
+    totalGeral: 0,
+  });
 
-  const handleAddRow = () => {
-    setItems([...items, { descricao: '', quantidade: 0, valorUnitario: 0, total: 0 }]);
+  // Função para adicionar um item
+  const handleAddItem = () => {
+    setData('items', [
+      ...data.items,
+      { descricao: '', quantidade: '', valorUnitario: '', total: 0 }
+    ]);
   };
 
-  const handleRemoveRow = (index) => {
-    const newItems = [...items];
-    newItems.splice(index, 1);
-    setItems(newItems);
+  // Função para remover um item
+  const handleRemoveItem = (index) => {
+    setData('items', data.items.filter((_, i) => i !== index));
   };
 
-  const handleInputChange = (index, field, value) => {
-    const newItems = [...items];
-    newItems[index][field] = value;
+  // Função para atualizar os valores de cada campo no item
+  const handleInputChange = (index, e) => {
+    const { name, value } = e.target;
+    const updatedItems = [...data.items];
+    updatedItems[index] = { ...updatedItems[index], [name]: value };
+    updatedItems[index].total = updatedItems[index].quantidade * updatedItems[index].valorUnitario;
+    setData('items', updatedItems);
+  };
 
-    if (field === 'quantidade' || field === 'valorUnitario') {
-      newItems[index].total = newItems[index].quantidade * newItems[index].valorUnitario;
-    }
+  // Calcula o subtotal dos itens
+  const calcularSubtotal = () => {
+    return data.items.reduce((acc, item) => acc + Number(item.total || 0), 0);
+  };
 
-    setItems(newItems);
+  // Calcula o total geral quando os itens mudam
+  useEffect(() => {
+    const totalGeral = calcularSubtotal();
+    setData('totalGeral', totalGeral);
+  }, [data.items]);
+
+  // Função para submeter o formulário e enviar os dados ao backend
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    post(route('estoque-store', { id: planoId }));
   };
 
   return (
-    <div className='p-4'>
-      <h2 className='text-center text-xl font-bold mb-4'>Estoque Inicial</h2>
-      <table className='min-w-full bg-white'>
+    <div className="container mx-auto p-4 mt-4">
+      <h1 className="text-3xl font-bold mb-4">Estoque</h1>
+
+      <table className="table-auto w-full mb-4">
         <thead>
           <tr>
-            <th className='px-4 py-2 border'>Descrição</th>
-            <th className='px-4 py-2 border'>Quantidade</th>
-            <th className='px-4 py-2 border'>Valor Unitário</th>
-            <th className='px-4 py-2 border'>Total</th>
-            <th className='px-4 py-2 border'>Ações</th>
+            <th>Descrição</th>
+            <th>Quantidade</th>
+            <th>Valor Unitário</th>
+            <th>Total</th>
+            <th>Ações</th>
           </tr>
         </thead>
         <tbody>
-          {items.map((item, index) => (
+          {data.items.map((item, index) => (
             <tr key={index}>
-              <td className='px-4 py-2 border'>
+              <td>
                 <input
-                  type='text'
+                  type="text"
+                  name="descricao"
                   value={item.descricao}
-                  onChange={(e) => handleInputChange(index, 'descricao', e.target.value)}
-                  className='w-full p-2 border'
-                  placeholder='Descrição'
+                  onChange={(e) => handleInputChange(index, e)}
+                  className="border px-2 py-1"
                 />
               </td>
-              <td className='px-4 py-2 border'>
+              <td>
                 <input
-                  type='number'
+                  type="number"
+                  name="quantidade"
                   value={item.quantidade}
-                  onChange={(e) => handleInputChange(index, 'quantidade', Number(e.target.value))}
-                  className='w-full p-2 border'
-                  min='1'
+                  onChange={(e) => handleInputChange(index, e)}
+                  className="border px-2 py-1"
                 />
               </td>
-              <td className='px-4 py-2 border'>
+              <td>
                 <input
-                  type='number'
+                  type="number"
+                  name="valorUnitario"
                   value={item.valorUnitario}
-                  onChange={(e) => handleInputChange(index, 'valorUnitario', Number(e.target.value))}
-                  className='w-full p-2 border'
-                  min='0'
-                  step='0.01'
+                  onChange={(e) => handleInputChange(index, e)}
+                  className="border px-2 py-1"
                 />
               </td>
-              <td className='px-4 py-2 border'>
-                {item.total.toFixed(2)}
+              <td>
+                {item.total.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}
               </td>
-              <td className='px-4 py-2 border'>
+              <td>
                 <button
-                  onClick={() => handleRemoveRow(index)}
-                  className='bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600'
+                  onClick={() => handleRemoveItem(index)}
+                  className="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600"
                 >
-                  Excluir
+                  Remover
                 </button>
               </td>
             </tr>
           ))}
         </tbody>
       </table>
+
       <button
-        onClick={handleAddRow}
-        className='bg-blue-500 text-white px-4 py-2 rounded mt-4 hover:bg-blue-600'
+        onClick={handleAddItem}
+        className="bg-blue-500 text-white px-4 py-2 rounded mt-4 hover:bg-blue-600"
       >
-        Adicionar
+        Adicionar Item
       </button>
+
+      <div className="text-right font-bold text-xl mt-4">
+        Total Geral: {data.totalGeral.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}
+      </div>
+
+      <div className="mt-4">
+        <button
+          onClick={handleSubmit}
+          type="submit"
+          className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
+          disabled={processing}
+        >
+          Enviar
+        </button>
+      </div>
     </div>
   );
 };

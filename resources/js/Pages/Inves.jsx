@@ -1,22 +1,22 @@
 import React, { useState, useEffect } from 'react';
 import { useForm } from '@inertiajs/react';
-import TabelaInvestimentos from './TabelaInvestimentos/TabelaInvestimentos'; 
+import TabelaInvestimentos from './pages_financeiro/TabelaInvestimentos/TabelaInvestimentos'; 
 
 const Inves = ({ planoId }) => {
   const { data, setData, post, processing, errors } = useForm({
     imoveis: [],
     maquinas: [],
     equipamentos: [],
-    veiculos: [],
-    moveisUtensilios: [],
-    computadores: []
+    veiculos: [], 
+    moveisUtensilios: [], 
+    computadores: [],
   });
 
   // Handle adding a new item in a specific category
   const handleAddItem = (categoria) => {
     setData(categoria, [
       ...data[categoria], 
-      { descricao: '', quantidade: 0, valorUnitario: 0, total: 0 }
+      { descricao: '', quantidade: '', valorUnitario: '', total: 0 }
     ]);
   };
 
@@ -35,11 +35,13 @@ const Inves = ({ planoId }) => {
   };
 
   // Calculate subtotal for a specific category
+  
   const calcularSubtotal = (categoria) => {
     return data[categoria].reduce((acc, item) => acc + Number(item.total || 0), 0);
   };
 
   // Calculate total for all categories
+  
   const calcularTotal = () => {
     return (
       calcularSubtotal('imoveis') +
@@ -50,16 +52,18 @@ const Inves = ({ planoId }) => {
       calcularSubtotal('computadores')
     );
   };
-
+ 
   // Auto-recalculate total when categories change
   useEffect(() => {
-    calcularTotal();
+    const total = calcularTotal();
+    setData('totalGeral', total); // Atualizando o totalGeral no estado
   }, [data]);
-
+ 
   // Handle form submission
   const handleSubmit = (e) => {
     e.preventDefault();
-    post(route('Investimento-Fixo', { id: planoId }));
+    post(route('investimento-fixo', { id: planoId }));
+
   };
 
   return (
@@ -115,7 +119,7 @@ const Inves = ({ planoId }) => {
       />
 
       <div className="text-right font-bold text-xl mt-4">
-        Total de Investimento Fixo: {calcularTotal().toFixed(2)}
+        Total de Investimento Fixo: {}
       </div>
 
       <div className="mt-4">

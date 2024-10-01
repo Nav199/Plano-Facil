@@ -43,7 +43,7 @@ const Executivo = () => {
 
   return (
     <div className="p-4 max-w-2xl mx-auto">
-      <h2 className="text-2xl font-bold mb-4 text-center">Dados da Empresa</h2>
+      <h2 className="text-2xl font-bold mb-4 text-center">Plano Executivo</h2>
       <form onSubmit={handleSubmit} className="space-y-4">
         <div className="flex flex-wrap -mx-2">
           <div className="w-full md:w-1/2 px-2 mb-4">

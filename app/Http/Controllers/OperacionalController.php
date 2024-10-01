@@ -23,11 +23,7 @@ class OperacionalController extends Controller
     // Depuração
     // dd($request->all());
 
-    $plano = Plano::all();
-    $plano_ = $plano->filter(function ($item) use ($id) {
-        return $item->id == $id;
-    })->first(); 
-
+    $plano = Plano::findOrFail($id);
     // Validação dos campos
     $request->validate([
         'capacidadeProdutiva' => 'required',
@@ -43,11 +39,11 @@ class OperacionalController extends Controller
             'volume' => $request->input('volumeProducao'),
             'cargo' => $pessoal['cargo'],
             'qualificacao' => $pessoal['qualificacao'],
-            'id_plano' => $plano_->id 
+            'id_plano' => $plano->id 
         ]);
     }
 
-    return redirect()->route('operacional.index')->with('status', 'Operacional criado com sucesso!');
+    return redirect()->route('investimento-fixo',[$id])->with('status', 'Operacional criado com sucesso!');
 }
 
 }
