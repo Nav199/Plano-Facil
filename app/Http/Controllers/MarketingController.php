@@ -40,4 +40,7 @@ class MarketingController extends Controller
 
         return redirect()->route('plano_operacional', [$id])->with('status', 'Marketing cadastrado com sucesso!');
     }
+
+
+   
 }
