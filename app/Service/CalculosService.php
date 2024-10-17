@@ -40,5 +40,29 @@ class CalculosService
             return $total + $item['total'];
         }, 0);
     }
+ 
     
+    public function processarFatura($items, $crescimento)
+    {
+        // Calcular subtotais para cada item
+        $itensCalculados = array_map(function ($item) {
+            $item['total'] = $item['quantidade'] * $item['valor'];
+            return $item;
+        }, $items);
+
+        // Calcular o total sem crescimento
+        $totalSemCrescimento = array_reduce($itensCalculados, function ($total, $item) {
+            return $total + $item['total'];
+        }, 0);
+
+        // Aplicar crescimento percentual no total
+        $crescimentoDecimal = 1 + ($crescimento / 100);
+        $totalComCrescimento = $totalSemCrescimento * $crescimentoDecimal;
+
+        return [
+            'itens' => $itensCalculados,
+            'totalSemCrescimento' => $totalSemCrescimento,
+            'totalComCrescimento' => $totalComCrescimento
+        ];
+    }
 }

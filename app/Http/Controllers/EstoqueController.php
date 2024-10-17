@@ -74,7 +74,7 @@ class EstoqueController extends Controller
            ]);
        }
 
-       return redirect()->route('estoque.index', ['id' => $request->planoId])
+       return redirect()->route('estoque.index', [$id])
                         ->with('success', 'Estoque salvo com sucesso.');
    }
 

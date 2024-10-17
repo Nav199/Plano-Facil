@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { useForm, usePage } from '@inertiajs/react';
 
 const Uni_Cus = ({ planoId }) => {
-  const { produtos } = usePage().props; // Recebendo os produtos do marketing via Inertia
+  const { produtos } = usePage().props; 
 
   // useForm para manipular o estado dos produtos
   const { data, setData, post, processing } = useForm({

@@ -52,7 +52,7 @@ class CustoUniController extends Controller
                      'marketing.estrategia_promo', 'marketing.estrategia_comer', 
                      'marketing.localizacao', 'marketing.id_plano', 
                      'marketing.created_at', 'marketing.updated_at')
-            ->where('marketing.id_plano', $id) // Filtra pelos produtos do plano específico
+            ->where('marketing.id_plano', $id)
             ->get();
     
         return $produtos; // Retorna a lista de produtos
@@ -73,12 +73,11 @@ class CustoUniController extends Controller
     
         $plano = Plano::findOrFail($id);
     
-        // Loop através dos produtos e itens para armazenar no banco de dados
+     
         foreach ($request->produtos as $produto) {
-            // Você pode armazenar dados do produto, se necessário
             foreach ($produto['itens'] as $item) {
                 Custo_Unitario::create([
-                    'id_plano' => $plano->id, // Associe o plano
+                    'id_plano' => $plano->id,
                     'material' => $item['material'],
                     'quantidade' => $item['quantidade'],
                     'valor_unitario' => $item['valorUnitario'],

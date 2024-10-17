@@ -8,5 +8,9 @@ use Illuminate\Database\Eloquent\Model;
 class Enquadramento extends Model
 {
     use HasFactory;
-    
+    protected $table = 'enquadramento';
+
+    protected $fillable = [
+        'id', 'id_forma','tipo'
+    ]; 
 }

@@ -36,7 +36,7 @@ class OperacionalController extends Controller
     foreach ($request->input('pessoal') as $pessoal) {
         Operacional::create([
             'capacidade' => $request->input('capacidadeProdutiva'),
-            'volume' => $request->input('volumeProducao'),
+            'volume' => $request->input('volumeProducao'), 
             'cargo' => $pessoal['cargo'],
             'qualificacao' => $pessoal['qualificacao'],
             'id_plano' => $plano->id 

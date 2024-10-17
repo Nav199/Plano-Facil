@@ -12,7 +12,7 @@ return new class extends Migration
     public function up(): void
     {
         //
-        Schema::create('mao_obra', function (Blueprint $table) {
+        Schema::create('mao_obra', function (Blueprint $table) { 
             $table->id(); // ID auto-increment
             $table->unsignedBigInteger('id_plano'); // ID do produto, que pode ser referenciado na tabela de produtos
             $table->string('funcao');

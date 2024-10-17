@@ -58,7 +58,7 @@ class Mao_ObraController extends Controller
                 'funcao' => $cargo['funcao'], // Nome do cargo
                 'empregado' => $cargo['num_empregados'],
                 'salario' => $cargo['salario_mensal'],
-                'encargo' => $cargo['encargos_percentual'],
+                'encargo' => $cargo[$encargos],
                 'total' => $total, // Total calculado
                 'total_geral' => array_sum(array_column($validatedData['cargos'], 'total')), // Total geral (se aplicável)
             ]);

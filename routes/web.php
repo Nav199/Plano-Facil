@@ -1,10 +1,12 @@
 <?php
 
 use App\Http\Controllers\CnaeController;
+use App\Http\Controllers\CustoFixoController;
 use App\Http\Controllers\CustoUniController;
-use App\Http\Controllers\EmpreendedorController;
+use App\Http\Controllers\DepreciacaoController;
 use App\Http\Controllers\EstoqueController;
 use App\Http\Controllers\ExecutivoController;
+use App\Http\Controllers\FaturaController;
 use App\Http\Controllers\InvestimentoFController;
 use App\Http\Controllers\Mao_ObraController;
 use App\Http\Controllers\MarketingController;
@@ -49,11 +51,24 @@ Route::post('/investimento-fixo/{id}', [InvestimentoFController::class, 'store']
 
 Route::get('/estoque/{id}',[EstoqueController::class,'create'])->name('estoque');
 Route::post('/estoque/{id}',[EstoqueController::class,'store'])->name('estoque-store');
+
+Route::get('/Faturamento/{id}',[FaturaController::class,'create'])->name('faturamento');
+Route::post('/Faturamento/{id}',[FaturaController::class,'store'])->name('faturamento');
+
 Route::get('/custo/{id}',[CustoUniController::class,'create'])->name('custo');
 Route::post('/custo/{id}',[CustoUniController::class,'store'])->name('custo-store');
 
 Route::get('/mao-obra/{id}',[Mao_ObraController::class,'create']);
 Route::post('/mao-obra/{id}',[Mao_ObraController::class,'store'])->name('mao-obra-store');
+
+//rota do Custo Fixo
+Route::get('/custo-fixo/{id}',[CustoFixoController::class,'create'])->name('custo-fixo');
+Route::post('/custo-fixo/{id}',[CustoFixoController::class,'store'])->name('custo-fixo');
+
+// rota depreciacao
+Route::get('/depreciacao/{id}',[DepreciacaoController::class,'create']);
+
+
 // rota da Tabela Cnae
 Route::get('/cnae', [CnaeController::class, 'index']);
 
