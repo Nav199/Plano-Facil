@@ -71,28 +71,28 @@ export default function Login({ status, canResetPassword }) {
                                 onChange={(e) => setData('remember', e.target.checked)}
                                 className="text-white"
                             />
-                            <span className="ml-2 text-sm text-gray-400">Remember me</span>
+                            <span className="ml-2 text-sm text-gray-400">Lembre de mim</span>
                         </div>
 
                         <div className="flex items-center justify-between">
                             {canResetPassword && (
-                                <Link
+                                <Link 
                                     href={route('password.request')}
                                     className="underline text-sm text-gray-400 hover:text-gray-200"
                                 >
-                                    Forgot your password?
+                                    Esqueceu sua Senha
                                 </Link>
                             )}
 
                             <PrimaryButton className="ml-4 bg-indigo-600 hover:bg-indigo-700" disabled={processing}>
-                                Log in
+                                Login
                             </PrimaryButton>
                         </div>
                     </form>
 
                     <div className="mt-6 text-center text-white">
-                        <Link to="/register" className="underline hover:text-gray-200">
-                            Don't have an account? Sign up
+                        <Link href={route('register')} className="underline hover:text-gray-200">
+                                 Não tem conta? Cadastre-se
                         </Link>
                     </div>
                 </div>

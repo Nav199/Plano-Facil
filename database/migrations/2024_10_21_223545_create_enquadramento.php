@@ -16,6 +16,7 @@ return new class extends Migration
             $table->id(); // ID auto-increment
             $table->unsignedBigInteger('id_forma');
             $table->string('tipo');
+            $table->timestamps();
             $table->foreign('id_forma')->references('id')->on('formajuridica')->onDelete('cascade');
         });
     }

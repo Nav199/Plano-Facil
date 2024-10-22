@@ -21,6 +21,15 @@ class DepreciacaoController extends Controller
     }
 
 
+
+    public function store(Request $request, $id)
+    {
+        
+        return redirect()->route('custo-fixo', [$id])
+        ->with('success', 'Estoque salvo com sucesso.');
+    }
+
+
     public function getTotais($id)
     {
         // Consulta para obter os totais de cada tabela, filtrando pelo id_plano

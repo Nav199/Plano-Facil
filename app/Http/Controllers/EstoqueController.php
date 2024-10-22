@@ -74,7 +74,7 @@ class EstoqueController extends Controller
            ]);
        }
 
-       return redirect()->route('estoque.index', [$id])
+       return redirect()->route('faturamento', [$id])
                         ->with('success', 'Estoque salvo com sucesso.');
    }
 

@@ -67,50 +67,44 @@ const Mercado = ({ planoId }) => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    post(route('plano_mercado', { id: planoId }));
+    post(route('mercado.store', planoId));
   };
 
   return (
-    <div className='container mx-auto p-4'>
-      <Client_Form onChange={(name, value) => handleChange('client', 0, name, value)} />
+    <form onSubmit={handleSubmit} className="space-y-8 divide-y divide-gray-200">
+      <Client_Form
+        data={data.client}
+        onChange={(name, value) => setData('client', { ...data.client, [name]: value })}
+      />
 
-      {data.concorrente.map((_, index) => (
+      {data.concorrente.map((concorrente, index) => (
         <Concorrente_Form
           key={index}
           onChange={(name, value) => handleChange('concorrente', index, name, value)}
+          onAdd={() => addNewSectionItem('concorrente')}
         />
       ))}
-      <button
-        type="button"
-        onClick={() => addNewSectionItem('concorrente')}
-        className="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded mt-2"
-      >
-        Adicionar Concorrente
-      </button>
 
-      {data.fornecedor.map((_, index) => (
+      {data.fornecedor.map((fornecedor, index) => (
         <Fornecedor_Form
           key={index}
           onChange={(name, value) => handleChange('fornecedor', index, name, value)}
+          onAdd={() => addNewSectionItem('fornecedor')}
         />
       ))}
-      <button
-        type="button"
-        onClick={() => addNewSectionItem('fornecedor')}
-        className="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded mt-2"
-      >
-        Adicionar Fornecedor
-      </button>
 
-      <button
-        onClick={handleSubmit}
-        type='submit'
-        className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded mt-4"
-        disabled={processing}
-      >
-        Enviar
-      </button>
-    </div>
+      <div className="pt-5">
+        <div className="flex justify-end">
+          <button
+            type="submit"
+            disabled={processing}
+            className="ml-3 inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+          >
+            Salvar
+          </button>
+        </div>
+      </div>
+    </form>
   );
 };
 

@@ -1,6 +1,6 @@
 import React from 'react';
 
-const Concorrente_Form = ({ onChange }) => {
+const Concorrente_Form = ({ onChange, onAdd }) => {
   const handleChange = (e) => {
     const { name, value } = e.target;
     onChange(name, value);
@@ -11,21 +11,21 @@ const Concorrente_Form = ({ onChange }) => {
       <h2 className="text-lg font-semibold mb-2">Estudo dos Concorrentes</h2>
       <div className="grid grid-cols-2 gap-4">
         <div>
-          <label htmlFor="qualidade" className="block text-sm font-medium text-gray-700">Qualidade</label>
-          <input
-            type="text"
-            id="qualidade"
-            name="qualidade_concorrente"
-            className="mt-1 p-2 w-full border-gray-300 rounded-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
-            onChange={handleChange}
-          />
-        </div>
-        <div>
           <label htmlFor="nome" className="block text-sm font-medium text-gray-700">Nome</label>
           <input
             type="text"
             id="nome"
             name="nome_concorrente"
+            className="mt-1 p-2 w-full border-gray-300 rounded-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
+            onChange={handleChange}
+          />
+        </div>
+        <div>
+          <label htmlFor="qualidade" className="block text-sm font-medium text-gray-700">Qualidade</label>
+          <input
+            type="text"
+            id="qualidade"
+            name="qualidade_concorrente"
             className="mt-1 p-2 w-full border-gray-300 rounded-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
             onChange={handleChange}
           />
@@ -81,6 +81,14 @@ const Concorrente_Form = ({ onChange }) => {
           />
         </div>
       </div>
+
+      <button
+        type="button"
+        onClick={onAdd}
+        className="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded mt-2"
+      >
+        Adicionar Concorrente
+      </button>
     </div>
   );
 };

@@ -41,11 +41,10 @@ class FaturaController extends Controller
                 'total' => $item['quantidade'] * $item['valor']
             ]);
         }
-        
-
     
 
-        return redirect()->back()->with('status', 'Fatura salva com sucesso!');
+        return redirect()->route('custo', [$id])
+        ->with('success', 'Estoque salvo com sucesso.');
     }
 
     private function listar_produtos($id)

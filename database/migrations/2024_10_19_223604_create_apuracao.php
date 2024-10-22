@@ -11,11 +11,14 @@ return new class extends Migration
      */
     public function up(): void
     {
-        //
-        Schema::create('formajuridica', function (Blueprint $table) {
-            $table->id(); // ID auto-increment
+        Schema::create('apuracao', function (Blueprint $table) {
+            $table->id(); 
             $table->unsignedBigInteger('id_plano');
-            $table->string('tipo');
+            $table->string('descricao');
+            $table->decimal('vendas', 10, 2);
+            $table->decimal('custo', 10, 2);
+            $table->decimal('crescimento', 10, 2);
+            $table->timestamps();
             $table->foreign('id_plano')->references('id')->on('plano_negocios')->onDelete('cascade');
         });
     }
@@ -25,7 +28,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        //
-        Schema::dropIfExists('formajuridica');
+        Schema::dropIfExists('apuracao');
     }
 };

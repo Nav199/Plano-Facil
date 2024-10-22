@@ -88,7 +88,7 @@ class CustoUniController extends Controller
         }
     
         // Redireciona de volta com uma mensagem de sucesso
-        return redirect()->route('custo', ['id' => $plano->id])->with('status', 'Custos armazenados com sucesso!');
+        return redirect()->route('comercializacao', ['id' => $plano->id])->with('status', 'Custos armazenados com sucesso!');
 
     }
     

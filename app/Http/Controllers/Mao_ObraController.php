@@ -64,7 +64,8 @@ class Mao_ObraController extends Controller
             ]);
         }
 
-        // Retorna uma mensagem de sucesso para o frontend
-        return redirect()->back()->with('status', 'Dados de mão-de-obra salvos com sucesso!');
+
+        return redirect()->route('depreciacao', [$id])
+        ->with('success', 'Estoque salvo com sucesso.');
     }
 }

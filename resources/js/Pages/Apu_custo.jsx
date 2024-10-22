@@ -1,83 +1,88 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Chart, registerables } from 'chart.js';
+import { useForm, usePage } from '@inertiajs/react';
 
 Chart.register(...registerables);
- 
-const Apu_custo = () => {
-  const [items, setItems] = useState([{ descricao: '', vendas: 0, custo: 0 }]);
-  const [crescimento, setCrescimento] = useState(0);
-  const chartRef = useRef(null); // Referência para o gráfico
 
-  useEffect(() => {
-    renderChart(); 
-    return () => {
-      if (chartRef.current) {
-        chartRef.current.destroy(); // Destruir o gráfico ao desmontar o componente ou atualizar
-      }
-    };
-  }, [items, crescimento]); // Atualizar o gráfico quando os dados ou o crescimento mudarem
+const Apu_custo = ({ planoId }) => {
+  const { faturamento, custoUnitario } = usePage().props;
 
-  const handleAddItem = () => {
-    setItems([...items, { descricao: '', vendas: 0, custo: 0 }]);
-  };
+  const { data, setData, post, processing, errors } = useForm({
+    items: faturamento.map((item, index) => ({
+      descricao: item.produto_servico,
+      vendas: item.estimativa_vendas,
+      custo: custoUnitario[index]?.total_geral || 0,
+    })),
+    crescimento: 0,
+  });
 
-  const handleRemoveItem = (index) => {
-    const newItems = items.filter((_, i) => i !== index);
-    setItems(newItems);
-  };
+  const chartRef = useRef(null);
 
-  const handleChange = (index, field, value) => {
-    const newItems = [...items];
-    newItems[index][field] = parseFloat(value);
-    setItems(newItems);
-  };
-
-  const totalCMV = items.reduce((acc, item) => acc + (item.vendas * item.custo || 0), 0);
-
-  const handleCrescimentoChange = (e) => {
-    setCrescimento(parseFloat(e.target.value));
-  };
+  const totalCMV = data.items.reduce(
+    (acc, item) => acc + (item.vendas * item.custo || 0),
+    0
+  );
 
   const calcularCrescimento = (valor, meses) => {
-    return Array.from({ length: meses }, (_, i) => valor * Math.pow(1 + crescimento / 100, i));
+    return Array.from({ length: meses }, (_, i) =>
+      valor * Math.pow(1 + data.crescimento / 100, i)
+    );
   };
+
+  const mesesCrescimento = calcularCrescimento(totalCMV, 12 * 5);
 
   const formatarNumeroBr = (numero) => {
-    return new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(numero);
+    return new Intl.NumberFormat('pt-BR', {
+      style: 'currency',
+      currency: 'BRL',
+    }).format(numero);
   };
 
-  const mesesCrescimento = calcularCrescimento(totalCMV, 12 * 5); // Calcula para 5 anos (60 meses)
-
-  // Função para renderizar o gráfico
   const renderChart = () => {
     const ctx = document.getElementById('crescimentoChart').getContext('2d');
-  
+
     if (chartRef.current) {
-      chartRef.current.destroy(); 
+      chartRef.current.destroy();
     }
-  
+
     const labels = [
-      'Mês 1', 'Mês 2', 'Mês 3', 'Mês 4', 'Mês 5', 'Mês 6',
-      'Mês 7', 'Mês 8', 'Mês 9', 'Mês 10', 'Mês 11', 'Mês 12',
-      'Ano 1', 'Ano 2', 'Ano 3', 'Ano 4', 'Ano 5'
+      'Mês 1',
+      'Mês 2',
+      'Mês 3',
+      'Mês 4',
+      'Mês 5',
+      'Mês 6',
+      'Mês 7',
+      'Mês 8',
+      'Mês 9',
+      'Mês 10',
+      'Mês 11',
+      'Mês 12',
+      'Ano 1',
+      'Ano 2',
+      'Ano 3',
+      'Ano 4',
+      'Ano 5',
     ];
-  
-    const data = mesesCrescimento.slice(0, 12).concat(
-      [mesesCrescimento.slice(0, 12).reduce((acc, val) => acc + val, 0)],  // Ano 1
-      [mesesCrescimento.slice(0, 24).reduce((acc, val) => acc + val, 0)],  // Ano 2
-      [mesesCrescimento.slice(0, 36).reduce((acc, val) => acc + val, 0)],  // Ano 3
-      [mesesCrescimento.slice(0, 48).reduce((acc, val) => acc + val, 0)],  // Ano 4
-      [mesesCrescimento.slice(0, 60).reduce((acc, val) => acc + val, 0)]   // Ano 5
-    );
-  
+
+    const dataValues = mesesCrescimento
+      .slice(0, 12)
+      .concat(
+        [mesesCrescimento.slice(0, 12).reduce((acc, val) => acc + val, 0)],
+        [mesesCrescimento.slice(0, 24).reduce((acc, val) => acc + val, 0)],
+        [mesesCrescimento.slice(0, 36).reduce((acc, val) => acc + val, 0)],
+        [mesesCrescimento.slice(0, 48).reduce((acc, val) => acc + val, 0)],
+        [mesesCrescimento.slice(0, 60).reduce((acc, val) => acc + val, 0)]
+      );
+
     chartRef.current = new Chart(ctx, {
       type: 'bar',
       data: {
-        labels: labels,  // Adiciona os rótulos personalizados
+        labels: labels,
         datasets: [
           {
             label: 'CMV (R$)',
-            data: data,
+            data: dataValues,
             backgroundColor: 'rgba(75, 192, 192, 0.2)',
             borderColor: 'rgba(75, 192, 192, 1)',
             borderWidth: 1,
@@ -93,140 +98,99 @@ const Apu_custo = () => {
         plugins: {
           tooltip: {
             callbacks: {
-              label: function(context) {
-                return `R$ ${context.raw.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}`;
-              }
-            }
-          }
-        }
+              label: function (context) {
+                return formatarNumeroBr(context.raw);
+              },
+            },
+          },
+        },
       },
     });
   };
-  
-  return (
-    <div className="min-h-screen flex flex-col items-center bg-gray-100">
-      <h2 className="text-2xl font-bold mt-8 mb-6">Apuração do Custo de MD ou MV</h2>
 
-      <div className="bg-white p-6 rounded-lg shadow-lg w-full max-w-4xl">
-        <table className="table-auto w-full mb-6 border-collapse">
+  useEffect(() => {
+    if (data.items.length > 0) {
+      renderChart();
+    }
+    return () => {
+      if (chartRef.current) {
+        chartRef.current.destroy();
+      }
+    };
+  }, [data.items, data.crescimento]);
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    post(route('apuracao', { id: planoId }));
+  };
+
+  const handleCrescimentoChange = (e) => {
+    setData('crescimento', parseFloat(e.target.value) || 0);
+  };
+
+  return (
+    <div className="min-h-screen flex flex-col items-center justify-center bg-gray-100">
+      <h2 className="text-2xl font-bold mt-8 mb-6 text-center">
+        Apuração do Custo de MD ou MV
+      </h2>
+
+      <form onSubmit={handleSubmit} className="bg-white p-6 rounded-lg shadow-lg w-full max-w-4xl">
+        <table className="min-w-full bg-white border-collapse border border-gray-200">
           <thead>
             <tr>
-              <th className="text-left p-2">
-                <button
-                  onClick={handleAddItem}
-                  className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-1 px-4 rounded"
-                >
-                  Adicionar
-                </button>
-              </th>
-              <th className="text-left p-2">Produto/Serviço</th>
-              <th className="text-left p-2">Estimativa Vendas</th>
-              <th className="text-left p-2">Custo Unitário</th>
-              <th className="text-left p-2">CMD / CMV</th>
-              <th className="text-left p-2">Ações</th>
+              <th className="border px-4 py-2">Produto/Serviço</th>
+              <th className="border px-4 py-2">Estimativa de Vendas</th>
+              <th className="border px-4 py-2">Custo Unitário (R$)</th>
+              <th className="border px-4 py-2">Total (R$)</th>
             </tr>
           </thead>
           <tbody>
-            {items.map((item, index) => (
-              <tr key={index} className="border-t">
-                <td className="p-2"></td>
-                <td className="p-2">
-                  <input
-                    type="text"
-                    name="descricao"
-                    placeholder="Descrição"
-                    value={item.descricao}
-                    onChange={(e) => handleChange(index, 'descricao', e.target.value)}
-                    className="border border-gray-300 p-2 w-full rounded"
-                  />
+            {data.items.map((item, index) => (
+              <tr key={index}>
+                <td className="border px-4 py-2">{item.descricao}</td>
+                <td className="border px-4 py-2">{item.vendas}</td>
+                <td className="border px-4 py-2">
+                  {formatarNumeroBr(item.custo)}
                 </td>
-                <td className="p-2">
-                  <input
-                    type="number"
-                    name="vendas"
-                    placeholder="Vendas"
-                    value={item.vendas}
-                    onChange={(e) => handleChange(index, 'vendas', e.target.value)}
-                    className="border border-gray-300 p-2 w-full rounded"
-                  />
-                </td>
-                <td className="p-2">
-                  <input
-                    type="number"
-                    name="custo"
-                    placeholder="Custo Unitário"
-                    value={item.custo}
-                    onChange={(e) => handleChange(index, 'custo', e.target.value)}
-                    className="border border-gray-300 p-2 w-full rounded"
-                  />
-                </td>
-                <td className="p-2">
+                <td className="border px-4 py-2">
                   {formatarNumeroBr(item.vendas * item.custo)}
-                </td>
-                <td className="p-2">
-                  <button
-                    onClick={() => handleRemoveItem(index)}
-                    className="bg-red-500 hover:bg-red-700 text-white font-bold py-1 px-4 rounded"
-                  >
-                    Deletar
-                  </button>
                 </td>
               </tr>
             ))}
           </tbody>
         </table>
 
-        <div className="flex justify-between items-center">
-          <h3 className="font-bold text-xl">Total CMD / CMV: {formatarNumeroBr(totalCMV)}</h3>
+        <div className="mt-4">
+          <h3 className="text-lg font-bold">Total:</h3>
+          <p className="text-xl text-gray-800">
+            {formatarNumeroBr(totalCMV)}
+          </p>
         </div>
 
         <div className="mt-6">
-          <h3 className="font-bold text-lg">Projeção de Crescimento</h3>
-          <div className="flex items-center mt-2">
-            <label htmlFor="crescimento" className="mr-4">% fixo de crescimento:</label>
-            <input
-              type="number"
-              id="crescimento"
-              value={crescimento}
-              onChange={handleCrescimentoChange}
-              className="border border-gray-300 p-2 w-20 rounded"
-            /> %
-          </div>
+          <label className="block text-gray-700 text-sm font-bold mb-2">
+            Projeção de Crescimento (%):
+          </label>
+          <input
+            type="number"
+            value={data.crescimento}
+            onChange={handleCrescimentoChange}
+            className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+          />
         </div>
 
-        <div className="mt-6">
-          <h3 className="font-bold text-lg">Projeção por Período</h3>
-          <table className="table-auto w-full mb-6 border-collapse">
-            <thead>
-              <tr>
-                <th className="text-left p-2">Período</th>
-                <th className="text-left p-2">CMV</th>
-              </tr>
-            </thead>
-            <tbody>
-              {mesesCrescimento.slice(0, 12).map((valor, index) => (
-                <tr key={index} className="border-t">
-                  <td className="p-2">Mês {index + 1}</td>
-                  <td className="p-2">{formatarNumeroBr(valor)}</td>
-                </tr>
-              ))}
-              <tr className="font-bold border-t">
-                <td className="p-2">Ano 1</td>
-                <td className="p-2">{formatarNumeroBr(mesesCrescimento.slice(0, 12).reduce((acc, val) => acc + val, 0))}</td>
-              </tr>
-              <tr className="font-bold border-t">
-                <td className="p-2">Ano 5</td>
-                <td className="p-2">{formatarNumeroBr(mesesCrescimento.slice(0, 60).reduce((acc, val) => acc + val, 0))}</td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
+        <canvas id="crescimentoChart" className="mt-6 w-full h-64"></canvas>
 
-        {/* Gráfico de colunas */}
-        <div className="mt-6">
-          <canvas id="crescimentoChart" width="400" height="200"></canvas>
+        <div className="flex justify-center mt-6">
+          <button
+            type="submit"
+            className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
+            disabled={processing}
+          >
+            {processing ? 'Enviando...' : 'Enviar'}
+          </button>
         </div>
-      </div>
+      </form>
     </div>
   );
 };
