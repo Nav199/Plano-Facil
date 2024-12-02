@@ -42,8 +42,6 @@ const Mao_obra = ({ planoId }) => {
       const encargos_sociais = (emp.encargos_percentual / 100) * subtotal;
       return acc + subtotal + encargos_sociais;
     }, 0);
-
-    // Enviar os dados para o backend, incluindo o total geral
     post(route('mao-obra-store', { id: planoId, totalGeral })); 
   };
 

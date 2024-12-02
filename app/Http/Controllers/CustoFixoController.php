@@ -46,7 +46,7 @@ class CustoFixoController extends Controller
     
         foreach ($validated['custos'] as $item) {
             CustoFixo::create([
-                'id_plano' => $id,
+                'id_plano' => $id, 
                 'descricao' => $item['descricao'],
                 'custo' => $item['valor'],
                 'crescimento' => $item['crescimento'],
@@ -54,13 +54,8 @@ class CustoFixoController extends Controller
             ]);
         }
     // Redireciona para a página de custos fixos
-    return redirect()->route('custos-fixos', ['id' => $id])->with('status', 'Custos fixos salvos com sucesso!');
+    return redirect()->route('demonstrativo', [$id])->with('status', 'Custos fixos salvos com sucesso!');
 }
-
-
-
-
-
     public function listar_salario($id)
     {
         // Realiza o join entre a tabela 'mao_obra' e a tabela 'planos' (substitua 'planos' pelo nome real da tabela de planos)

@@ -43,7 +43,7 @@ class OperacionalController extends Controller
         ]);
     }
 
-    return redirect()->route('investimento-fixo',[$id])->with('status', 'Operacional criado com sucesso!');
+    return redirect()->route('investimento-fixo', [$plano->id]);
 }
 
 }

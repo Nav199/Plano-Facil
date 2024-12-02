@@ -8,4 +8,16 @@ use Illuminate\Database\Eloquent\Model;
 class Depreciacao extends Model
 {
     use HasFactory;
+
+    protected $table = 'depreciacao';
+
+    protected $fillable = [
+        'id_plano',
+        'ativos',
+        'valor',
+        'anos',
+        'anual',
+        'mensal',
+        'total'
+    ];
 }

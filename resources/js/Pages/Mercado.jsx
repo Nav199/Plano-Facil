@@ -67,7 +67,7 @@ const Mercado = ({ planoId }) => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    post(route('mercado.store', planoId));
+    post(route('plano_mercado', planoId));
   };
 
   return (
@@ -77,21 +77,45 @@ const Mercado = ({ planoId }) => {
         onChange={(name, value) => setData('client', { ...data.client, [name]: value })}
       />
 
-      {data.concorrente.map((concorrente, index) => (
-        <Concorrente_Form
-          key={index}
-          onChange={(name, value) => handleChange('concorrente', index, name, value)}
-          onAdd={() => addNewSectionItem('concorrente')}
-        />
-      ))}
+      {/* Concorrentes */}
+      <div>
+        {data.concorrente.map((concorrente, index) => (
+          <Concorrente_Form
+            key={index}
+            data={concorrente}
+            onChange={(name, value) => handleChange('concorrente', index, name, value)}
+          />
+        ))}
+        <div className="text-center">
+          <button
+            type="button"
+            onClick={() => addNewSectionItem('concorrente')}
+            className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded mt-4"
+          >
+            Adicionar Concorrente
+          </button>
+        </div>
+      </div>
 
-      {data.fornecedor.map((fornecedor, index) => (
-        <Fornecedor_Form
-          key={index}
-          onChange={(name, value) => handleChange('fornecedor', index, name, value)}
-          onAdd={() => addNewSectionItem('fornecedor')}
-        />
-      ))}
+      {/* Fornecedores */}
+      <div>
+        {data.fornecedor.map((fornecedor, index) => (
+          <Fornecedor_Form
+            key={index}
+            data={fornecedor}
+            onChange={(name, value) => handleChange('fornecedor', index, name, value)}
+          />
+        ))}
+        <div className="text-center">
+          <button
+            type="button"
+            onClick={() => addNewSectionItem('fornecedor')}
+            className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded mt-4"
+          >
+            Adicionar Fornecedor
+          </button>
+        </div>
+      </div>
 
       <div className="pt-5">
         <div className="flex justify-end">

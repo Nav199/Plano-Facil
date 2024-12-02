@@ -11,16 +11,13 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('socios', function (Blueprint $table) {
-            $table->id();
+        //
+        Schema::create('comercializacao', function (Blueprint $table) {
+            $table->id(); 
             $table->unsignedBigInteger('id_plano');
-            $table->string('nome');
-            $table->string('endereco');
-            $table->integer('numero');
-            $table->string('cidade');
-            $table->string('estado');
-            $table->integer('telefone');
-            $table->string('curriculo');
+            $table->decimal('total_impostos', 15, 2)->default(0.00);
+            $table->decimal('total_gastos_vendas', 15, 2)->default(0.00);
+            $table->decimal('total_geral', 15, 2)->default(0.00);
             $table->timestamps();
             $table->foreign('id_plano')->references('id')->on('plano_negocios')->onDelete('cascade');
         });
@@ -31,6 +28,7 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('socios');
+        //
+        Schema::dropIfExists('comercializacao');
     }
 };

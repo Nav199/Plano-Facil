@@ -22,7 +22,7 @@ class ApuracaoController extends Controller
             'custoUnitario'=>$custoUnitario
         ]);
     }
-
+ 
     public function store(Request $request, $id)
 {
     // Validação dos dados recebidos
@@ -49,18 +49,29 @@ class ApuracaoController extends Controller
 }
 
 
-    public function custoUnitario($id)
-    {
-        // Join entre as tabelas custo_unitario e plano de negócios, filtrando pelo id_plano
-        $custoUnitario = DB::table('custo_unitario')
-            ->where('custo_unitario.id_plano', $id)
-            ->select(
-                'custo_unitario.total_geral'  // Coluna total geral do custo
-            )
-            ->get();
+public function custoUnitario($id)
+{
+    // Join entre as tabelas custo_unitario e plano de negócios, filtrando pelo id_plano
+    $custoUnitario = DB::table('custo_unitario')
+    ->select(
+        'id',
+        'id_plano',
+        'material',
+        'quantidade',
+        'valor_untario',
+        'total',
+        'total_geral',
+        'created_at',
+        'updated_at',
+        DB::raw('valor_unitario AS custo')
+    )
+    ->where('id_plano', $id)
+    ->get();
+
     
-        return $custoUnitario;
-    }
+    return $custoUnitario;
+}
+
 
     // Método para buscar os dados de Faturamento
     public function faturamento($id)
@@ -69,10 +80,10 @@ class ApuracaoController extends Controller
         $faturamento = DB::table('faturamento')
             ->where('faturamento.id_plano', $id)
             ->select(
-                'faturamento.produto as produto_servico',  // Produto ou serviço
-                'faturamento.quantidade as estimativa_vendas',  // Estimativa de vendas
-                'faturamento.valor_unitario',  // Valor unitário de vendas
-                'faturamento.total as total_faturamento'  // Total do faturamento
+                'faturamento.produto as produto_servico',  
+                'faturamento.quantidade as estimativa_vendas',  
+                'faturamento.valor_unitario',  
+                'faturamento.total as total_faturamento'  
             )
             ->get();
         return $faturamento;

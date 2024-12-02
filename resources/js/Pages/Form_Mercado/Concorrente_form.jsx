@@ -1,6 +1,6 @@
 import React from 'react';
 
-const Concorrente_Form = ({ onChange, onAdd }) => {
+const Concorrente_Form = ({ onChange}) => {
   const handleChange = (e) => {
     const { name, value } = e.target;
     onChange(name, value);
@@ -82,13 +82,6 @@ const Concorrente_Form = ({ onChange, onAdd }) => {
         </div>
       </div>
 
-      <button
-        type="button"
-        onClick={onAdd}
-        className="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded mt-2"
-      >
-        Adicionar Concorrente
-      </button>
     </div>
   );
 };

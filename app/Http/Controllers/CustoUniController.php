@@ -8,7 +8,7 @@ use App\Service\CalculosService;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
-
+ 
 class CustoUniController extends Controller
 {
     protected $calculosService;

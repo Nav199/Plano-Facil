@@ -7,15 +7,21 @@ Chart.register(...registerables);
 const Apu_custo = ({ planoId }) => {
   const { faturamento, custoUnitario } = usePage().props;
 
+  // Associar custo unitário aos itens de faturamento
   const { data, setData, post, processing, errors } = useForm({
-    items: faturamento.map((item, index) => ({
-      descricao: item.produto_servico,
-      vendas: item.estimativa_vendas,
-      custo: custoUnitario[index]?.total_geral || 0,
-    })),
+    items: faturamento.map((item, index) => {
+      // Encontre o custo unitário correspondente ao item
+      const custo = custoUnitario.find(custoItem => custoItem.material === item.produto_servico);
+      return {
+        descricao: item.produto_servico,
+        vendas: item.estimativa_vendas,
+        custo: custo ? custo.valor_unitario : 0,  // Verifique se existe um custo unitário
+      };
+    }),
     crescimento: 0,
   });
-
+  
+  
   const chartRef = useRef(null);
 
   const totalCMV = data.items.reduce(
@@ -37,6 +43,7 @@ const Apu_custo = ({ planoId }) => {
       currency: 'BRL',
     }).format(numero);
   };
+  
 
   const renderChart = () => {
     const ctx = document.getElementById('crescimentoChart').getContext('2d');
@@ -119,7 +126,7 @@ const Apu_custo = ({ planoId }) => {
     };
   }, [data.items, data.crescimento]);
 
-  const handleSubmit = (e) => {
+  const handleSubmit = (e) => { 
     e.preventDefault();
     post(route('apuracao', { id: planoId }));
   };

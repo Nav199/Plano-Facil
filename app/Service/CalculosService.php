@@ -65,4 +65,26 @@ class CalculosService
             'totalComCrescimento' => $totalComCrescimento
         ];
     }
+
+    public function calcular12Meses($itens, $crescimento, $calculoCallback)
+    {
+        // Converter itens para array caso seja Collection
+        $itensArray = $itens instanceof \Illuminate\Support\Collection ? $itens->toArray() : $itens;
+
+        // Total inicial sem crescimento
+        $totalSemCrescimento = array_reduce($itensArray, function ($total, $item) use ($calculoCallback) {
+            return $total + $calculoCallback($item); // Usar o cálculo específico para cada item
+        }, 0);
+
+        // Aplicar crescimento percentual (composto) no total
+        $crescimentoDecimal = 1 + ($crescimento / 100);
+        $total12Meses = $totalSemCrescimento * ($crescimentoDecimal ** 12);
+
+        return [
+            'totalSemCrescimento' => $totalSemCrescimento,
+            'total12Meses' => $total12Meses,
+        ];
+    }
+    
+
 }

@@ -12,7 +12,7 @@ class Faturamento extends Model
     protected $table = 'faturamento';
 
     protected $fillable = [
-        'id', 'id_plano','produto','quantidade','valor_unitario','total'
+        'id', 'id_plano','produto','quantidade','valor_unitario','total','crescimento'
     ];
     public function plano()
     {

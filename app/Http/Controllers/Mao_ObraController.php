@@ -66,6 +66,6 @@ class Mao_ObraController extends Controller
 
 
         return redirect()->route('depreciacao', [$id])
-        ->with('success', 'Estoque salvo com sucesso.');
+        ->with('success', 'Salvo com sucesso.');
     }
 }

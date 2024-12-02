@@ -14,9 +14,9 @@ class CnaeService
                 "Alíquota" => 15.5
             ],
             [
-                "CNAE" => 3250706,
-                "Descrição" => "Serviços de prótese dentária",
-                "Fator R" => "Sim",
+                "CNAE" => 4399101,
+                "Descrição" => "Administração de obras",
+                "Fator R" => "Não",
                 "Alíquota" => 6
             ],
             [
@@ -26,10 +26,10 @@ class CnaeService
                 "Alíquota" => 15.5
             ],
             [
-                "CNAE" => 3250709,
-                "Descrição" => "Serviço de laboratório óptico",
+                "CNAE" => 4512901,
+                "Descrição" => "Representantes comerciais e agentes do comércio de veículos automotoreso",
                 "Fator R" => "Sim",
-                "Alíquota" => 6
+                "Alíquota" => 15.5
             ],
             [
                 "CNAE" => 4399101,

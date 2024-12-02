@@ -46,35 +46,32 @@ const Fatura = ({ planoId, produtos }) => {
   const formatarNumeroBr = (numero) => {
     return new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(numero);
   };
-
   const renderChart = () => {
     const ctx = document.getElementById('crescimentoChart').getContext('2d');
-
+  
     if (chartRef.current) {
       chartRef.current.destroy();
     }
-
+  
     const labels = [
       'Mês 1', 'Mês 2', 'Mês 3', 'Mês 4', 'Mês 5', 'Mês 6',
       'Mês 7', 'Mês 8', 'Mês 9', 'Mês 10', 'Mês 11', 'Mês 12',
       'Ano 1', 'Ano 2', 'Ano 3', 'Ano 4', 'Ano 5'
     ];
-
-    // Projeção para os 12 meses
+  
+    // Crescimento mensal
     const crescimentoMensal = [...Array(12).keys()].map((i) => total * Math.pow(1 + data.crescimento / 100, i));
-
-    // Projeção para os 5 anos, acumulando o crescimento mensal
+  
+    const ano1 = crescimentoMensal[11];
+  
+    
     const crescimentoAnual = [...Array(5).keys()].map((i) => {
-      let crescimentoCumulativo = 0;
-      for (let j = 0; j <= i * 12; j++) {
-        crescimentoCumulativo += total * Math.pow(1 + data.crescimento / 100, j);
-      }
-      return crescimentoCumulativo;
+      return ano1 * Math.pow(1 + data.crescimento / 100, i); 
     });
+  
 
-    // Unir os dados de meses e anos para o gráfico
-    const crescimentoData = [...crescimentoMensal, ...crescimentoAnual];
-
+    const dataSet = crescimentoMensal.concat(crescimentoAnual);
+  
     chartRef.current = new Chart(ctx, {
       type: 'bar',
       data: {
@@ -82,7 +79,7 @@ const Fatura = ({ planoId, produtos }) => {
         datasets: [
           {
             label: 'Faturamento (R$)',
-            data: crescimentoData,
+            data: dataSet,
             backgroundColor: 'rgba(75, 192, 192, 0.2)',
             borderColor: 'rgba(75, 192, 192, 1)',
             borderWidth: 1,
@@ -98,82 +95,111 @@ const Fatura = ({ planoId, produtos }) => {
         plugins: {
           tooltip: {
             callbacks: {
-              label: function (context) {
-                return `R$ ${context.raw.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}`;
-              },
-            },
-          },
-        },
+              label: function(context) {
+                return formatarNumeroBr(context.raw);
+              }
+            }
+          }
+        }
       },
     });
   };
-
+  
+  
   const handleSubmit = (e) => {
-    e.preventDefault();
-    post(route('faturamento',{id: planoId}));
+    e.preventDefault();  // Impede o envio do formulário
+    post(route('faturamento', { id: planoId }), {
+      onSuccess: () => reset(),
+    });
   };
+  
 
   return (
     <div className="min-h-screen flex flex-col items-center bg-gray-100">
       <h2 className="text-2xl font-bold mt-8 mb-6">Faturamento</h2>
-
-      <form onSubmit={handleSubmit}>
-        <div className="bg-white p-6 rounded-lg shadow-lg ">
-          <table className="w-full">
-            <thead>
-              <tr>
-                <th>Produto</th>
-                <th>Quantidade</th>
-                <th>Valor</th>
+      <div className="bg-white p-6 rounded-lg shadow-lg w-full max-w-4xl">
+        <table className="table-auto w-full mb-6 border-collapse text-center">
+          <thead>
+            <tr>
+              <th className="p-2 text-center">Produto/Serviço</th>
+              <th className="text-center p-2">Quantidade</th>
+              <th className="text-center p-2">Valor</th>
+              <th className="text-center p-2">Total</th>
+            </tr>
+          </thead>
+          <tbody>
+            {data.items.map((item, index) => (
+              <tr key={index} className="border-t">
+                <td className="p-2">
+                  <input
+                    type="text"
+                    placeholder="Descrição"
+                    value={item.descricao}
+                    onChange={(e) => handleChange(index, 'descricao', e.target.value)}
+                    className="border border-gray-300 p-2 w-full rounded"
+                  />
+                </td>
+                <td className="p-2">
+                  <input
+                    type="number"
+                    placeholder="Quantidade"
+                    value={item.quantidade}
+                    onChange={(e) => handleChange(index, 'quantidade', e.target.value)}
+                    className="border border-gray-300 p-2 w-full rounded"
+                    min="0"
+                  />
+                </td>
+                <td className="p-2">
+                  <input
+                    type="number"
+                    placeholder="R$ Valor"
+                    value={item.valor}
+                    onChange={(e) => handleChange(index, 'valor', e.target.value)}
+                    className="border border-gray-300 p-2 w-full rounded"
+                    min="0"
+                  />
+                </td>
+                <td className="p-2">
+                  {formatarNumeroBr(calculateTotal(item))}
+                </td>
               </tr>
-            </thead>
-            <tbody>
-              {data.items.map((item, index) => (
-                <tr key={index}>
-                  <td>{item.descricao}</td>
-                  <td>
-                    <input
-                      type="number"
-                      value={item.quantidade}
-                      onChange={(e) => handleChange(index, 'quantidade', e.target.value)}
-                      className="w-full p-2 pl-10 text-sm text-gray-700"
-                    />
-                  </td>
-                  <td>
-                    <input
-                      type="number"
-                      value={item.valor}
-                      onChange={(e) => handleChange(index, 'valor', e.target.value)}
-                      className="w-full p-2 pl-10 text-sm text-gray-700"
-                    />
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
+            ))}
+          </tbody>
+        </table>
 
-          <div className="flex justify-between mt-4">
-            <label>
-              Crescimento (%):
-              <input
-                type="number"
-                value={data.crescimento}
-                onChange={(e) => handleCrescimentoChange(e.target.value)}
-                className="w-full p-2 pl-10 text-sm text-gray-700"
-              />
-            </label>
+        <div className="flex justify-between items-center">
+          <h3 className="font-bold text-xl">Total do Faturamento: {formatarNumeroBr(total)}</h3>
+        </div>
+
+        <div className="mt-6">
+          <h3 className="font-bold text-lg">Projeção de Crescimento</h3>
+          <div className="flex items-center mt-2">
+            <label htmlFor="crescimento" className="mr-4">% fixo de crescimento:</label>
+            <input
+              type="number"
+              id="crescimento"
+              value={data.crescimento}
+              onChange={(e) => handleCrescimentoChange(parseFloat(e.target.value))}
+              className="border border-gray-300 p-2 w-20 rounded"
+            /> %
           </div>
+        </div>
 
+        <div className="mt-8">
           <canvas id="crescimentoChart" width="400" height="200"></canvas>
+        </div>
 
+        <div className="flex justify-center mb-6">
           <button
-            type="submit"
-            className="bg-orange-500 hover:bg-orange-700 text-white font-bold py-2 px-4 rounded"
+            type="button"
+            onClick={handleSubmit}
+            className="bg-blue-500 text-white px-4 py-2 rounded disabled:opacity-50"
+            disabled={processing}
           >
             Enviar
           </button>
         </div>
-      </form>
+      </div> 
     </div>
   );
 };

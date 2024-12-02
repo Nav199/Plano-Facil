@@ -6,7 +6,7 @@ use App\Models\Estoque;
 use App\Models\Plano;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
-use Inertia\Response;
+use Inertia\Response; 
 use App\Service\CalculosService;
 
 class EstoqueController extends Controller
@@ -74,8 +74,7 @@ class EstoqueController extends Controller
            ]);
        }
 
-       return redirect()->route('faturamento', [$id])
-                        ->with('success', 'Estoque salvo com sucesso.');
+       return redirect()->route('faturamento', [$plano->id]); 
    }
 
 }

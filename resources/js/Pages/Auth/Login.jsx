@@ -29,9 +29,8 @@ export default function Login({ status, canResetPassword }) {
         <GuestLayout>
             <Head title="Log in" />
 
-            <div className="container mx-auto flex justify-center items-center min-h-screen">
+            <div className="container mx-auto flex justify-center items-center">
                 <div className="w-full max-w-md bg-gray-800 p-8 rounded-lg shadow-lg">
-
                     {status && <div className="mb-4 font-medium text-sm text-green-600">{status}</div>}
 
                     <form onSubmit={submit} className="space-y-6">
@@ -42,7 +41,7 @@ export default function Login({ status, canResetPassword }) {
                                 type="email"
                                 name="email"
                                 value={data.email}
-                                className="mt-1 block w-full bg-gray-700 text-white"
+                                className="mt-1 block w-full bg-gray-700 text-white border-gray-600 focus:border-indigo-500 focus:ring-indigo-500 rounded-md"
                                 autoComplete="username"
                                 isFocused={true}
                                 onChange={(e) => setData('email', e.target.value)}
@@ -51,13 +50,13 @@ export default function Login({ status, canResetPassword }) {
                         </div>
 
                         <div>
-                            <InputLabel htmlFor="password" value="Password" className="text-white" />
+                            <InputLabel htmlFor="Senha" value="Senha" className="text-white" />
                             <TextInput
                                 id="password"
                                 type="password"
                                 name="password"
                                 value={data.password}
-                                className="mt-1 block w-full bg-gray-700 text-white"
+                                className="mt-1 block w-full bg-gray-700 text-white border-gray-600 focus:border-indigo-500 focus:ring-indigo-500 rounded-md"
                                 autoComplete="current-password"
                                 onChange={(e) => setData('password', e.target.value)}
                             />
@@ -85,14 +84,14 @@ export default function Login({ status, canResetPassword }) {
                             )}
 
                             <PrimaryButton className="ml-4 bg-indigo-600 hover:bg-indigo-700" disabled={processing}>
-                                Login
+                                Entrar
                             </PrimaryButton>
                         </div>
                     </form>
 
                     <div className="mt-6 text-center text-white">
                         <Link href={route('register')} className="underline hover:text-gray-200">
-                                 Não tem conta? Cadastre-se
+                            Não tem conta? Cadastre-se
                         </Link>
                     </div>
                 </div>

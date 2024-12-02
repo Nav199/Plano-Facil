@@ -44,7 +44,7 @@ class InvestimentoFController extends Controller
         if (!$plano) {
             return redirect()->back()->withErrors(['message' => 'Plano não encontrado'])->withInput();
         }
-
+ 
         // Função para salvar cada item em sua respectiva tabela
         $this->salvarItens($validatedData['imoveis'], 'imoveis', $plano->id);
         $this->salvarItens($validatedData['maquinas'], 'maquina', $plano->id); 
@@ -54,7 +54,7 @@ class InvestimentoFController extends Controller
         $this->salvarItens($validatedData['computadores'], 'computador', $plano->id);
 
         // Responder com sucesso
-        return redirect()->route('estoque',[$id])->with('status', 'Operacional criado com sucesso!');
+        return redirect()->route('estoque',[$plano->id]);
     } catch (\Illuminate\Validation\ValidationException $e) {
         // Captura erros de validação
         return redirect()->back()->withErrors($e->validator)->withInput()->with('status', 'Erro de validação: ' . implode(', ', $e->errors()));

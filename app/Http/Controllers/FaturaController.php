@@ -38,7 +38,8 @@ class FaturaController extends Controller
                 'produto' => $item['descricao'],
                 'quantidade' => $item['quantidade'],
                 'valor_unitario' => $item['valor'],
-                'total' => $item['quantidade'] * $item['valor']
+                'total' => $item['quantidade'] * $item['valor'],
+                'crescimento'=> $validated['crescimento']
             ]);
         }
     

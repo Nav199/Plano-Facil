@@ -20,8 +20,38 @@ class Plano extends Model
         return $this->hasMany(Executivo::class, 'id_plano');
     }
 
-    public function investimento_fixo()
+    public function veiculo()
     {
-        return $this->hasMany(InvestimentoFixo::class,'id_plano');
+        return $this->hasMany(veiculo::class, 'id_plano');
+    }
+
+    public function maquina()
+    {
+        return $this->hasMany(maquina::class, 'id_plano');
+    }
+
+    public function imoveis()
+    {
+        return $this->hasMany(imoveis::class, 'id_plano');
+    }
+
+    public function equipamento()
+    {
+        return $this->hasMany(equipamento::class, 'id_plano');
+    }
+
+    public function Forma()
+    {
+        return $this->hasMany(Forma::class, 'id_plano');
+    }
+
+    public function investimento_pre()
+    {
+        return $this->hasMany(InvestimentoPre::class, 'id_plano');
+    }
+
+    public function Faturamento()
+    {
+        return $this->hasMany(Faturamento::class, 'id_plano');
     }
 }

@@ -64,13 +64,14 @@ class ExecutivoController extends Controller
             'nome_empresa' => $validated['nome'],
             'cpf_cnpj' => $validated['cpfCnpj'],
             'missao' => $validated['missao'],
-            'setor_atividade' => $cnaeDescription, // Salvando a descrição do CNAE
+            'setor_atividade' => $cnaeDescription,
             'visao' => $validated['visao'],
             'valores' => $validated['valores'], 
             'fonte_recursos' => $validated['fonteRecursos'],
             'id_plano' => $plano->id,
         ]);
         $forma = Forma::create([
+            'id_plano'=>$plano->id,
             'tipo' => $validated['formaJuridica'],
         ]);
         Enquadramento::create([
@@ -79,7 +80,7 @@ class ExecutivoController extends Controller
         ]);
 
         // Redirecionamento após sucesso
-        return redirect()->route('plano_mercado', [$plano->id])->with('success', 'Executivo criado com sucesso.');
+        return redirect()->route('socios.create', [$plano->id])->with('success', 'Executivo criado com sucesso.');
     }
-    
+     
 }
