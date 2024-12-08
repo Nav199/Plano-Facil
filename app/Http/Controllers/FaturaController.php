@@ -41,8 +41,8 @@ class FaturaController extends Controller
                 'total' => $item['quantidade'] * $item['valor'],
                 'crescimento'=> $validated['crescimento']
             ]);
-        }
-    
+        } 
+     
 
         return redirect()->route('custo', [$id])
         ->with('success', 'Estoque salvo com sucesso.');

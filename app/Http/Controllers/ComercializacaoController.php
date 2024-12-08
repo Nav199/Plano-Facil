@@ -35,29 +35,46 @@ class ComercializacaoController extends Controller
     
 
     public function store(Request $request, $id)
-{
-    // Validação dos dados
-    //dd($request->all());
-    $validatedData = $request->validate([
-        'gastosVendas' => 'required|array',
-        'gastosVendas.*.descricao' => 'required|string',
-        'gastosVendas.*.percentual' => 'required|numeric',
-        'gastosVendas.*.faturamentoEstimado' => 'required|numeric',
-        'gastosVendas.*.custoTotal' => 'required|numeric',
-    ]);
-
-    // Criar registros na tabela 'comercializacao'
-    foreach ($validatedData['gastosVendas'] as $gasto) {
-        Comercializacao::create([
-            'id_plano' => $id,
-            'total_impostos' => $gasto['custoTotal'], 
-            'total_gastos_vendas' => $gasto['faturamentoEstimado'], 
-            'total_geral' => $gasto['custoTotal'] + $gasto['faturamentoEstimado'], 
+    {
+        $validatedData = $request->validate([
+            'gastosVendas' => 'required|array',
+            'gastosVendas.*.descricao' => 'required|string',
+            'gastosVendas.*.percentual' => 'required|numeric',
+            'gastosVendas.*.faturamentoEstimado' => 'required|numeric',
+            'gastosVendas.*.custoTotal' => 'required|numeric',
         ]);
+    
+        $totalImpostos = 0;
+        $totalGastosVendas = 0;
+    
+        foreach ($validatedData['gastosVendas'] as $gasto) {
+            if (str_contains($gasto['descricao'], 'Imposto')) {
+                $totalImpostos += $gasto['custoTotal'];
+            } else {
+                $totalGastosVendas += $gasto['custoTotal'];
+            }
+        }
+    
+        DB::beginTransaction();
+    
+        try {
+            Comercializacao::create([
+                'id_plano' => $id,
+                'total_impostos' => $totalImpostos,
+                'total_gastos_vendas' => $totalGastosVendas,
+                'total_geral' => $totalImpostos + $totalGastosVendas,
+            ]);
+    
+            DB::commit();
+            return redirect()->route('apuracao', [$id])
+                ->with('success', 'Estoque salvo com sucesso.');
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return redirect()->route('apuracao', [$id])
+                ->with('error', 'Erro ao salvar comercialização: ' . $e->getMessage());
+        }
     }
-
-    return redirect()->route('apuracao', [$id]); // Redireciona para outra página
-}
+    
 
 
 

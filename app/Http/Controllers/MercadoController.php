@@ -21,6 +21,7 @@ class MercadoController extends Controller
  
     public function store(Request $request, $id)
 {
+    //dd($request->all());
     // Validação dos dados
     $validated = $request->validate([
         'client.perfil' => 'required|string|max:255',

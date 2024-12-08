@@ -67,8 +67,11 @@ const Mercado = ({ planoId }) => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
+    const trimmedComportamento = data.client.comportamento.slice(0, 255); // Adjust length as needed
+    setData('client', { ...data.client, comportamento: trimmedComportamento });
     post(route('plano_mercado', planoId));
   };
+  
 
   return (
     <form onSubmit={handleSubmit} className="space-y-8 divide-y divide-gray-200">

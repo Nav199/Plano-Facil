@@ -27,54 +27,61 @@ class InvestimentoFController extends Controller
     }
 
     public function store(Request $request, $id)
-{
-    try {
-        // Validação
-        $validatedData = $request->validate([
-            'imoveis' => 'required|array',
-            'maquinas' => 'required|array',
-            'equipamentos' => 'required|array',
-            'veiculos' => 'required|array',
-            'moveisUtensilios' => 'required|array',
-            'computadores' => 'required|array',
-        ]);
+    {
+        dd($request->all());
+        try {
+            // Validação
+            $validatedData = $request->validate([
+                'imoveis' => 'required|array',
+                'maquinas' => 'required|array',
+                'equipamentos' => 'required|array',
+                'veiculos' => 'required|array',
+                'moveisUtensilios' => 'required|array',
+                'computadores' => 'required|array',
+            ]);
 
-        // Verifica se o plano existe
-        $plano = Plano::find($id);
-        if (!$plano) {
-            return redirect()->back()->withErrors(['message' => 'Plano não encontrado'])->withInput();
-        }
+            // Verifica se o plano existe
+            $plano = Plano::find($id);
+            if (!$plano) {
+                return redirect()->route('plano.index')->withErrors(['message' => 'Plano não encontrado']);
+            }
  
-        // Função para salvar cada item em sua respectiva tabela
-        $this->salvarItens($validatedData['imoveis'], 'imoveis', $plano->id);
-        $this->salvarItens($validatedData['maquinas'], 'maquina', $plano->id); 
-        $this->salvarItens($validatedData['equipamentos'], 'equipamento', $plano->id);
-        $this->salvarItens($validatedData['veiculos'], 'veiculo', $plano->id);
-        $this->salvarItens($validatedData['moveisUtensilios'], 'moveis', $plano->id);
-        $this->salvarItens($validatedData['computadores'], 'computador', $plano->id);
+            // Função para salvar cada item em sua respectiva tabela
+            $this->salvarItens($validatedData['imoveis'], 'imoveis', $plano->id);
+            $this->salvarItens($validatedData['maquinas'], 'maquina', $plano->id); 
+            $this->salvarItens($validatedData['equipamentos'], 'equipamento', $plano->id);
+            $this->salvarItens($validatedData['veiculos'], 'veiculo', $plano->id);
+            $this->salvarItens($validatedData['moveisUtensilios'], 'moveis', $plano->id);
+            $this->salvarItens($validatedData['computadores'], 'computador', $plano->id);
 
-        // Responder com sucesso
-        return redirect()->route('estoque',[$plano->id]);
-    } catch (\Illuminate\Validation\ValidationException $e) {
-        // Captura erros de validação
-        return redirect()->back()->withErrors($e->validator)->withInput()->with('status', 'Erro de validação: ' . implode(', ', $e->errors()));
-    } catch (\Exception $e) {
-        // Retornar um erro em caso de falha
-        return redirect()->back()->withErrors(['message' => 'Erro ao salvar: ' . $e->getMessage()])->withInput();
+            // Responder com sucesso
+            return redirect()->route('estoque', [$id])->with('success', 'Dados de mercado salvos com sucesso!');
+
+        } catch (\Illuminate\Validation\ValidationException $e) {
+            // Captura erros de validação e converte as mensagens para string
+            $errors = implode(', ', array_map('strval', $e->errors()));
+            return redirect()->back()->withErrors($e->validator)->withInput()->with('status', 'Erro de validação: ' . $errors);
+        } catch (\Exception $e) {
+            // Retornar um erro em caso de falha
+            return redirect()->back()->withErrors(['message' => 'Erro ao salvar: ' . $e->getMessage()])->withInput();
+        }
     }
-}
 
-private function salvarItens($itens, $tipo, $planoId)
-{
-    foreach ($itens as $item) {
-        \DB::table($tipo)->insert([
-            'descricao' => $item['descricao'],
-            'quantidade' => $item['quantidade'],
-            'valor_unitario' => $item['valorUnitario'],
-            'total' => $item['quantidade'] * $item['valorUnitario'],
-            'id_plano' => $planoId,
-        ]);
+    private function salvarItens($itens, $tipo, $planoId)
+    {
+        foreach ($itens as $item) {
+            if (is_array($item)) {
+                // Verifique e converta se necessário
+                $item = (object) $item;
+            }
+
+            DB::table($tipo)->insert([
+                'descricao' => (string) $item->descricao,  // Garantir que seja string
+                'quantidade' => (int) $item->quantidade,  // Garantir que seja inteiro
+                'valor_unitario' => (float) $item->valorUnitario,  // Garantir que seja float
+                'total' => (float) ($item->quantidade * $item->valorUnitario),
+                'id_plano' => $planoId,
+            ]);
+        }
     }
-}
-
 }

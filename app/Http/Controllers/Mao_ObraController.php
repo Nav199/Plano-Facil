@@ -47,22 +47,21 @@ class Mao_ObraController extends Controller
 
         
         foreach ($validatedData['cargos'] as $cargo) {
-            
             $subtotal = $cargo['num_empregados'] * $cargo['salario_mensal'];
             $encargos = ($cargo['encargos_percentual'] / 100) * $subtotal;
             $total = $subtotal + $encargos;
-
-          
+        
             Obra::create([
                 'id_plano' => $id, // ID do plano de negócios
                 'funcao' => $cargo['funcao'], // Nome do cargo
                 'empregado' => $cargo['num_empregados'],
                 'salario' => $cargo['salario_mensal'],
-                'encargo' => $cargo[$encargos],
+                'encargo' => $encargos, // Corrigido aqui
                 'total' => $total, // Total calculado
                 'total_geral' => array_sum(array_column($validatedData['cargos'], 'total')), // Total geral (se aplicável)
             ]);
         }
+         
 
 
         return redirect()->route('depreciacao', [$id])

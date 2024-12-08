@@ -17,7 +17,7 @@ class ApuracaoController extends Controller
 
         return Inertia::render('Apu_custo',[
             'planoId' => $id,
-            "status"=> session('status'),
+            'status'=> session('status'),
             'faturamento'=>$faturamento,
             'custoUnitario'=>$custoUnitario
         ]);
@@ -51,24 +51,21 @@ class ApuracaoController extends Controller
 
 public function custoUnitario($id)
 {
-    // Join entre as tabelas custo_unitario e plano de negócios, filtrando pelo id_plano
     $custoUnitario = DB::table('custo_unitario')
-    ->select(
-        'id',
-        'id_plano',
-        'material',
-        'quantidade',
-        'valor_untario',
-        'total',
-        'total_geral',
-        'created_at',
-        'updated_at',
-        DB::raw('valor_unitario AS custo')
-    )
-    ->where('id_plano', $id)
-    ->get();
+        ->select(
+            'id',
+            'id_plano',
+            'material',
+            'quantidade',
+            'valor_unitario',
+            DB::raw('(quantidade * valor_unitario) as total'),
+            'total_geral',
+            'created_at',
+            'updated_at'
+        )
+        ->where('id_plano', $id)
+        ->get();
 
-    
     return $custoUnitario;
 }
 

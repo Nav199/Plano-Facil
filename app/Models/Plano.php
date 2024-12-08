@@ -54,4 +54,37 @@ class Plano extends Model
     {
         return $this->hasMany(Faturamento::class, 'id_plano');
     }
+    public function clientes(){ 
+        return $this->hasMany(Cliente::class, 'id_plano');
+    }
+    public function fornecedores(){
+        return $this->hasMany(Fornecedor::class, 'id_plano');
+    }
+    public function concorrentes(){
+        return $this->hasMany(Concorrente::class, 'id_plano');
+    }
+    public function marketing(){
+        return $this->hasMany(Marketing::class, 'id_plano');
+    }
+
+    public function analise()
+    {
+        return $this->hasMany(analise::class, 'id_plano');
+    }
+
+    public function apuracao()
+    {
+        return $this->hasMany(apuracao::class, 'id_plano');
+    }
+
+    public function mao_obra()
+    {
+        return $this->hasMany(Obra::class, 'id_plano');
+    }
+
+    public function demonstrativo()
+    {
+        return $this->hasMany(demonstrativo::class, 'id_plano');
+    }
+
 }

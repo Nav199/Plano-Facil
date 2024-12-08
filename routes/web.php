@@ -3,6 +3,9 @@
 use App\Http\Controllers\Analise;
 use App\Http\Controllers\AnaliseController;
 use App\Http\Controllers\ApuracaoController;
+use App\Http\Controllers\Avaliacao;
+use App\Http\Controllers\AvaliacaoController;
+use App\Http\Controllers\CaixaController;
 use App\Http\Controllers\CnaeController;
 use App\Http\Controllers\ComercializacaoController;
 use App\Http\Controllers\CustoFixoController;
@@ -82,6 +85,8 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('/Faturamento/{id}', [FaturaController::class, 'create'])->name('faturamento');
     Route::post('/Faturamento/{id}', [FaturaController::class, 'store'])->name('faturamento');
 
+    Route::get('/Caixa/{id}',[CaixaController::class,'create'])->name('caixa');
+
     Route::get('/custo/{id}', [CustoUniController::class, 'create'])->name('custo');
     Route::post('/custo/{id}', [CustoUniController::class, 'store'])->name('custo-store');
 
@@ -108,11 +113,14 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('/Demonstrativo/{id}', [DemonstrativoController::class, 'create'])->name('demonstrativo');
     Route::post('/Demonstrativo/{id}', [DemonstrativoController::class, 'store'])->name('demonstrativo');
     
-    // Analise 
+    // Analise  
     Route::get('/Analise/{id}', [AnaliseController::class, 'create'])->name('analise');
     Route::post('/Analise/{id}', [AnaliseController::class, 'store'])->name('analise');
 
- 
+
+    //Avaliação
+    Route::get('/Avaliacao/{id}', [AvaliacaoController::class, 'create'])->name('avaliacao');
+    Route::post('/Avaliacao/{id}', [AvaliacaoController::class, 'store'])->name('avaliacao');
 
     // Relatório do Plano de Negócio
     Route::get('/relatorio/{id}', [RelatorioController::class, 'create'])->name('relatorio');

@@ -1,81 +1,54 @@
-import React, { useState, useEffect, useRef } from 'react';
-import { usePage, useForm } from '@inertiajs/react';
-
+import React, { useState, useEffect } from "react";
+import { usePage, useForm } from "@inertiajs/react";
 
 const Comer = ({ planoId }) => {
   const { totalFaturamento, aliquota } = usePage().props;
 
   const { data, setData, post, processing, errors, reset } = useForm({
     gastosVendas: [
-      { descricao: "SIMPLES (Imposto Federal)", percentual: aliquota, faturamentoEstimado: totalFaturamento, custoTotal: totalFaturamento * aliquota/100 },
-      { descricao: "Comissões (Gastos com Vendas)", percentual: 0, faturamentoEstimado: totalFaturamento, custoTotal: 0 },
-      { descricao: "Propaganda (Gastos com Vendas)", percentual: 2, faturamentoEstimado: totalFaturamento, custoTotal: totalFaturamento * 0.02 },
-      { descricao: "Taxas de Cartões (Gastos com Vendas)", percentual: 0, faturamentoEstimado: totalFaturamento, custoTotal: 0 },
+      { descricao: "SIMPLES (Imposto Federal)", percentual: aliquota, faturamentoEstimado: totalFaturamento, custoTotal: totalFaturamento * aliquota / 100 },
+      { descricao: "Comissões (Gastos com Vendas)", percentual: '', faturamentoEstimado: totalFaturamento, custoTotal: 0 },
+      { descricao: "Propaganda (Gastos com Vendas)", percentual: '', faturamentoEstimado: totalFaturamento, custoTotal: totalFaturamento * 0.02 },
+      { descricao: "Taxas de Cartões (Gastos com Vendas)", percentual: '', faturamentoEstimado: totalFaturamento, custoTotal: 0 },
     ],
   });
 
-  const [impostosPorPeriodo, setImpostosPorPeriodo] = useState([]);
-  const [gastosComVendasPorPeriodo, setGastosComVendasPorPeriodo] = useState([]);
-  const [totaisPorPeriodo, setTotaisPorPeriodo] = useState([]);
+  const handlePercentualChange = (index, newPercentual) => {
+    const updatedGastosVendas = data.gastosVendas.map((item, i) => {
+      if (i === index) {
+        const percentual = Math.max(0, Math.min(100, parseFloat(newPercentual) || 0)); // Limita entre 0 e 100
+        return {
+          ...item,
+          percentual,
+          custoTotal: item.faturamentoEstimado * (percentual / 100),
+        };
+      }
+      return item;
+    });
 
-
-  useEffect(() => {
-    gerarDadosPorPeriodo();
-   
-  }, [data.gastosVendas]);
-
-  const formatarNumeroBr = (numero) => {
-    return new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(numero);
-  };
-
-  const calcularProjecao = (valorInicial, percentualCrescimento, periodos) => {
-    let valores = [valorInicial];
-    for (let i = 1; i < periodos; i++) {
-      valores.push(valores[i - 1] * (1 + percentualCrescimento / 100));
-    }
-    return valores;
-  };
-
-  const gerarDadosPorPeriodo = () => {
-    const meses = 12;
-    const anos = 5;
-
-    const gastosVendasAtualizados = data.gastosVendas.map(item => ({
-      ...item,
-      custoTotal: item.faturamentoEstimado * (item.percentual / 100),
-    }));
-
-    const imposto = gastosVendasAtualizados.find(item => item.descricao.includes("Imposto"));
-    const outrosGastos = gastosVendasAtualizados.filter(item => !item.descricao.includes("Imposto"));
-
-    const impostosMensais = calcularProjecao(imposto?.custoTotal || 0, 0, meses);
-    const gastosComVendasMensais = calcularProjecao(
-      outrosGastos.reduce((acc, item) => acc + item.custoTotal, 0),
-      0,
-      meses
-    );
-
-    const impostosAnuais = calcularProjecao(impostosMensais[11], 0, anos);
-    const gastosComVendasAnuais = calcularProjecao(gastosComVendasMensais[11], 0, anos);
-
-    setImpostosPorPeriodo(impostosMensais.concat(impostosAnuais));
-    setGastosComVendasPorPeriodo(gastosComVendasMensais.concat(gastosComVendasAnuais));
-    setTotaisPorPeriodo(
-      impostosMensais.concat(impostosAnuais).map((imposto, i) => imposto + gastosComVendasMensais.concat(gastosComVendasAnuais)[i])
-    );
+    setData("gastosVendas", updatedGastosVendas);
   };
 
   const handleSubmit = (e) => {
     e.preventDefault();
-
-    post(route('comercializacao', { id: planoId }), {
+    post(route("comercializacao", { id: planoId }), {
       onSuccess: () => reset(),
     });
   };
 
-  const totalImpostos = impostosPorPeriodo.reduce((acc, curr) => acc + curr, 0);
-  const totalGastosVendas = gastosComVendasPorPeriodo.reduce((acc, curr) => acc + curr, 0);
-  const totalGeral = totaisPorPeriodo.reduce((acc, curr) => acc + curr, 0);
+  const formatarNumeroBr = (numero) => {
+    return new Intl.NumberFormat("pt-BR", { style: "currency", currency: "BRL" }).format(numero);
+  };
+
+  const totalImpostos = data.gastosVendas
+    .filter((item) => item.descricao.includes("Imposto"))
+    .reduce((acc, curr) => acc + curr.custoTotal, 0);
+
+  const totalGastosVendas = data.gastosVendas
+    .filter((item) => !item.descricao.includes("Imposto"))
+    .reduce((acc, curr) => acc + curr.custoTotal, 0);
+
+  const totalGeral = totalImpostos + totalGastosVendas;
 
   return (
     <div className="space-y-8">
@@ -85,7 +58,7 @@ const Comer = ({ planoId }) => {
             <thead>
               <tr>
                 <th className="border px-4 py-2">Descrição</th>
-                <th className="border px-4 py-2">%</th>
+                <th className="border px-4 py-2">% (Editar)</th>
                 <th className="border px-4 py-2">Faturamento Estimado</th>
                 <th className="border px-4 py-2">Custo Total</th>
               </tr>
@@ -94,7 +67,17 @@ const Comer = ({ planoId }) => {
               {data.gastosVendas.map((item, index) => (
                 <tr key={index}>
                   <td className="border px-4 py-2">{item.descricao}</td>
-                  <td className="border px-4 py-2">{item.percentual}%</td>
+                  <td className="border px-4 py-2">
+                    <input
+                      type="number"
+                      min="0"
+                      max="100"
+                      step="0.01"
+                      value={item.percentual}
+                      onChange={(e) => handlePercentualChange(index, e.target.value)}
+                      className="w-full border rounded px-2 py-1"
+                    />
+                  </td>
                   <td className="border px-4 py-2">{formatarNumeroBr(item.faturamentoEstimado)}</td>
                   <td className="border px-4 py-2">{formatarNumeroBr(item.custoTotal)}</td>
                 </tr>
@@ -119,7 +102,7 @@ const Comer = ({ planoId }) => {
           className="bg-blue-600 text-white py-2 px-4 rounded-lg hover:bg-blue-700"
           disabled={processing}
         >
-          {processing ? 'Salvando...' : 'Salvar'}
+          {processing ? "Enviando..." : "Enviar"}
         </button>
       </form>
     </div>

@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Demonstrativo;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 use Illuminate\Support\Facades\DB;
@@ -20,11 +21,24 @@ class DemonstrativoController extends Controller
         ]);
     }
     
-
-    public function store(Request $request)
+    public function store(Request $request, $id)
     {
-        // Lógica para armazenar dados
+        $validated = $request->validate([
+            'lucro_operacional' => 'required|numeric',
+            'lucro_anual' => 'required|numeric',
+            'porcentagem' => 'required|numeric',
+        ]);
+    
+        Demonstrativo::create([
+            'id_plano' => $id,
+            'resultado_operacional' => $validated['lucro_operacional'],
+            'lucro_mensal' => $validated['lucro_anual'],
+            'porcentagem_lucro' => $validated['porcentagem'],
+        ]);
+    
+        return redirect()->route('analise', [$id])->with('success', 'Demonstrativo salvo com sucesso.');
     }
+    
 
     public function listar_faturamento($id)
     {
@@ -47,6 +61,7 @@ class DemonstrativoController extends Controller
         return [
             'detalhes' => $detalhesFaturamento,
             'total' => $faturamento['totalSemCrescimento'],
+            'crescimento_faturamento' => $crescimento,
             'faturamento_anual' => $faturamento['total12Meses'],
         ];
     }
@@ -102,38 +117,43 @@ class DemonstrativoController extends Controller
     }
 
     public function listar_gastos_vendas($id)
-{
-    $gastosVendas = DB::table('comercializacao')
-        ->select(
-            'id',
-            'id_plano',
-            'total_impostos',
-            'total_gastos_vendas',
-            'total_geral',
-            'created_at',
-            'updated_at',
-            DB::raw('total_gastos_vendas AS total')
-        )
-        ->where('id_plano', $id)
-        ->get();
-
-    $crescimento = floatval($gastosVendas->first()->crescimento ?? 0);
-
-    $calculosService = new \App\Service\CalculosService();
-    $gastosVendasCalculados = $calculosService->calcular12Meses(
-        $gastosVendas,
-        $crescimento,
-        function ($item) {
-            return $item->total_gastos_vendas;
-        }
-    );
-
-    return [
-        'detalhes' => $gastosVendas,
-        'total' => $gastosVendasCalculados['totalSemCrescimento'],
-        'gastosAnuais' => $gastosVendasCalculados['total12Meses'],
-    ];
-}
+    {
+        $gastosVendas = DB::table('comercializacao')
+            ->select(
+                'id',
+                'id_plano',
+                'total_impostos',
+                'total_gastos_vendas',
+                'total_geral',
+                'created_at',
+                'updated_at',
+                DB::raw('total_gastos_vendas AS total')
+            )
+            ->where('id_plano', $id)
+            ->get();
+    
+        $crescimento = floatval($gastosVendas->first()->crescimento ?? 0);
+    
+        $calculosService = new \App\Service\CalculosService();
+        $gastosVendasCalculados = $calculosService->calcular12Meses(
+            $gastosVendas,
+            $crescimento,
+            function ($item) {
+                return $item->total_gastos_vendas;
+            }
+        );
+    
+        // Adiciona 1% ao valor anual dos gastos com vendas
+        $gastosVendasCalculados['total12Meses'] *= 1.01;
+    
+        return [
+            'detalhes' => $gastosVendas,
+            'total' => $gastosVendasCalculados['totalSemCrescimento'],
+            'gastosAnuais' => $gastosVendasCalculados['total12Meses'],
+        ];
+        
+    }
+    
 
 
 }

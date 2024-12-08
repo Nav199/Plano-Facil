@@ -9,19 +9,18 @@ const Apu_custo = ({ planoId }) => {
 
   // Associar custo unitário aos itens de faturamento
   const { data, setData, post, processing, errors } = useForm({
-    items: faturamento.map((item, index) => {
+    items: faturamento.map((item) => {
       // Encontre o custo unitário correspondente ao item
       const custo = custoUnitario.find(custoItem => custoItem.material === item.produto_servico);
       return {
         descricao: item.produto_servico,
         vendas: item.estimativa_vendas,
-        custo: custo ? custo.valor_unitario : 0,  // Verifique se existe um custo unitário
+        custo: custo ? custo.valor_unitario : 0, 
       };
     }),
     crescimento: 0,
   });
-  
-  
+
   const chartRef = useRef(null);
 
   const totalCMV = data.items.reduce(
@@ -43,8 +42,8 @@ const Apu_custo = ({ planoId }) => {
       currency: 'BRL',
     }).format(numero);
   };
-  
 
+  // Renderizar gráfico de crescimento
   const renderChart = () => {
     const ctx = document.getElementById('crescimentoChart').getContext('2d');
 
@@ -53,23 +52,8 @@ const Apu_custo = ({ planoId }) => {
     }
 
     const labels = [
-      'Mês 1',
-      'Mês 2',
-      'Mês 3',
-      'Mês 4',
-      'Mês 5',
-      'Mês 6',
-      'Mês 7',
-      'Mês 8',
-      'Mês 9',
-      'Mês 10',
-      'Mês 11',
-      'Mês 12',
-      'Ano 1',
-      'Ano 2',
-      'Ano 3',
-      'Ano 4',
-      'Ano 5',
+      'Mês 1', 'Mês 2', 'Mês 3', 'Mês 4', 'Mês 5', 'Mês 6', 'Mês 7', 'Mês 8', 'Mês 9', 'Mês 10', 'Mês 11', 'Mês 12',
+      'Ano 1', 'Ano 2', 'Ano 3', 'Ano 4', 'Ano 5'
     ];
 
     const dataValues = mesesCrescimento

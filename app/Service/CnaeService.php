@@ -49,6 +49,20 @@ class CnaeService
                 "Fator R" => "Não",
                 "Alíquota" => 4
             ],
+            [
+                "CNAE" => 7729201,
+                "Descrição" => "Aluguel de aparelhos de jogos eletrônicos",
+                "Fator R" => "Não",
+                "Alíquota" => 6
+            ],
+
+            [
+                "CNAE" => 9329804,
+                "Descrição" => "Exploração de jogos eletrônicos recreativos",
+                "Fator R" => "Não",
+                "Alíquota" => 6
+            ],
+
         ];
     
     }

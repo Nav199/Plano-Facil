@@ -10,18 +10,13 @@ return new class extends Migration
      * Run the migrations.
      */
     public function up(): void
-    { 
-        //
-        Schema::create('faturamento', function (Blueprint $table) {
-            $table->id(); // ID auto-increment
+    {
+        Schema::create('avaliacao', function (Blueprint $table) {
+            $table->id();
             $table->unsignedBigInteger('id_plano');
-            $table->string('produto');
-            $table->integer('quantidade');
-            $table->decimal('valor_unitario', 10, 2);
-            $table->decimal('total', 10, 2);
-            $table->decimal('crescimento');
-            $table->timestamps();
+            $table->text('analise');
             $table->foreign('id_plano')->references('id')->on('plano_negocios')->onDelete('cascade');
+            $table->timestamps();
         });
     }
 
@@ -30,7 +25,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        //
-        Schema::dropIfExists('faturamento');
+        Schema::dropIfExists('avaliacao');
     }
 };
