@@ -12,14 +12,13 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('caixa_minimo', function (Blueprint $table) {
-            $table->id(); // ID auto-increment
-            $table->unsignedBigInteger('id_plano'); // Chave estrangeira para plano_negocios
-            $table->integer('necessidade_estoque'); // Necessidade de estoque (inteiro)
-            $table->decimal('capital_giro', 10, 2); // Capital de giro (decimal)
-            $table->decimal('estoque_inicial', 10, 2); // Estoque inicial (decimal)
-            $table->timestamps(); // created_at e updated_at
+            $table->id(); 
+            $table->unsignedBigInteger('id_plano'); 
+            $table->decimal('necessidade_estoque', 10, 2)->default(0); 
+            $table->decimal('capital_giro', 10, 2); 
+            $table->decimal('estoque_inicial', 10, 2); 
+            $table->timestamps();
             
-            // Definição da chave estrangeira
             $table->foreign('id_plano')
                 ->references('id')
                 ->on('plano_negocios')

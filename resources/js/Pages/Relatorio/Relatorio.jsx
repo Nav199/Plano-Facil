@@ -1,32 +1,26 @@
 import React from 'react';
 import { usePage } from '@inertiajs/react';
+import Authenticated from '@/Layouts/AuthenticatedLayout';
 
-const Relatorio = () => {
-  const { plano, status, message, aiAnalysis } = usePage().props;
+const Relatorio = ({auth }) => {
+  const { plano, status, message,analise,avaliacao } = usePage().props;
 
-  // Função para formatar o preço em R$
   const formatarPreco = (preco) => {
     return new Intl.NumberFormat('pt-BR', {
       style: 'currency',
       currency: 'BRL',
-    }).format(preco || 0);  // Caso não tenha preço, exibe R$ 0,00
+    }).format(preco || 0);
   };
-
-  // Função para extrair o texto da análise da IA
-  const obterAnaliseIA = () => {
-    if (aiAnalysis && aiAnalysis.response && aiAnalysis.response.candidates?.length > 0) {
-      const analise = aiAnalysis.response.candidates[0].content?.text || 'Nenhuma análise disponível.';
-      return analise;
-    }
-    return 'Ainda não há análise disponível para este plano.';
-  };
-  
-
   return (
+      <Authenticated
+              user={auth.user}
+              header={
+                <h2 className="font-semibold text-xl text-gray-800 leading-tight text-center">
+                        Plano de Negócio - {plano?.nome}
+                </h2>
+              }
+            >
     <div className="bg-gray-100 min-h-screen p-4 space-y-6">
-      <header className="text-center bg-blue-500 text-white py-4">
-        <h1 className="text-2xl font-bold">Plano de Negócio - {plano?.nome}</h1>
-      </header>
       <main id="relatorio-content" className="space-y-6">
         {/* Mostrar mensagem caso não tenha dados */}
         {message ? (
@@ -34,10 +28,10 @@ const Relatorio = () => {
             <p>{message}</p>
           </div>
         ) : (
-          <>
+          <> 
             {/* Seção: Missão, Visão e Valores */}
             <section className="bg-white shadow rounded p-4">
-              <h2 className="text-xl font-bold mb-2">Missão, Visão e Valores</h2>
+              <h2 className="text-xl font-bold mb-2 text-center">Missão, Visão e Valores</h2>
               {plano?.executivos?.length ? (
                 <ul className="list-disc ml-4">
                   {plano.executivos.map((executivo, index) => (
@@ -53,31 +47,60 @@ const Relatorio = () => {
               )}
             </section>
 
-            {/* Seção: Executivos */}
+            {/* Seção: Socios */}
             <section className="bg-white shadow rounded p-4">
-              <h2 className="text-xl font-bold mb-2">Plano Executivo</h2>
-              {plano?.executivos?.length ? (
+            <h2 className="text-xl font-bold mb-2 text-center">Sócios da empresa</h2>
+              {plano?.socios?.length ? (
                 <ul className="list-disc ml-4">
-                  {plano.executivos.map((executivo, index) => (
+                  {plano.socios.map((socio, index) => (
                     <li key={index}>
-                      <p><strong>Nome:</strong> {executivo.nome}</p>
-                      <p><strong>Cargo:</strong> {executivo.cargo}</p>
-                      <p><strong>Fonte de Recursos:</strong> {executivo.fonte_recursos}</p>
-                      <p><strong>Visão:</strong> {executivo.visao}</p>
-                      <p><strong>Valores:</strong> {executivo.valores}</p>
-                      <p><strong>Missão:</strong> {executivo.missao}</p>
-                      <p><strong>Setor de Atividade:</strong> {executivo.setor_atividade}</p>
+                      <p><strong>Nome:</strong> {socio.nome}</p>
+                      <p><strong>Curriculo:</strong> {socio.curriculo}</p>
+                      <p><strong>Funcao na Empresa:</strong> {socio.funcao}</p>
                     </li>
                   ))}
                 </ul>
               ) : (
-                <p>Nenhum executivo registrado.</p>
+                <p>Nenhum dado encontrado.</p>
               )}
             </section>
 
+            {/* Seção: Executivos */}
+            <section className="bg-white shadow rounded p-4">
+  <h2 className="text-xl font-bold mb-2">Plano Executivo</h2>
+  {plano?.executivos?.length ? (
+    <ul className="list-disc ml-4">
+      {plano.executivos.map((executivo, index) => (
+        <li key={index}>
+          <p><strong>Fonte de Recursos:</strong> {executivo.fonte_recursos}</p>
+          <p><strong>Visão:</strong> {executivo.visao}</p>
+          <p><strong>Valores:</strong> {executivo.valores}</p>
+          <p><strong>Missão:</strong> {executivo.missao}</p>
+          <p><strong>Setor de Atividade:</strong> {executivo.setor_atividade}</p>
+        </li>
+      ))}
+    </ul>
+  ) : (
+    <p>Nenhum executivo registrado.</p>
+  )}
+
+  {plano?.forma?.length ? (
+    <ul className="list-disc ml-4">
+      {plano.forma.map((forma, index) => (
+        <li key={index}>
+          <p><strong>Forma Jurídica:</strong> {forma.tipo}</p>
+        </li>
+      ))}
+    </ul>
+  ) : (
+    <p>Nenhuma forma jurídica registrada.</p>
+  )}
+</section>
+
+
             {/* Seção: Análise de Mercado */}
             <section className="bg-white shadow rounded p-4">
-              <h2 className="text-xl font-bold mb-2">Pesquisa de Mercado</h2>
+              <h2 className="text-xl font-bold mb-2 text-center">Pesquisa de Mercado</h2>
 
               {/* Seção de Clientes */}
               {plano?.clientes?.length ? (
@@ -142,7 +165,7 @@ const Relatorio = () => {
 
             {/* Seção: Marketing */}
             <section className="bg-white shadow rounded p-4">
-              <h2 className="text-xl font-bold mb-2">Estratégias de Marketing</h2>
+              <h2 className="text-xl font-bold mb-2 text-center">Estratégias de Marketing</h2>
               {plano?.marketing?.length ? (
                 <ul className="list-disc ml-4">
                   {plano.marketing.map((m, index) => (
@@ -158,89 +181,216 @@ const Relatorio = () => {
               ) : (
                 <p>Nenhum marketing registrado.</p>
               )}
-              <div>
-                <p>Análise pela IA</p>
-              </div>
             </section>
-
-             {/* Seção: Potencial Inovativo */}
-             <section>
-               <h2 className="text-xl font-bold mb-2">Potencial Inovativo do Plano de Negócio</h2>
-              
-             </section>
 
             {/* Seção: Investimento Pré-Operacional */}
             <section className="bg-white shadow rounded p-4">
-              <h2 className="text-xl font-bold mb-2">Investimento Pré-Operacional</h2>
-              {plano?.investimento_pre?.length ? (
-                <ul className="list-disc ml-4">
-                  {plano.investimento_pre.map((investimento, index) => (
-                    <li key={index}>
-                      {investimento.descricao} - {formatarPreco(investimento.valor)}
-                    </li>
-                  ))}
-                </ul>
-              ) : (
-                <p>Nenhum investimento pré-operacional registrado.</p>
-              )}
-            </section>
-
+  <h2 className="text-xl font-bold mb-2 text-center">Investimento Pré-Operacional</h2>
+  {plano?.investimento_pre?.length ? (
+    <table className="table-auto w-full border-collapse border border-gray-300 text-center">
+      <thead>
+        <tr>
+          <th className="border border-gray-300 p-2">Descrição</th>
+          <th className="border border-gray-300 p-2">Valor</th>
+        </tr>
+      </thead>
+      <tbody>
+        {plano.investimento_pre.map((item, index) => (
+          <tr key={index}>
+            <td className="border border-gray-300 p-2">{item.descricao}</td>
+            <td className="border border-gray-300 p-2">{formatarPreco(item.valor)}</td>
+          </tr>
+        ))}
+      </tbody>
+    </table>
+  ) : (
+    <p>Nenhum dado disponível para o investimento pré-operacional.</p>
+  )}
+</section>
             {/* Seção: Faturamento */}
-            <section className="bg-white shadow rounded p-4">
-              <h2 className="text-xl font-bold mb-2">Faturamento</h2>
-              {plano?.Faturamento?.length ? (
-                <ul className="list-disc ml-4">
-                  {plano.Faturamento.map((faturamento, index) => (
-                    <li key={index}>
-                      {faturamento.produto} - {formatarPreco(faturamento.valor)}
-                    </li>
-                  ))}
-                </ul>
-              ) : (
-                <p>Nenhum dado de faturamento registrado.</p>
-              )}
-            </section>
-
-            <section>
-                  Investimento Necessário
-                </section>
-
+<section className="bg-white shadow rounded p-4">
+  <h2 className="text-xl font-bold mb-2 text-center">Faturamento da Empresa</h2>
+  {plano?.faturamento?.length ? (
+    <table className="table-auto w-full border-collapse border border-gray-300 text-center">
+      <thead>
+        <tr>
+          <th className="border border-gray-300 p-2">Produto</th>
+          <th className="border border-gray-300 p-2">Quantidade</th>
+          <th className="border border-gray-300 p-2">Valor Unitário</th>
+          <th className="border border-gray-300 p-2">Total</th>
+          <th className="border border-gray-300 p-2">Crescimento</th>
+        </tr>
+      </thead>
+      <tbody>
+        {plano.faturamento.map((item, index) => (
+          <tr key={index}>
+            <td className="border border-gray-300 p-2">{item.produto}</td>
+            <td className="border border-gray-300 p-2">{item.quantidade}</td>
+            <td className="border border-gray-300 p-2">{formatarPreco(item.valor_unitario)}</td>
+            <td className="border border-gray-300 p-2">{formatarPreco(item.total)}</td>
+            <td className="border border-gray-300 p-2">{item.crescimento}%</td>
+          </tr>
+        ))}
+      </tbody>
+    </table>
+  ) : (
+    <p>Nenhum dado disponível para o faturamento.</p>
+  )}
+</section>
               <section className="bg-white shadow rounded p-4">
-              <h2 className="text-xl font-bold mb-2">Capital de Giro</h2>
-
+              <h2 className="text-xl font-bold mb-2 text-center">Custos Fixos</h2>
+              {plano?.custo_fixo?.length ? (
+    <table className="table-auto w-full border-collapse border border-gray-300 text-center">
+      <thead>
+        <tr>
+          <th className="border border-gray-300 p-2">Descrição</th>
+          <th className="border border-gray-300 p-2">Custo</th>
+          <th className="border border-gray-300 p-2">Crescimento</th>
+        </tr>
+      </thead>
+      <tbody>
+        {plano.custo_fixo.map((item, index) => (
+          <tr key={index}>
+            <td className="border border-gray-300 p-2">{item.descricao}</td>
+            <td className="border border-gray-300 p-2">{item.custo}</td>
+            <td className="border border-gray-300 p-2">{item.crescimento}%</td>
+          </tr>
+        ))}
+      </tbody>
+    </table>
+  ) : (
+    <p>Nenhum dado disponível para o faturamento.</p>
+  )}
             </section>
             <section className="bg-white shadow rounded p-4">
-              <h2 className="text-xl font-bold mb-2">Demonstrativo de Resultados</h2>
+  <h2 className="text-xl font-bold mb-2 text-center">Demonstrativo de Resultados</h2>
+  {plano?.demonstrativo?.length ? (
+    <table className="table-auto w-full border-collapse border border-gray-300 text-center">
+      <thead>
+        <tr>
+          <th className="border border-gray-300 p-2">Resultado Operacional</th>
+          <th className="border border-gray-300 p-2">Lucro Mensal</th>
+          <th className="border border-gray-300 p-2">Porcentagem Lucro</th>
+        </tr>
+      </thead>
+      <tbody>
+        {plano.demonstrativo.map((demonstrativo, index) => (
+          <tr key={index}>
+            <td className="border border-gray-300 p-2">{formatarPreco(demonstrativo.resultado_operacional)}</td>
+            <td className="border border-gray-300 p-2">{formatarPreco(demonstrativo.lucro_mensal)}</td>
+            <td className="border border-gray-300 p-2">{demonstrativo.porcentagem_lucro ? parseFloat(demonstrativo.porcentagem_lucro).toFixed(2) : 'N/A'}%</td>
+          </tr>
+        ))}
+      </tbody>
+    </table>
+  ) : (
+    <p>Nenhum dado disponível para o demonstrativo de resultados.</p>
+  )}
+</section>
 
-            </section>
+            {analise && (
+  <section className="bg-white shadow rounded p-4">
+    <h2 className="text-xl font-bold mb-4 text-center">Análise SWOT</h2>
+    <table className="table-auto w-full border-collapse border border-gray-300 text-center">
+      <thead>
+        <tr>
+          <th className="border border-gray-300 p-2 bg-gray-200 text-left">Fatores Internos</th>
+          <th className="border border-gray-300 p-2 bg-gray-200 text-left">Fatores Externos</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          {/* Pontos Fortes */}
+          <td className="border border-gray-300 p-2">
+            <h3 className="font-semibold">Pontos Fortes</h3>
+            {analise.forcas && analise.forcas.length > 0 ? (
+              <ul className="list-disc ml-4">
+                {analise.forcas.map((forca, index) => (
+                  <li key={index}>{forca}</li>
+                ))}
+              </ul>
+            ) : (
+              <p>Nenhum ponto forte registrado.</p>
+            )}
+          </td>
 
-            <section className="bg-white shadow rounded p-4">
-              <h2 className="text-xl font-bold mb-2">Análise Swot</h2>
+          {/* Oportunidades */}
+          <td className="border border-gray-300 p-2">
+            <h3 className="font-semibold">Oportunidades</h3>
+            {analise.oportunidades && analise.oportunidades.length > 0 ? (
+              <ul className="list-disc ml-4">
+                {analise.oportunidades.map((oportunidade, index) => (
+                  <li key={index}>{oportunidade}</li>
+                ))}
+              </ul>
+            ) : (
+              <p>Nenhuma oportunidade registrada.</p>
+            )}
+          </td>
+        </tr>
 
-            </section>
+        <tr>
+          {/* Fraquezas */}
+          <td className="border border-gray-300 p-2">
+            <h3 className="font-semibold">Fraquezas</h3>
+            {analise.fraquezas && analise.fraquezas.length > 0 ? (
+              <ul className="list-disc ml-4">
+                {analise.fraquezas.map((fraqueza, index) => (
+                  <li key={index}>{fraqueza}</li>
+                ))}
+              </ul>
+            ) : (
+              <p>Nenhuma fraqueza registrada.</p>
+            )}
+          </td>
+
+          {/* Ameaças */}
+          <td className="border border-gray-300 p-2">
+            <h3 className="font-semibold">Ameaças</h3>
+            {analise.ameacas && analise.ameacas.length > 0 ? (
+              <ul className="list-disc ml-4">
+                {analise.ameacas.map((ameaca, index) => (
+                  <li key={index}>{ameaca}</li>
+                ))}
+              </ul>
+            ) : (
+              <p>Nenhuma ameaça registrada.</p>
+            )}
+          </td>
+        </tr>
+      </tbody>
+    </table>
+
+    {/* Ações Estratégicas */}
+    <h3 className="text-lg font-bold mt-6 text-center">Ações Estratégicas</h3>
+    {analise.acoes && analise.acoes.length > 0 ? (
+      <ul className="list-disc ml-4 text-center">
+        {analise.acoes.map((acao, index) => (
+          <li key={index}>{acao}</li>
+        ))}
+      </ul>
+    ) : (
+      <p>Nenhuma ação estratégica registrada.</p>
+    )}
+  </section>
+)}
 
 
-            <section className="bg-white shadow rounded p-4">
-              <h2 className="text-xl font-bold mb-2">Análise de Cenário</h2>
 
-            </section>
-
-            <section className="bg-white shadow rounded p-4">
-              <h2 className="text-xl font-bold mb-2">Viabilidade Financeira do Negócio</h2>
-
-            </section>
 
             {/* Seção: Análise da IA */}
             
-<section className="bg-white shadow rounded p-4">
-  <h2 className="text-xl font-bold mb-2">Análise da IA</h2>
+            <section className="bg-white shadow rounded p-4">
+  <h2 className="text-xl font-bold mb-2">Avaliação do Plano</h2>
   <div className="prose">
-    {aiAnalysis && aiAnalysis.viabilidade ? (
-      aiAnalysis.viabilidade.map((viabilidade, index) => (
-        <p key={index}>{index + 1}. {viabilidade}</p>
-      ))
+    {avaliacao && avaliacao.descricao && avaliacao.descricao.length > 0 ? (
+      <ul>
+        {avaliacao.descricao.map((item, index) => (
+          <li key={index}>{item}</li>
+        ))}
+      </ul>
     ) : (
-      <p>Nenhuma análise de viabilidade disponível.</p>
+      <p>Avaliação não disponível.</p>
     )}
   </div>
 </section>
@@ -251,8 +401,10 @@ const Relatorio = () => {
 
       <footer className="text-center bg-blue-500 text-white py-4">
         <p>&copy; 2024 - Todos os direitos reservados.</p>
+        <p>&copy; A Análise de Plano de Negócios feita pela IA é uma análise automatizada, procure um especialista para obter uma avaliação mais detalhada.</p>
       </footer>
     </div>
+    </Authenticated>
   );
 };
 

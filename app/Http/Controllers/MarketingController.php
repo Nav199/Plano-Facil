@@ -17,30 +17,30 @@ class MarketingController extends Controller
         ]); 
     }
 
-    public function store(Request $request,$id)
-    {
-       
-        $validated = $request->validate([
-            'produtos.*.name' => 'required|string|min:1',
-            'produtos.*.price' => 'required|numeric|min:0',
-            'estrategia_promo' => 'required|string|min:1',
-            'estrategia_comer' => 'required|string|min:1',
-            'localizacao' => 'required|string|min:1'
-        ]);
-        $plano = Plano::findOrFail($id);
+    public function store(Request $request, $id)
+{
+    $validated = $request->validate([
+        'produtos.*.name' => 'required|string|min:1',
+        'produtos.*.price' => 'required|numeric|min:0',
+        'estrategia_promo' => 'required|string|min:1',
+        'estrategia_comer' => 'required|string|min:1',
+        'localizacao' => 'required|string|min:1'
+    ]);
+
+    $plano = Plano::findOrFail($id);
+
+    foreach ($validated['produtos'] as $produto) {
         Marketing::create([
-            'produto' => implode(',', array_column($validated['produtos'], 'name')),
-            'preco' => implode(',', array_column($validated['produtos'], 'price')),
+            'produto' => $produto['name'],
+            'preco' => $produto['price'],
             'estrategia_promo' => $validated['estrategia_promo'],
             'estrategia_comer' => $validated['estrategia_comer'],
             'localizacao' => $validated['localizacao'],
             'id_plano' => $plano->id
         ]);
-        
-
-        return redirect()->route('plano_operacional', [$id])->with('status', 'Marketing cadastrado com sucesso!');
     }
 
-
+    return redirect()->route('plano_operacional', [$id])->with('status', 'Marketing cadastrado com sucesso!');
+}
    
 }

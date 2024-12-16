@@ -1,10 +1,11 @@
 import React, { useEffect, useRef } from 'react';
 import { Chart, registerables } from 'chart.js';
 import { useForm } from '@inertiajs/react';
-
+import Authenticated from '@/Layouts/AuthenticatedLayout';
+import Button from '@/Components/Button'; 
 Chart.register(...registerables);
 
-const Fatura = ({ planoId, produtos }) => {
+const Fatura = ({ planoId, produtos,auth }) => {
   const { data, setData, post, processing, errors } = useForm({
     items: produtos.map((produto) => ({
       descricao: produto.produto,
@@ -115,6 +116,14 @@ const Fatura = ({ planoId, produtos }) => {
   
 
   return (
+      <Authenticated
+              user={auth.user}
+              header={
+                <h2 className="font-semibold text-xl text-gray-800 leading-tight text-center">
+                  Apuração de custo
+                </h2>
+              }
+            >
     <div className="min-h-screen flex flex-col items-center bg-gray-100">
       <h2 className="text-2xl font-bold mt-8 mb-6">Faturamento</h2>
       <div className="bg-white p-6 rounded-lg shadow-lg w-full max-w-4xl">
@@ -189,18 +198,18 @@ const Fatura = ({ planoId, produtos }) => {
           <canvas id="crescimentoChart" width="400" height="200"></canvas>
         </div>
 
-        <div className="flex justify-center mb-6">
-          <button
-            type="button"
-            onClick={handleSubmit}
-            className="bg-blue-500 text-white px-4 py-2 rounded disabled:opacity-50"
-            disabled={processing}
-          >
-            Enviar
-          </button>
-        </div>
+        <div className="flex justify-center">
+            <Button
+              type="submit"
+              processing={processing}
+              className="extra-classes-if-needed"
+            >
+              Enviar
+            </Button>
+          </div>
       </div> 
     </div>
+    </Authenticated>
   );
 };
 

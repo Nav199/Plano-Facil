@@ -45,6 +45,11 @@ class Plano extends Model
         return $this->hasMany(Forma::class, 'id_plano');
     }
 
+    public function enquadramento()
+    {
+        return $this->hasMany(Enquadramento::class, 'id_plano');
+    }
+
     public function investimento_pre()
     {
         return $this->hasMany(InvestimentoPre::class, 'id_plano');
@@ -85,6 +90,26 @@ class Plano extends Model
     public function demonstrativo()
     {
         return $this->hasMany(demonstrativo::class, 'id_plano');
+    }
+
+    public function custo_fixo()
+    {
+        return $this->hasMany(CustoFixo::class,'id_plano');
+    }
+
+    public function comercializacao()
+    {
+        return $this->hasMany(Comercializacao::class,'id_plano');
+    }
+
+    public function avaliacao()
+    {
+        return $this->hasMany(avaliacao::class,'id_plano');
+    }
+
+    public function socios()
+    {
+        return $this->hasMany(Socios::class,'id_plano');
     }
 
 }

@@ -25,6 +25,7 @@ const Client_form = ({ onChange }) => {
                     <textarea
                         name="comportamento"
                         id="comportamento"
+                        maxLength={200}
                         className="mt-1 p-2 w-full border-gray-300 rounded-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
                         onChange={handleChange}
                     />
@@ -35,6 +36,7 @@ const Client_form = ({ onChange }) => {
                         type="text"
                         name="área"
                         id="área"
+                        maxLength={200}
                         className="mt-1 p-2 w-full border-gray-300 rounded-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
                         onChange={handleChange}
                     />

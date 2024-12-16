@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Apuracao;
+use App\Models\Custo_Unitario;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 use Illuminate\Support\Facades\DB;
@@ -25,7 +26,8 @@ class ApuracaoController extends Controller
  
     public function store(Request $request, $id)
 {
-    // Validação dos dados recebidos
+    
+    //dd($request->all());
     $validated = $request->validate([
         'items' => 'required|array',
         'items.*.descricao' => 'required|string|max:255',
@@ -39,50 +41,41 @@ class ApuracaoController extends Controller
         Apuracao::create([
             'id_plano' => $id,
             'descricao' => $item['descricao'],
-            'vendas' => $item['vendas'],
+            'vendas' => $item['vendas'], 
             'custo' => $item['custo'],
-            'crescimento' => $validated['crescimento']
+            'crescimento' => $validated['crescimento'],
+            'total'=> $item['vendas'] * $item['custo']
         ]);
     }
     return redirect()->route('mao-obra', [$id])
     ->with('success', 'Estoque salvo com sucesso.');
 }
 
-
 public function custoUnitario($id)
 {
-    $custoUnitario = DB::table('custo_unitario')
+    $custoUnitario = Custo_Unitario::where('id_plano', $id)->get();
+
+    if (!$custoUnitario) {
+        return null;
+    }
+    return $custoUnitario;
+} 
+
+// Método para buscar os dados de Faturamento
+public function faturamento($id)
+{
+    // Join entre as tabelas de faturamento e plano de negócios, filtrando pelo id_plano
+    $faturamento = DB::table('faturamento')
+        ->where('faturamento.id_plano', $id)
         ->select(
-            'id',
-            'id_plano',
-            'material',
-            'quantidade',
-            'valor_unitario',
-            DB::raw('(quantidade * valor_unitario) as total'),
-            'total_geral',
-            'created_at',
-            'updated_at'
+            'faturamento.produto as produto_servico',  
+            'faturamento.quantidade as estimativa_vendas',  
+            'faturamento.valor_unitario',  
+            'faturamento.total as total_faturamento'  
         )
-        ->where('id_plano', $id)
         ->get();
 
-    return $custoUnitario;
+    return $faturamento;
 }
 
-
-    // Método para buscar os dados de Faturamento
-    public function faturamento($id)
-    {
-        // Join entre as tabelas de faturamento e plano de negócios, filtrando pelo id_plano
-        $faturamento = DB::table('faturamento')
-            ->where('faturamento.id_plano', $id)
-            ->select(
-                'faturamento.produto as produto_servico',  
-                'faturamento.quantidade as estimativa_vendas',  
-                'faturamento.valor_unitario',  
-                'faturamento.total as total_faturamento'  
-            )
-            ->get();
-        return $faturamento;
-    }
 }

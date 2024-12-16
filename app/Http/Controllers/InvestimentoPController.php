@@ -35,7 +35,7 @@ class InvestimentoPController extends Controller
             ]);
         }
     
-        return redirect()->route('investimento-total')->with('status', 'Investimentos salvos com sucesso.');
+        return redirect()->route('faturamento', [$id])->with('status', 'Investimentos salvos com sucesso.');
     }
     
 }

@@ -3,8 +3,9 @@ import { useForm } from '@inertiajs/react';
 import Client_Form from './Form_Mercado/Client_Form';
 import Concorrente_Form from './Form_Mercado/Concorrente_Form';
 import Fornecedor_Form from './Form_Mercado/Fornecedor_Form';
+import Authenticated from '@/Layouts/AuthenticatedLayout';
 
-const Mercado = ({ planoId }) => {
+const Mercado = ({ planoId,auth }) => {
   const { data, setData, post, processing, errors } = useForm({
     client: {
       perfil: '',
@@ -71,9 +72,10 @@ const Mercado = ({ planoId }) => {
     setData('client', { ...data.client, comportamento: trimmedComportamento });
     post(route('plano_mercado', planoId));
   };
-  
 
   return (
+     <Authenticated user={auth.user} header={<h2 className="font-semibold text-xl text-gray-800 leading-tight text-center">Análise de Mercado</h2>}>
+        <div className="p-4 max-w-2xl mx-auto"></div>
     <form onSubmit={handleSubmit} className="space-y-8 divide-y divide-gray-200">
       <Client_Form
         data={data.client}
@@ -110,7 +112,7 @@ const Mercado = ({ planoId }) => {
           />
         ))}
         <div className="text-center">
-          <button
+          <button 
             type="button"
             onClick={() => addNewSectionItem('fornecedor')}
             className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded mt-4"
@@ -121,17 +123,18 @@ const Mercado = ({ planoId }) => {
       </div>
 
       <div className="pt-5">
-        <div className="flex justify-end">
+        <div className="flex justify-center">
           <button
             type="submit"
             disabled={processing}
             className="ml-3 inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
           >
-            Salvar
+            Enviar
           </button>
         </div>
       </div>
     </form>
+    </Authenticated>
   );
 };
 

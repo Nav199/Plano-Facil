@@ -18,6 +18,7 @@ return new class extends Migration
             $table->decimal('vendas', 10, 2);
             $table->decimal('custo', 10, 2);
             $table->decimal('crescimento', 10, 2);
+            $table->decimal('total', 10, 2);
             $table->timestamps();
             $table->foreign('id_plano')->references('id')->on('plano_negocios')->onDelete('cascade');
         });

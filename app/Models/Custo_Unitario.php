@@ -12,6 +12,6 @@ class Custo_Unitario extends Model
     protected $table = 'custo_unitario';
 
     protected $fillable = [
-        'id_plano', 'material', 'quantidade', 'valor_unitario', 'total','total_geral '
+        'id_plano', 'produto','material', 'quantidade', 'valor_unitario', 'total','total_geral '
    ]; 
 }

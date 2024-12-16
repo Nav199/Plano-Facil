@@ -4,7 +4,7 @@ import { usePage, useForm } from "@inertiajs/react";
 const Demonstrativo = ({planoId}) => {
   const { faturamento, apuracao, custo_fixo, gastos_vendas } = usePage().props;
 
-  // Dados iniciais
+  // Dados iniciais 
   const totalFaturamento = faturamento?.total ?? 0;
   const faturamentoAnual = faturamento?.faturamento_anual ?? 0;
 
@@ -31,7 +31,7 @@ const Demonstrativo = ({planoId}) => {
       { descricao: "Custos Variáveis Totais", valor: totalApuracao + totalGastosVendas, anual: apuracaoAnual + gastosVendasAnuais, percentual: ((apuracaoAnual + gastosVendasAnuais) / (totalFaturamento || 1) * 100).toFixed(3) },
       { descricao: "Custos com materiais diretos e/ou CMV", valor: totalApuracao, anual: apuracaoAnual, percentual: ((totalApuracao / totalFaturamento) * 100).toFixed(3) },
       { descricao: "Gastos com Vendas", valor: totalGastosVendas, anual: gastosVendasAnuais, percentual: ((totalGastosVendas / totalFaturamento) * 100).toFixed(2) },
-      { descricao: "Margem de Contribuição", valor: totalFaturamento - (totalApuracao + totalGastosVendas), anual: faturamentoAnual - (apuracaoAnual + gastosVendasAnuais), percentual: (((totalApuracao + totalGastosVendas) / totalFaturamento) * 100).toFixed(3) },
+      { descricao: "Margem de Contribuição", valor: totalFaturamento + (totalApuracao + totalGastosVendas), anual: faturamentoAnual - (apuracaoAnual + gastosVendasAnuais), percentual: (((totalApuracao + totalGastosVendas) / totalFaturamento) * 100).toFixed(3) },
       { descricao: "Custos Fixos Totais", valor: totalCustosFixos, anual: custosFixosAnuais, percentual: ((totalCustosFixos / totalFaturamento) * 100).toFixed(3) },
       { descricao: "Resultado Operacional (Lucro)", valor: valor, anual: anual_lucro, percentual: percentual_lucro },
     ],

@@ -1,9 +1,14 @@
 import React from 'react';
 
-const TabelaInvestimentos = ({ categoria, dados, adicionarItem, removerItem, handleInputChange }) => {
+const TabelaInvestimentos = ({ categoria, dados, adicionarItem, removerItem, handleInputChange, handlePriceChange }) => {
+
+  // Função para formatar o valor em R$
+  const formatarMoeda = (valor) => {
+    return `R$ ${valor.toFixed(2).replace('.', ',').replace(/\B(?=(\d{3})+(?!\d))/g, ".")}`;
+  };
 
   const calcularSubtotal = () => {
-    return dados.reduce((acc, item) => acc + Number(item.total || 0), 0);
+    return formatarMoeda(dados.reduce((acc, item) => acc + Number(item.total || 0), 0));
   };
 
   return (
@@ -42,27 +47,27 @@ const TabelaInvestimentos = ({ categoria, dados, adicionarItem, removerItem, han
               </td>
               <td>
                 <input
-                  type="number"
+                  type="text"
                   name="valorUnitario"
                   value={item.valorUnitario}
-                  onChange={(e) => handleInputChange(index, e)}
+                  onChange={(e) => handlePriceChange(index, e)}
                   className="p-2 w-full border border-gray-300 rounded"
                 />
               </td>
-              <td>{item.total.toFixed(2)}</td>
+              <td>{formatarMoeda(item.total)}</td>
               <td>
                 <button
                   className="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded"
                   onClick={() => removerItem(index)}
                 >
-                  Excluir
+                  Remover
                 </button>
               </td>
             </tr>
           ))}
         </tbody>
       </table>
-      <div className="text-right font-bold mb-4">SUBTOTAL {categoria}: {calcularSubtotal().toFixed(2)}</div>
+      <div className="text-right font-bold mb-4">SUBTOTAL {categoria}: {calcularSubtotal()}</div>
       <button
         className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
         onClick={adicionarItem}

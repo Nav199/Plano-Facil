@@ -60,11 +60,12 @@ class CustoUniController extends Controller
     
     public function store(Request $request, $id)
     {
-        // Validação dos dados recebidos
+        //dd($request->all());
+        
         $request->validate([
             'produtos' => 'required|array',
             'produtos.*.name' => 'required|string|max:255',
-            'produtos.*.itens' => 'required|array',
+            'produtos.*.itens' => 'required|array', 
             'produtos.*.itens.*.material' => 'required|string|max:255',
             'produtos.*.itens.*.quantidade' => 'required|numeric|min:0',
             'produtos.*.itens.*.valorUnitario' => 'required|numeric|min:0',
@@ -76,8 +77,9 @@ class CustoUniController extends Controller
      
         foreach ($request->produtos as $produto) {
             foreach ($produto['itens'] as $item) {
-                Custo_Unitario::create([
+                Custo_Unitario::create([ 
                     'id_plano' => $plano->id,
+                    'produto' => $produto['name'],
                     'material' => $item['material'],
                     'quantidade' => $item['quantidade'],
                     'valor_unitario' => $item['valorUnitario'],

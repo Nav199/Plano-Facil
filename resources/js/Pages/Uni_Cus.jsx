@@ -8,7 +8,7 @@ const Uni_Cus = ({ planoId }) => {
     produtos: produtos.map((produto) => ({
       id: produto.marketing_id,
       name: produto.produto,
-      itens: [{ material: '', quantidade: 0, valorUnitario: 0, total: 0 }],
+      itens: [{ name: produto.produto,material: '', quantidade: 0, valorUnitario: 0, total: 0 }],
       totalGeral: 0,
     })),
   });

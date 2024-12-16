@@ -15,9 +15,9 @@ return new class extends Migration
             $table->increments('id');
             $table->string('produto', 40);
             $table->string('preco', 40);
-            $table->string('estrategia_promo', 60);
-            $table->string('estrategia_comer',60); 
-            $table->string('localizacao', 40);
+            $table->text('estrategia_promo'); // Campo de texto longo para a estratégia promocional
+            $table->text('estrategia_comer'); // Campo de texto longo para a estratégia de comercialização
+            $table->string('localizacao', 100); // Limitado a 100 caracteres para o campo de localização
             $table->unsignedBigInteger('id_plano')->nullable();
             $table->timestamps();
 
@@ -30,7 +30,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        //
         Schema::table('marketing', function (Blueprint $table) {
             $table->dropForeign(['id_plano']);
         });

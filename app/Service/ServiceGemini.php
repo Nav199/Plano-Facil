@@ -13,7 +13,7 @@ class ServiceGemini
     public function __construct()
     {
         // Defina sua chave API aqui ou no .env
-        $this->apiKey = 'AIzaSyD2LF98ouT-whEGorDzbcfn54CI3ZPvXXo'; 
+        $this->apiKey = 'AIzaSyByHd6XfIDj3mziNkV_jrPgPgVTQ3v7_MU'; 
         $this->baseUrl = 'https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash-latest:generateContent';
     }
 

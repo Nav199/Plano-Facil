@@ -1,7 +1,7 @@
 <?php
 
 namespace App\Service;
-
+use Illuminate\Support\Facades\Log;
 class CalculosService
 {
     // Função para calcular o total de cada categoria de investimento do Investimento Fixo
@@ -86,52 +86,33 @@ class CalculosService
         ];
     }
     
-    public function calcularIndicadores($faturamento, $apuracao, $custoFixo, $gastosVendas, $crescimento = 1.05, $periodos = 5)
-    {
-        // Dados iniciais
-        $totalFaturamento = $faturamento['total'] ?? 0;
-        $totalApuracao = $apuracao['total'] ?? 0;
-        $totalCustosFixos = $custoFixo['total'] ?? 0;
-        $totalGastosVendas = $gastosVendas['total'] ?? 0;
-
-        if (!$totalFaturamento || !$totalApuracao || !$totalCustosFixos || !$totalGastosVendas) {
-            throw new \Exception('Valores inválidos fornecidos para cálculo de indicadores.');
-        }
-
-        // Resultado para cada período (1º mês + anos subsequentes)
-        $indicadores = [];
-
-        for ($ano = 0; $ano <= $periodos; $ano++) {
-            $receita = $totalFaturamento * pow($crescimento, $ano);
-            $custosVariaveis = $totalApuracao * pow($crescimento, $ano);
-            $custosFixos = $totalCustosFixos * pow($crescimento, $ano);
-            $gastosVendas = $totalGastosVendas * pow($crescimento, $ano);
-
-            $custosVariaveisTotais = $custosVariaveis + $gastosVendas;
-            $margemContribuicao = $receita - $custosVariaveisTotais;
-            $margemContribuicaoPercentual = $margemContribuicao / $totalFaturamento;
-            $resultadoOperacional = $margemContribuicao - $custosFixos;
-            $pontoEquilibrio = $margemContribuicaoPercentual > 0 ? $custosFixos / $margemContribuicaoPercentual : 0;
-
-            $lucratividade = $receita > 0 ? ($resultadoOperacional / $receita) * 100 : 0;
-            $rentabilidade = $custosFixos > 0 ? ($resultadoOperacional / $custosFixos) * 100 : 0;
-
-            $indicadores[] = [
-                'periodo' => $ano === 0 ? '1º mês' : "Ano $ano",
-                'receita' => $receita,
-                'custosVariaveis' => $custosVariaveis,
-                'custosFixos' => $custosFixos,
-                'gastosVendas' => $gastosVendas,
-                'custosVariaveisTotais' => $custosVariaveisTotais,
-                'margemContribuicao' => $margemContribuicao,
-                'resultadoOperacional' => $resultadoOperacional,
-                'pontoEquilibrio' => $pontoEquilibrio,
-                'lucratividade' => round($lucratividade, 2),
-                'rentabilidade' => round($rentabilidade, 2),
-            ];
-        }
-
-        return $indicadores;
+    public function calcularIndicadores($faturamento, $apuracao, $custoFixo, $gastosVendas)
+{
+    // Validação para evitar divisão por zero
+    if ($faturamento <= 0) {
+        throw new \InvalidArgumentException('O faturamento deve ser maior que zero.');
     }
+
+    // Verificar se os valores são números válidos
+    if (!is_numeric($faturamento) || !is_numeric($apuracao) || !is_numeric($gastosVendas) || !is_numeric($custoFixo)) {
+        throw new \InvalidArgumentException('Erro nas variáveis. Todos os valores devem ser números.');
+    }
+
+    // Calcular a Margem de Contribuição
+    $MC = $faturamento - ($apuracao + $gastosVendas);
+
+    // Calcular a Lucratividade e a Rentabilidade
+    $lucratividade = round(($MC / $faturamento) * 100, 2);
+    $rentabilidade = round(($MC - $custoFixo) / $faturamento * 100, 2);
+
+    // Retornar os resultados
+    return [
+        'lucratividade' => $lucratividade,
+        'rentabilidade' => $rentabilidade,
+    ];
+}
+
+
+    //Calculo do Capital de Giro
 
 }

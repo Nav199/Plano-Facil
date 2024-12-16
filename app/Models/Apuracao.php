@@ -11,7 +11,7 @@ class Apuracao extends Model
     protected $table = 'apuracao';
      
     protected $fillable = [
-        'id_plano','descricao', 'vendas', 'custo', 'crescimento'
+        'id_plano','descricao', 'vendas', 'custo', 'crescimento','total'
    ]; 
        // Relação com o modelo Plano
        public function planoNegocio()

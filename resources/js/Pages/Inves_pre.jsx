@@ -1,10 +1,11 @@
 import React, { useState } from 'react';
 import { useForm } from '@inertiajs/react';
+import Button from '@/Components/Button'; 
 
 const Inves_pre = ({ planoId }) => {
   const [items, setItems] = useState([{ descricao: '', valor: '' }]);
   
-  const { post, data, setData, reset } = useForm({
+  const { post, data, setData, reset,processing } = useForm({
     items: [{ descricao: '', valor: '' }],
     total: 0,
   });
@@ -105,8 +106,8 @@ const Inves_pre = ({ planoId }) => {
                     type="button"
                     onClick={() => handleRemoveItem(index)}
                     className="bg-red-500 hover:bg-red-700 text-white font-bold py-1 px-4 rounded"
-                  >
-                    Deletar
+                  > 
+                    Remover
                   </button>
                 </td>
               </tr>
@@ -116,13 +117,16 @@ const Inves_pre = ({ planoId }) => {
 
         <div className="flex justify-between items-center mt-4">
           <h3 className="font-bold text-xl">Total: {formatCurrency(calculateTotal(items))}</h3>
-          <button
-            type="submit"
-            className="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-6 rounded"
-          >
-            Salvar
-          </button>
         </div>
+        <div className="flex justify-center">
+            <Button
+              type="submit"
+              processing={processing}
+              className="extra-classes-if-needed"
+            >
+              Enviar
+            </Button>
+          </div>
       </form>
     </div>
   );

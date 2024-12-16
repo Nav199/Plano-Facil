@@ -63,6 +63,13 @@ class CnaeService
                 "Alíquota" => 6
             ],
 
+            [
+                "CNAE" => 8512100,
+                "Descrição" => "Educação infantil – pré-escola",
+                "Fator R" => "Não",
+                "Alíquota" => 6
+            ],
+
         ];
     
     }

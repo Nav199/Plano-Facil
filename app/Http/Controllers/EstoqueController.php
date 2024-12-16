@@ -74,7 +74,7 @@ class EstoqueController extends Controller
            ]);
        }
 
-       return redirect()->route('faturamento', [$plano->id]); 
+       return redirect()->route('investimentoP', [$plano->id]); 
    }
 
 }

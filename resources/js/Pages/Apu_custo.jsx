@@ -1,21 +1,24 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Chart, registerables } from 'chart.js';
 import { useForm, usePage } from '@inertiajs/react';
+import Authenticated from '@/Layouts/AuthenticatedLayout';
+import Button from '@/Components/Button';
 
 Chart.register(...registerables);
 
-const Apu_custo = ({ planoId }) => {
+const ApuCusto = ({ planoId, auth }) => {
   const { faturamento, custoUnitario } = usePage().props;
 
-  // Associar custo unitário aos itens de faturamento
   const { data, setData, post, processing, errors } = useForm({
     items: faturamento.map((item) => {
-      // Encontre o custo unitário correspondente ao item
-      const custo = custoUnitario.find(custoItem => custoItem.material === item.produto_servico);
+      const custo = custoUnitario.length > 0 ? 
+        parseFloat(custoUnitario.find(c => c.produto === item.produto_servico)?.valor_unitario) || 0 
+        : 0;
+
       return {
         descricao: item.produto_servico,
         vendas: item.estimativa_vendas,
-        custo: custo ? custo.valor_unitario : 0, 
+        custo: custo,
       };
     }),
     crescimento: 0,
@@ -29,10 +32,13 @@ const Apu_custo = ({ planoId }) => {
   );
 
   const calcularCrescimento = (valor, meses) => {
-    return Array.from({ length: meses }, (_, i) =>
-      valor * Math.pow(1 + data.crescimento / 100, i)
-    );
+    const crescimentoArray = [];
+    for (let i = 0; i < meses; i++) {
+      crescimentoArray.push(valor * Math.pow(1 + data.crescimento / 100, i));
+    }
+    return crescimentoArray;
   };
+  
 
   const mesesCrescimento = calcularCrescimento(totalCMV, 12 * 5);
 
@@ -43,7 +49,6 @@ const Apu_custo = ({ planoId }) => {
     }).format(numero);
   };
 
-  // Renderizar gráfico de crescimento
   const renderChart = () => {
     const ctx = document.getElementById('crescimentoChart').getContext('2d');
 
@@ -110,21 +115,25 @@ const Apu_custo = ({ planoId }) => {
     };
   }, [data.items, data.crescimento]);
 
-  const handleSubmit = (e) => { 
+  const handleSubmit = (e) => {
     e.preventDefault();
     post(route('apuracao', { id: planoId }));
   };
-
+ 
   const handleCrescimentoChange = (e) => {
     setData('crescimento', parseFloat(e.target.value) || 0);
   };
 
   return (
+  <Authenticated
+          user={auth.user}
+          header={
+            <h2 className="font-semibold text-xl text-gray-800 leading-tight text-center">
+              Apuração de custo
+            </h2>
+          }
+        >
     <div className="min-h-screen flex flex-col items-center justify-center bg-gray-100">
-      <h2 className="text-2xl font-bold mt-8 mb-6 text-center">
-        Apuração do Custo de MD ou MV
-      </h2>
-
       <form onSubmit={handleSubmit} className="bg-white p-6 rounded-lg shadow-lg w-full max-w-4xl">
         <table className="min-w-full bg-white border-collapse border border-gray-200">
           <thead>
@@ -140,12 +149,8 @@ const Apu_custo = ({ planoId }) => {
               <tr key={index}>
                 <td className="border px-4 py-2">{item.descricao}</td>
                 <td className="border px-4 py-2">{item.vendas}</td>
-                <td className="border px-4 py-2">
-                  {formatarNumeroBr(item.custo)}
-                </td>
-                <td className="border px-4 py-2">
-                  {formatarNumeroBr(item.vendas * item.custo)}
-                </td>
+                <td className="border px-4 py-2">{formatarNumeroBr(item.custo)}</td>
+                <td className="border px-4 py-2">{formatarNumeroBr(item.vendas * item.custo)}</td>
               </tr>
             ))}
           </tbody>
@@ -153,9 +158,7 @@ const Apu_custo = ({ planoId }) => {
 
         <div className="mt-4">
           <h3 className="text-lg font-bold">Total:</h3>
-          <p className="text-xl text-gray-800">
-            {formatarNumeroBr(totalCMV)}
-          </p>
+          <p className="text-xl text-gray-800">{formatarNumeroBr(totalCMV)}</p>
         </div>
 
         <div className="mt-6">
@@ -169,21 +172,21 @@ const Apu_custo = ({ planoId }) => {
             className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
           />
         </div>
-
         <canvas id="crescimentoChart" className="mt-6 w-full h-64"></canvas>
 
-        <div className="flex justify-center mt-6">
-          <button
-            type="submit"
-            className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
-            disabled={processing}
-          >
-            {processing ? 'Enviando...' : 'Enviar'}
-          </button>
-        </div>
+        <div className="flex justify-center">
+            <Button
+              type="submit"
+              processing={processing}
+              className="extra-classes-if-needed"
+            >
+              Enviar
+            </Button>
+          </div>
       </form>
     </div>
+    </Authenticated>
   );
 };
 
-export default Apu_custo;
+export default ApuCusto;

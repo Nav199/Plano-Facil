@@ -63,7 +63,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
     
     Route::get('/Mercado/{id}', [MercadoController::class, 'create'])->name('plano_mercado');
     Route::post('/Mercado/{id}', [MercadoController::class, 'store'])->name('plano_mercado');
-
+  
     Route::get('/Marketing/{id}', [MarketingController::class, 'create'])->name('plano_marketing');
     Route::post('/Marketing/{id}', [MarketingController::class, 'store'])->name('plano_marketing');
 
@@ -75,7 +75,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
     Route::get('/estoque/{id}', [EstoqueController::class, 'create'])->name('estoque');
     Route::post('/estoque/{id}', [EstoqueController::class, 'store'])->name('estoque-store');
-
+ 
     Route::get('/investimento-pre/{id}',[InvestimentoPController::class, 'create'])->name('investimentoP');
     Route::post('/investimento-pre/{id}',[InvestimentoPController::class, 'store'])->name('investimentoP');
 
@@ -86,7 +86,8 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::post('/Faturamento/{id}', [FaturaController::class, 'store'])->name('faturamento');
 
     Route::get('/Caixa/{id}',[CaixaController::class,'create'])->name('caixa');
-
+    Route::post('/Caixa/{id}',[CaixaController::class,'store'])->name('caixa');
+    
     Route::get('/custo/{id}', [CustoUniController::class, 'create'])->name('custo');
     Route::post('/custo/{id}', [CustoUniController::class, 'store'])->name('custo-store');
 

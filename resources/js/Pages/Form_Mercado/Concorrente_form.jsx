@@ -1,9 +1,28 @@
-import React from 'react';
+import React, { useState } from 'react';
 
-const Concorrente_Form = ({ onChange}) => {
+const Concorrente_Form = ({ onChange }) => {
+  const [preco, setPreco] = useState('');
+
   const handleChange = (e) => {
     const { name, value } = e.target;
     onChange(name, value);
+  };
+
+  const handlePriceChange = (e) => {
+    let value = e.target.value;
+
+    // Remove caracteres não numéricos, mas permite a vírgula como separador decimal
+    const numericValue = value.replace(/[^\d,]/g, '').replace(',', '.');
+
+    // Formata para o valor monetário 'R$ 90.000,00'
+    const formattedValue = "R$ " + numericValue
+      .replace('.', ',') // Substitui o ponto por vírgula para garantir o formato BR
+      .replace(/\B(?=(\d{3})+(?!\d))/g, "."); // Adiciona ponto como separador de milhar
+
+    setPreco(formattedValue); // Armazena o valor formatado para exibição
+
+    // Passa o valor numérico (sem formatação) para o componente pai
+    onChange('preco_concorrente', numericValue);
   };
 
   return (
@@ -33,11 +52,12 @@ const Concorrente_Form = ({ onChange}) => {
         <div>
           <label htmlFor="preco" className="block text-sm font-medium text-gray-700">Preço</label>
           <input
-            type="number"
+            type="text"
             id="preco"
             name="preco_concorrente"
-            className="mt-1 p-2 w-full border-gray-300 rounded-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
-            onChange={handleChange}
+            value={preco}
+            className="mt-1 p-2 w-48 border-gray-300 rounded-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
+            onChange={handlePriceChange} // Atualiza o estado e o valor numérico
           />
         </div>
         <div>
@@ -81,7 +101,6 @@ const Concorrente_Form = ({ onChange}) => {
           />
         </div>
       </div>
-
     </div>
   );
 };

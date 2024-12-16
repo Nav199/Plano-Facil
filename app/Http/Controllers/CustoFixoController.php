@@ -38,10 +38,10 @@ class CustoFixoController extends Controller
         ]);
     
         foreach ($validated['custos'] as &$custo) {
-            // Verifica se os valores são nulos e atribui 0 ou outro valor padrão
+        
             $custo['valor'] = $custo['valor'] ?? 0;
-            $custo['crescimento'] = $validated['crescimento'] ?? 0; // Caso venha nulo, atribuir 0
-            $custo['total'] = $validated['total'] ?? 0; // Caso venha nulo, atribuir 0
+            $custo['crescimento'] = $validated['crescimento'] ?? 0; 
+            $custo['total'] = $validated['total'] ?? 0; 
         }
     
         foreach ($validated['custos'] as $item) {
@@ -53,7 +53,6 @@ class CustoFixoController extends Controller
                 'total' => $item['total']
             ]);
         }
-    // Redireciona para a página de custos fixos
     return redirect()->route('demonstrativo', [$id])->with('status', 'Custos fixos salvos com sucesso!');
 }
     public function listar_salario($id)

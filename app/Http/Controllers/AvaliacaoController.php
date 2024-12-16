@@ -21,26 +21,24 @@ class AvaliacaoController extends Controller
         return Inertia::render('Avaliacao/Avaliacao', [
             'status' => session('status'),
             'planoId' => $id,
-            'avaliacao' => $avaliacao['avaliacao'] ?? [], // Envia o array de avaliação ou um array vazio
+            'avaliacao' => $avaliacao['avaliacao'] ?? [],
             'error' => $avaliacao['error'] ?? null,
         ]);
     } 
 
     public function store(Request $request, $id)
     {
-        // Validação dos dados recebidos
+
         $validated = $request->validate([
-            'avaliacao' => 'required|array', // O campo 'avaliacao' deve ser um array
-            'avaliacao.*' => 'string', // Cada item da avaliação deve ser uma string
+            'avaliacao' => 'required|array',
+            'avaliacao.*' => 'string', 
         ]);
 
-        // Verifica se o plano com o ID fornecido existe
         $plano = Plano::find($id);
         if (!$plano) {
             return redirect()->back()->withErrors(['error' => 'Plano não encontrado.']);
         }
 
-        // Armazenar cada avaliação no banco de dados
         foreach ($validated['avaliacao'] as $avaliacaoTexto) {
             avaliacao::create([
                 'id_plano' => $id,
@@ -48,13 +46,10 @@ class AvaliacaoController extends Controller
             ]);
         }
 
-        // Retornar sucesso ou redirecionar com uma mensagem
         return redirect()->route('/dashboard')
             ->with('success', 'Avaliação enviada com sucesso!');
     }
-    /**
-     * Gera e retorna a avaliação do plano usando IA.
-     */
+ 
     public function analise($id)
 {
     $plano = Plano::with([
@@ -66,9 +61,14 @@ class AvaliacaoController extends Controller
         'Forma',
         'investimento_pre',
         'Faturamento',
-        'analise'
+        'analise',
+        'apuracao',
+        'comercializacao',
+        'custo_fixo', 
+        'demonstrativo',
+        'mao_obra'
     ])->find($id);
-
+ 
     if (!$plano) {
         Log::warning("Plano com ID $id não encontrado.");
         return ['error' => 'Plano não encontrado.'];
@@ -80,14 +80,20 @@ class AvaliacaoController extends Controller
         'veiculo' => $plano->veiculo->toArray(),
         'faturamento' => $plano->Faturamento->toArray(),
         'analise' => $plano->analise->toArray(),
+        'Estratégia de Comercializacao'=> $plano->comercializacao->toArray(),
+        'Apuração de custo'=> $plano->apuracao->toArray(),
+        'Custos Fixos'=> $plano->custo_fixo->toArray(),
+        'Mão de Obra'=> $plano->mao_obra->toArray(),
+        'Demonstrativo de Resultados' => $plano->demonstrativo->toArray(),
     ];
 
     $geminiService = new ServiceGemini();
     $prompt = "Crie uma avaliação sobre o plano de negócio no seguinte formato JSON:
-    {
-        \"avaliacao\": [\"...\"]
-    }
-    Baseie-se nos seguintes dados: " . json_encode($dados);
+        {
+            \"avaliacao\": [\"...\"]
+        }
+        Baseie-se nos seguintes dados e diga se o plano é viável ou não: " . json_encode($dados);
+        
 
     $response = $geminiService->analyze($dados, $prompt);
 
@@ -99,7 +105,7 @@ class AvaliacaoController extends Controller
     $avaliacaoDataText = $response['candidates'][0]['content']['parts'][0]['text'] ?? null;
 
     if ($avaliacaoDataText) {
-        // Remove marcações de bloco de código e decodifica JSON
+        
         $cleanedText = preg_replace('/^```json\s*|\s*```$/', '', $avaliacaoDataText);
         $avaliacaoData = json_decode($cleanedText, true);
 
@@ -110,7 +116,7 @@ class AvaliacaoController extends Controller
             return ['error' => 'Erro ao interpretar a resposta da IA.'];
         }
     }
-
+ 
     Log::warning('Nenhum conteúdo de avaliação retornado.');
     return ['error' => 'Nenhuma avaliação gerada.'];
 }

@@ -42,7 +42,7 @@ function Avaliacao() {
                   onChange={(e) => handleChange(e, index)}
                   placeholder={`Avaliação ${index + 1}`}
                 />
-              </div>
+              </div> 
             ))}
           </div>
         </div>

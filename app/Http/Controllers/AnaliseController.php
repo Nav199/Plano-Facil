@@ -58,11 +58,11 @@ class AnaliseController extends Controller
         
         analise::create([
             'id_plano' => $id,
-            'forcas' => $forcasString,  // Armazena como string
-            'fraquezas' => $fraquezasString,  // Armazena como string
-            'oportunidades' => $oportunidadesString,  // Armazena como string
-            'ameacas' => $ameacasString,  // Armazena como string
-            'acoes' => $acoesString,  // Armazena como string
+            'forcas' => $forcasString,  
+            'fraquezas' => $fraquezasString,  
+            'oportunidades' => $oportunidadesString,  
+            'ameacas' => $ameacasString, 
+            'acoes' => $acoesString,  
         ]);
 
         return redirect()->route('Avaliacao', [$id])
@@ -83,9 +83,14 @@ class AnaliseController extends Controller
             'Forma',
             'investimento_pre',
             'Faturamento',
-            'mao_obra',
+            'clientes',
+            'concorrentes',
+            'fornecedores',
+            'marketing',
             'apuracao',
-            'demonstrativo'
+            'custo_fixo',
+            'demonstrativo',
+            'socios',
         ])->find($id);
     
         if (!$plano) {
@@ -101,6 +106,15 @@ class AnaliseController extends Controller
             'mao de obra'=> $plano->mao_obra->toArray(),
             'apuração de custo'=> $plano->apuracao->toArray(),
             'Demonstrativo de resultados'=> $plano->demonstrativo->toArray(),
+            'Apuração de Custo'=> $plano->apuracao->toArray(),
+            'Custo Fixo'=> $plano->custo_fixo->toArray(),
+            'Marketing'=> $plano->marketing->toArray(),
+            'Clientes'=> $plano->clientes->toArray(),
+            'Concorrentes'=> $plano->concorrentes->toArray(),
+            'Fornecedores'=> $plano->fornecedores->toArray(),
+            'Forma'=> $plano->Forma->toArray(),
+            'Socios'=> $plano->socios->toArray(),
+            'Investimento Pré operacional'=> $plano->investimento_pre->toArray(),
         ];
     
         $geminiService = new ServiceGemini();
@@ -121,11 +135,11 @@ class AnaliseController extends Controller
             return null;
         }
     
-        // Acessa o campo correto no JSON retornado
+       
         $swotDataText = $resultado['candidates'][0]['content']['parts'][0]['text'] ?? null;
     
         if ($swotDataText) {
-            // Remove as marcações de bloco de código (```json)
+        
             $cleanedText = preg_replace('/^```json\s*|\s*```$/', '', $swotDataText);
     
             // Tenta decodificar o JSON limpo
@@ -141,45 +155,5 @@ class AnaliseController extends Controller
     
         Log::warning('Nenhum conteúdo de análise SWOT retornado.');
         return null;
-    }
-    
-
-    /**
-     * Converte o texto da análise SWOT em um array estruturado.
-     */
-    private function parseSwotText($text)
-    {
-        // Estrutura inicial para os dados SWOT
-        $sections = [
-            'forcas' => [],
-            'fraquezas' => [],
-            'oportunidades' => [],
-            'ameacas' => [],
-            'acoes' => [],
-        ];
-
-        // Processamento do texto para dividir por seções
-        $lines = explode("\n", $text);
-        $currentSection = null;
-
-        foreach ($lines as $line) {
-            $line = trim($line);
-
-            if (stripos($line, 'PONTOS FORTES:') !== false) {
-                $currentSection = 'forcas';
-            } elseif (stripos($line, 'PONTOS FRACOS:') !== false) {
-                $currentSection = 'fraquezas';
-            } elseif (stripos($line, 'OPORTUNIDADES:') !== false) {
-                $currentSection = 'oportunidades';
-            } elseif (stripos($line, 'AMEAÇAS:') !== false) {
-                $currentSection = 'ameacas';
-            } elseif (stripos($line, 'AÇÕES ESTRATÉGICAS:') !== false) {
-                $currentSection = 'acoes';
-            } elseif ($currentSection && $line !== '') {
-                $sections[$currentSection][] = $line;
-            }
-        }
-
-        return $sections;
     }
 }
