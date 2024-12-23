@@ -53,7 +53,7 @@ class CustoFixoController extends Controller
                 'total' => $item['total']
             ]);
         }
-    return redirect()->route('demonstrativo', [$id])->with('status', 'Custos fixos salvos com sucesso!');
+    return redirect()->route('caixa', [$id])->with('status', 'Custos fixos salvos com sucesso!');
 }
     public function listar_salario($id)
     {

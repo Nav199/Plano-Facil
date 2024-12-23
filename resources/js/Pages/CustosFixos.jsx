@@ -1,10 +1,11 @@
 import React, { useEffect, useRef } from 'react';
 import { Chart, registerables } from 'chart.js';
 import { useForm, usePage } from '@inertiajs/react';
-
+import Authenticated from "@/Layouts/AuthenticatedLayout";
+import Button from "@/Components/Button";
 Chart.register(...registerables);
 
-const CustosFixos = ({ planoId }) => {
+const CustosFixos = ({ planoId,auth }) => {
   const chartRef = useRef(null);
   const { Salario, Depreciacao } = usePage().props; 
 
@@ -109,9 +110,15 @@ const CustosFixos = ({ planoId }) => {
   };
 
   return (
+      <Authenticated
+          user={auth.user}
+          header={
+            <h2 className="font-semibold text-xl text-gray-800 leading-tight text-center">
+              Custos Fixos
+            </h2>
+          }
+        >
     <div className="min-h-screen flex flex-col items-center bg-gray-100">
-      <h2 className="text-2xl font-bold mt-8 mb-6">Custos Fixos</h2>
-
       <form onSubmit={handleSubmit} className="bg-white p-6 rounded-lg shadow-lg w-full max-w-4xl">
         <table className="table-auto w-full mb-6 border-collapse">
           <thead>
@@ -162,15 +169,14 @@ const CustosFixos = ({ planoId }) => {
           <canvas id="crescimentoChart"></canvas>
         </div>
 
-        <button
-          type="submit"
-          className="bg-blue-500 text-white font-bold py-2 px-4 rounded hover:bg-blue-700"
-          disabled={processing}
-        >
-          Enviar
-        </button>
+        <div className="flex justify-center mt-4">
+            <Button type="submit" processing={processing}>
+              Enviar
+            </Button>
+          </div>
       </form>
     </div>
+    </Authenticated>
   );
 };
 

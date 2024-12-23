@@ -54,11 +54,15 @@ const Inves_pre = ({ planoId }) => {
   };
 
   return (
+       <Authenticated
+                  user={auth.user}
+                  header={
+                    <h2 className="font-semibold text-xl text-gray-800 leading-tight text-center">
+                      Investimento Pré-Operacional
+                    </h2>
+                  }
+                >
     <div className="min-h-screen flex flex-col items-center bg-gray-100">
-      <h2 className="text-2xl font-bold mt-8 mb-6 flex items-center gap-2">
-        Investimento Pré-Operacional
-      </h2>
-
       <form onSubmit={handleSubmit} className="bg-white p-6 rounded-lg shadow-lg w-full max-w-4xl">
         <table className="table-auto w-full mb-6 border-collapse">
           <thead>
@@ -129,6 +133,7 @@ const Inves_pre = ({ planoId }) => {
           </div>
       </form>
     </div>
+    </Authenticated>
   );
 };
 

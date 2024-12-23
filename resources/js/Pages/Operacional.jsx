@@ -1,8 +1,9 @@
 import React from 'react';
 import { useForm } from '@inertiajs/react';
 import Necessidade from './Form_Operacional/Form_Necessidade/Necessidade';
-
-const Operacional = ({ planoId }) => {
+import Authenticated from "@/Layouts/AuthenticatedLayout";
+import Button from "@/Components/Button";
+const Operacional = ({ planoId,auth }) => {
   const { data, setData, post, processing, errors } = useForm({
     capacidadeProdutiva: '',
     volumeProducao: '', 
@@ -31,8 +32,15 @@ const Operacional = ({ planoId }) => {
   };
 
   return (
+     <Authenticated
+              user={auth.user}
+              header={
+                <h2 className="font-semibold text-xl text-gray-800 leading-tight text-center">
+                  Plano Operacional
+                </h2>
+              }
+            >
     <div className="container mx-auto p-4">
-      <h1 className="text-2xl font-bold mb-4">Plano Operacional</h1>
       <form onSubmit={handleSubmit}>
         <div className="mb-4">
           <label htmlFor="capacidadeProdutiva" className="block text-sm font-medium text-gray-700">
@@ -84,15 +92,15 @@ const Operacional = ({ planoId }) => {
           addRow={addRow}
           removeRow={removeRow}
         />
-        <button
-          type="submit"
-          className="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded"
-          disabled={processing}
-        >
-          Enviar
-        </button>
+      
+      <div className="flex justify-center mt-4">
+            <Button type="submit" processing={processing}>
+              Enviar
+            </Button>
+          </div>
       </form>
     </div>
+    </Authenticated>
   );
 };
 

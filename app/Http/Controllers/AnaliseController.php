@@ -65,7 +65,7 @@ class AnaliseController extends Controller
             'acoes' => $acoesString,  
         ]);
 
-        return redirect()->route('Avaliacao', [$id])
+        return redirect()->route('avaliacao', [$id])
         ->with('success', 'Estoque salvo com sucesso.');
     }
 

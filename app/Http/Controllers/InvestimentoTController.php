@@ -31,7 +31,7 @@ class InvestimentoTController extends Controller
             'total_investimento'=>$validate['total']
         ]);
 
-        return redirect()->route('avaliacao', [$id])
+        return redirect()->route('demonstrativo', [$id])
         ->with('success', 'Estoque salvo com sucesso.');
     }
 

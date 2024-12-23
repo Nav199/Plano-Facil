@@ -1,6 +1,6 @@
-import React, { useState, useEffect } from "react";
 import { usePage, useForm } from "@inertiajs/react";
-
+import Button from '@/Components/Button'; 
+import Authenticated from "@/Layouts/AuthenticatedLayout";
 const Comer = ({ planoId }) => {
   const { totalFaturamento, aliquota } = usePage().props;
 
@@ -51,6 +51,14 @@ const Comer = ({ planoId }) => {
   const totalGeral = totalImpostos + totalGastosVendas;
 
   return (
+     <Authenticated
+          user={auth.user}
+          header={
+            <h2 className="font-semibold text-xl text-gray-800 leading-tight text-center">
+              Custos de Comercialização
+            </h2>
+          }
+        >
     <div className="space-y-8">
       <form onSubmit={handleSubmit} className="w-full max-w-3xl mx-auto">
         <div className="overflow-x-auto mb-6">
@@ -97,15 +105,18 @@ const Comer = ({ planoId }) => {
             </tbody>
           </table>
         </div>
-        <button
-          type="submit"
-          className="bg-blue-600 text-white py-2 px-4 rounded-lg hover:bg-blue-700"
-          disabled={processing}
-        >
-          {processing ? "Enviando..." : "Enviar"}
-        </button>
+        <div className="flex justify-center">
+            <Button
+              type="submit"
+              processing={processing}
+              className="extra-classes-if-needed"
+            >
+              Enviar
+            </Button>
+          </div>
       </form>
     </div>
+    </Authenticated>
   );
 };
 

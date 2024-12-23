@@ -1,7 +1,9 @@
 import React, { Suspense, lazy } from 'react';
 import { usePage } from '@inertiajs/react';
 import Authenticated from '@/Layouts/AuthenticatedLayout';
-
+import Analise_component from './Analise/Analise';
+import Avaliação_component from './Analise/Avaliacao_component';
+import Socios from './socios/Socios';
 const Relatorio = ({auth }) => {
   const { plano, status, message,analise,avaliacao } = usePage().props;
   const DownloadButton = lazy(() => import('@/Components/DownloadButton'));
@@ -30,6 +32,8 @@ const Relatorio = ({auth }) => {
           </div>
         ) : (
           <> 
+          <div className='grid grid-cols-2 gap-6'>
+
             {/* Seção: Missão, Visão e Valores */}
             <section className="bg-white shadow rounded p-4">
               <h2 className="text-xl font-bold mb-2 text-center">Missão, Visão e Valores</h2>
@@ -40,24 +44,6 @@ const Relatorio = ({auth }) => {
                       <p><strong>Visão:</strong> {executivo.visao}</p>
                       <p><strong>Valores:</strong> {executivo.valores}</p>
                       <p><strong>Missão:</strong> {executivo.missao}</p>
-                    </li>
-                  ))}
-                </ul>
-              ) : (
-                <p>Nenhum dado encontrado.</p>
-              )}
-            </section>
-
-            {/* Seção: Socios */}
-            <section className="bg-white shadow rounded p-4">
-            <h2 className="text-xl font-bold mb-2 text-center">Sócios da empresa</h2>
-              {plano?.socios?.length ? (
-                <ul className="list-disc ml-4">
-                  {plano.socios.map((socio, index) => (
-                    <li key={index}>
-                      <p><strong>Nome:</strong> {socio.nome}</p>
-                      <p><strong>Curriculo:</strong> {socio.curriculo}</p>
-                      <p><strong>Funcao na Empresa:</strong> {socio.funcao}</p>
                     </li>
                   ))}
                 </ul>
@@ -96,6 +82,9 @@ const Relatorio = ({auth }) => {
   ) : (
     <p>Nenhuma forma jurídica registrada.</p>
   )}
+  
+            {/* Seção: Socios */}
+      <Socios socios={plano?.socios}/>
 </section>
 
 
@@ -185,29 +174,7 @@ const Relatorio = ({auth }) => {
             </section>
 
             {/* Seção: Investimento Pré-Operacional */}
-            <section className="bg-white shadow rounded p-4">
-  <h2 className="text-xl font-bold mb-2 text-center">Investimento Pré-Operacional</h2>
-  {plano?.investimento_pre?.length ? (
-    <table className="table-auto w-full border-collapse border border-gray-300 text-center">
-      <thead>
-        <tr>
-          <th className="border border-gray-300 p-2">Descrição</th>
-          <th className="border border-gray-300 p-2">Valor</th>
-        </tr>
-      </thead>
-      <tbody>
-        {plano.investimento_pre.map((item, index) => (
-          <tr key={index}>
-            <td className="border border-gray-300 p-2">{item.descricao}</td>
-            <td className="border border-gray-300 p-2">{formatarPreco(item.valor)}</td>
-          </tr>
-        ))}
-      </tbody>
-    </table>
-  ) : (
-    <p>Nenhum dado disponível para o investimento pré-operacional.</p>
-  )}
-</section>
+
             {/* Seção: Faturamento */}
 <section className="bg-white shadow rounded p-4">
   <h2 className="text-xl font-bold mb-2 text-center">Faturamento da Empresa</h2>
@@ -237,33 +204,141 @@ const Relatorio = ({auth }) => {
   ) : (
     <p>Nenhum dado disponível para o faturamento.</p>
   )}
-</section>
-              <section className="bg-white shadow rounded p-4">
-              <h2 className="text-xl font-bold mb-2 text-center">Custos Fixos</h2>
-              {plano?.custo_fixo?.length ? (
+      <h2 className="text-xl font-bold mb-2 text-center">Custo Unitário</h2>
+  {plano?.custo_unitario?.length ? (
     <table className="table-auto w-full border-collapse border border-gray-300 text-center">
       <thead>
         <tr>
-          <th className="border border-gray-300 p-2">Descrição</th>
-          <th className="border border-gray-300 p-2">Custo</th>
-          <th className="border border-gray-300 p-2">Crescimento</th>
+          <th className="border border-gray-300 p-2">Produto</th>
+          <th className="border border-gray-300 p-2">Material</th>
+          <th className="border border-gray-300 p-2">Quantidade</th>
+          <th className="border border-gray-300 p-2">Valor</th>
+          <th className="border border-gray-300 p-2">Total</th>
         </tr>
       </thead>
       <tbody>
-        {plano.custo_fixo.map((item, index) => (
+        {plano.custo_unitario.map((item, index) => (
           <tr key={index}>
-            <td className="border border-gray-300 p-2">{item.descricao}</td>
-            <td className="border border-gray-300 p-2">{item.custo}</td>
-            <td className="border border-gray-300 p-2">{item.crescimento}%</td>
+            <td className="border border-gray-300 p-2">{item.produto}</td>
+            <td className="border border-gray-300 p-2">{item.material}</td>
+            <td className="border border-gray-300 p-2">{item.quantidade}</td>
+            <td className="border border-gray-300 p-2">{formatarPreco(item.valor_unitário)}</td>
+            <td className="border border-gray-300 p-2">{formatarPreco(item.total)}</td>
           </tr>
         ))}
       </tbody>
     </table>
   ) : (
-    <p>Nenhum dado disponível para o faturamento.</p>
+    <p>Nenhum dado disponível para o custo unitário.</p>
   )}
-            </section>
-            <section className="bg-white shadow rounded p-4">
+</section>
+
+  <section className="bg-white shadow rounded p-4">
+  <h2 className="text-xl font-bold mb-2 text-center">Comercialização</h2>
+  </section>
+
+<section className="bg-white shadow rounded p-4">
+
+  <h2 className="text-xl font-bold mb-2 text-center">Investimento Pré-Operacional</h2>
+  {plano?.investimento_pre?.length ? (
+    <table className="table-auto w-full border-collapse border border-gray-300 text-center">
+      <thead>
+        <tr>
+          <th className="border border-gray-300 p-2">Descrição</th>
+          <th className="border border-gray-300 p-2">Valor</th>
+        </tr>
+      </thead>
+      <tbody>
+        {plano.investimento_pre.map((item, index) => (
+          <tr key={index}>
+            <td className="border border-gray-300 p-2">{item.descricao}</td>
+            <td className="border border-gray-300 p-2">{formatarPreco(item.valor)}</td>
+          </tr>
+        ))}
+      </tbody>
+    </table>
+  ) : (
+    <p>Nenhum dado disponível para o investimento pré-operacional.</p>
+  )}
+
+    <h2 className="text-xl font-bold mb-2 text-center">Investimento Total</h2>
+  {plano?.investimento_total?.length ? (
+    <table className="table-auto w-full border-collapse border border-gray-300 text-center">
+      <thead>
+        <tr>
+          <th className="border border-gray-300 p-2">Valor total do empreendimento</th>
+        </tr>
+      </thead>
+      <tbody>
+        {plano.investimento_total.map((item, index) => (
+          <tr key={index}>
+            <td className="border border-gray-300 p-2">{formatarPreco(item.total_investimento)}</td>
+          </tr>
+        ))}
+      </tbody>
+    </table>
+  ) : (
+    <p>Nenhum dado disponível para o Investimento Total.</p>
+  )}
+ 
+</section>
+
+  <section className="bg-white shadow rounded p-4">
+  <h2 className="text-lg font-semibold mb-2 text-center">Depreciação</h2>
+{plano?.depreciacao?.length ? (
+      <table className='table-auto w-full border-collapse border border-gray-300 text-sm text-center'>
+      <thead>
+      <tr>
+      <th className="border border-gray-300 px-2 py-1">Ativos</th>
+        <th className="border border-gray-300 px-2 py-1">Valor</th>
+        <th className="border border-gray-300 px-2 py-1">Anos</th>
+        <th className="border border-gray-300 px-2 py-1">Anual</th>
+        <th className="border border-gray-300 px-2 py-1">Mensal</th>
+        <th className="border border-gray-300 px-2 py-1">Total</th>
+      </tr>
+      </thead>
+      <tbody>
+  {plano.depreciacao.map((item, index) => (
+    <tr key={index}>
+      <td className="border border-gray-300 px-2 py-1">{item.ativos}</td>
+      <td className="border border-gray-300 px-2 py-1">{formatarPreco(item.valor)}</td>
+      <td className="border border-gray-300 px-2 py-1">{item.anos}</td>
+      <td className="border border-gray-300 px-2 py-1">{formatarPreco(item.anual)}</td>
+      <td className="border border-gray-300 px-2 py-1">{formatarPreco(item.mensal)}</td>
+      <td className="border border-gray-300 px-2 py-1">{formatarPreco(item.total)}</td>
+    </tr>
+  ))}
+</tbody>
+</table>
+  ) : (
+    <p>Nenhum dado disponível para a depreciação.</p>
+  )}
+  <h2 className="text-lg font-semibold mb-2 text-center">Custos Fixos</h2>
+  {plano?.custo_fixo?.length ? (
+    <table className="table-auto w-full border-collapse border border-gray-300 text-sm text-center">
+      <thead>
+        <tr>
+          <th className="border border-gray-300 px-2 py-1">Descrição</th>
+          <th className="border border-gray-300 px-2 py-1">Custo</th>
+          <th className="border border-gray-300 px-2 py-1">Crescimento</th>
+        </tr>
+      </thead>
+      <tbody>
+        {plano.custo_fixo.map((item, index) => (
+          <tr key={index}>
+            <td className="border border-gray-300 px-2 py-1">{item.descricao}</td>
+            <td className="border border-gray-300 px-2 py-1">{item.custo}</td>
+            <td className="border border-gray-300 px-2 py-1">{item.crescimento}%</td>
+          </tr>
+        ))}
+      </tbody>
+    </table>
+  ) : (
+    <p className="text-center">Nenhum dado disponível para o faturamento.</p>
+  )}
+
+
+  <section className="bg-white shadow rounded p-4">
   <h2 className="text-xl font-bold mb-2 text-center">Demonstrativo de Resultados</h2>
   {plano?.demonstrativo?.length ? (
     <table className="table-auto w-full border-collapse border border-gray-300 text-center">
@@ -288,114 +363,14 @@ const Relatorio = ({auth }) => {
     <p>Nenhum dado disponível para o demonstrativo de resultados.</p>
   )}
 </section>
-
-            {analise && (
-  <section className="bg-white shadow rounded p-4">
-    <h2 className="text-xl font-bold mb-4 text-center">Análise SWOT</h2>
-    <table className="table-auto w-full border-collapse border border-gray-300 text-center">
-      <thead>
-        <tr>
-          <th className="border border-gray-300 p-2 bg-gray-200 text-left">Fatores Internos</th>
-          <th className="border border-gray-300 p-2 bg-gray-200 text-left">Fatores Externos</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr>
-          {/* Pontos Fortes */}
-          <td className="border border-gray-300 p-2">
-            <h3 className="font-semibold">Pontos Fortes</h3>
-            {analise.forcas && analise.forcas.length > 0 ? (
-              <ul className="list-disc ml-4">
-                {analise.forcas.map((forca, index) => (
-                  <li key={index}>{forca}</li>
-                ))}
-              </ul>
-            ) : (
-              <p>Nenhum ponto forte registrado.</p>
-            )}
-          </td>
-
-          {/* Oportunidades */}
-          <td className="border border-gray-300 p-2">
-            <h3 className="font-semibold">Oportunidades</h3>
-            {analise.oportunidades && analise.oportunidades.length > 0 ? (
-              <ul className="list-disc ml-4">
-                {analise.oportunidades.map((oportunidade, index) => (
-                  <li key={index}>{oportunidade}</li>
-                ))}
-              </ul>
-            ) : (
-              <p>Nenhuma oportunidade registrada.</p>
-            )}
-          </td>
-        </tr>
-
-        <tr>
-          {/* Fraquezas */}
-          <td className="border border-gray-300 p-2">
-            <h3 className="font-semibold">Fraquezas</h3>
-            {analise.fraquezas && analise.fraquezas.length > 0 ? (
-              <ul className="list-disc ml-4">
-                {analise.fraquezas.map((fraqueza, index) => (
-                  <li key={index}>{fraqueza}</li>
-                ))}
-              </ul>
-            ) : (
-              <p>Nenhuma fraqueza registrada.</p>
-            )}
-          </td>
-
-          {/* Ameaças */}
-          <td className="border border-gray-300 p-2">
-            <h3 className="font-semibold">Ameaças</h3>
-            {analise.ameacas && analise.ameacas.length > 0 ? (
-              <ul className="list-disc ml-4">
-                {analise.ameacas.map((ameaca, index) => (
-                  <li key={index}>{ameaca}</li>
-                ))}
-              </ul>
-            ) : (
-              <p>Nenhuma ameaça registrada.</p>
-            )}
-          </td>
-        </tr>
-      </tbody>
-    </table>
-
-    {/* Ações Estratégicas */}
-    <h3 className="text-lg font-bold mt-6 text-center">Ações Estratégicas</h3>
-    {analise.acoes && analise.acoes.length > 0 ? (
-      <ul className="list-disc ml-4 text-center">
-        {analise.acoes.map((acao, index) => (
-          <li key={index}>{acao}</li>
-        ))}
-      </ul>
-    ) : (
-      <p>Nenhuma ação estratégica registrada.</p>
-    )}
-  </section>
-)}
-
-
-
-
-            {/* Seção: Análise da IA */}
-            
-            <section className="bg-white shadow rounded p-4">
-  <h2 className="text-xl font-bold mb-2">Avaliação do Plano</h2>
-  <div className="prose">
-    {avaliacao && avaliacao.descricao && avaliacao.descricao.length > 0 ? (
-      <ul>
-        {avaliacao.descricao.map((item, index) => (
-          <li key={index}>{item}</li>
-        ))}
-      </ul>
-    ) : (
-      <p>Avaliação não disponível.</p>
-    )}
-  </div>
 </section>
+
+{/* Seção: Análise SWOT */}
+  <Analise_component analise = {analise}/>
+  {/* Seção: Análise da IA */}
+  <Avaliação_component Avaliação_component={avaliacao}/>
   {/* Botão de Download */}
+</div>
   <Suspense fallback={<p>Carregando botão...</p>}>
               <DownloadButton
                 elementId="relatorio-content"

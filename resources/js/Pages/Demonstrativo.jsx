@@ -151,7 +151,7 @@ const Demonstrativo = ({ planoId, auth }) => {
 
             </table>
           </div>
-
+ 
           <div className="flex justify-center mt-4">
             <Button type="submit" processing={processing}>
               Enviar

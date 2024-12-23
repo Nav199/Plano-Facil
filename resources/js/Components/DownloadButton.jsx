@@ -12,27 +12,63 @@ const DownloadButton = ({ elementId = 'relatorio-content', filename = 'document.
         }
 
         try {
-            // Captura a área do elemento HTML como imagem
-            const canvas = await html2canvas(element, { scale: 1, useCORS: true });
+            // Adiciona a classe para ocultar o botão
+            const buttonElement = document.getElementById('download-button');
+            if (buttonElement) buttonElement.classList.add('hidden-when-printing');
+
+            // Renderiza o elemento em um canvas
+            const canvas = await html2canvas(element, { scale: 2, useCORS: true });
             const imgData = canvas.toDataURL('image/png');
 
-            // Criação do PDF
             const pdf = new jsPDF('p', 'mm', 'a4');
             const pdfWidth = pdf.internal.pageSize.getWidth();
-            const pdfHeight = (canvas.height * pdfWidth) / canvas.width;
+            const pdfHeight = pdf.internal.pageSize.getHeight();
 
-            // Adiciona a imagem ao PDF
-            pdf.addImage(imgData, 'PNG', 0, 0, pdfWidth, pdfHeight);
+            const imgWidth = canvas.width;
+            const imgHeight = canvas.height;
 
-            // Salva o PDF com o nome fornecido
+            const pageHeight = (pdfHeight * imgWidth) / pdfWidth; // Altura da página em termos do canvas
+            let yOffset = 0;
+
+            while (yOffset < imgHeight) {
+                const pageCanvas = document.createElement('canvas');
+                pageCanvas.width = imgWidth;
+                pageCanvas.height = Math.min(pageHeight, imgHeight - yOffset);
+
+                const pageCtx = pageCanvas.getContext('2d');
+                pageCtx.drawImage(
+                    canvas,
+                    0,
+                    yOffset,
+                    imgWidth,
+                    pageCanvas.height,
+                    0,
+                    0,
+                    imgWidth,
+                    pageCanvas.height
+                );
+
+                const pageImgData = pageCanvas.toDataURL('image/png');
+                pdf.addImage(pageImgData, 'PNG', 0, 0, pdfWidth, pdfHeight);
+
+                yOffset += pageHeight;
+
+                if (yOffset < imgHeight) {
+                    pdf.addPage();
+                }
+            }
+
             pdf.save(filename || `Plano de Negócio - ${planoNome || 'Desconhecido'}.pdf`);
         } catch (error) {
             console.error('Erro ao gerar o PDF:', error);
+        } finally {
+            // Remove a classe após a geração do PDF
+            if (buttonElement) buttonElement.classList.remove('hidden-when-printing');
         }
     };
 
     return (
-        <div className="text-center my-4">
+        <div id="download-button" className="text-center my-4">
             <button
                 onClick={downloadPDF}
                 className="bg-blue-500 text-white px-4 py-2 rounded shadow hover:bg-blue-600 flex items-center mx-auto"

@@ -85,7 +85,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
     Route::get('/Faturamento/{id}', [FaturaController::class, 'create'])->name('faturamento');
     Route::post('/Faturamento/{id}', [FaturaController::class, 'store'])->name('faturamento');
-
+ 
     Route::get('/Caixa/{id}',[CaixaController::class,'create'])->name('caixa');
     Route::post('/Caixa/{id}',[CaixaController::class,'store'])->name('caixa');
     

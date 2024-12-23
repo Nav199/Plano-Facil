@@ -4,6 +4,13 @@ const Necessidade = ({ pessoal, handlePessoalChange, addRow, removeRow }) => {
   return (
     <div className="mb-4">
       <h2 className="text-lg font-semibold mb-2">Necessidade Pessoal</h2>
+      <button
+        type="button"
+        onClick={addRow}
+        className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded mt-2"
+      >
+        Adicionar Linha
+      </button>
       <table className="w-full border-collapse">
         <thead>
           <tr>
@@ -46,13 +53,6 @@ const Necessidade = ({ pessoal, handlePessoalChange, addRow, removeRow }) => {
           ))}
         </tbody>
       </table>
-      <button
-        type="button"
-        onClick={addRow}
-        className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded mt-2"
-      >
-        Adicionar Linha
-      </button>
     </div>
   );
 };

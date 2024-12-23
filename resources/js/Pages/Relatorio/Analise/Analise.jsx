@@ -1,6 +1,6 @@
 import React from 'react';
 
-const Analise = ({ analise }) => {
+const Analise_component = ({ analise }) => {
   return (
     analise && (
       <section className="bg-white shadow rounded p-4">
@@ -91,4 +91,4 @@ const Analise = ({ analise }) => {
   );
 };
 
-export default Analise;
+export default Analise_component;

@@ -43,7 +43,7 @@ class CaixaController extends Controller
         ];
     }
     
- 
+  
     public function store(Request $request, $id)
     {
         // Validação dos dados recebidos
@@ -66,7 +66,7 @@ class CaixaController extends Controller
                 'estoque_inicial' => $validated['estoque_inicial'], // Salvando capital de giro no banco
             ]);
     
-            return redirect()->route('demonstrativo', [$id])
+            return redirect()->route('investimento-total', [$id])
             ->with('success', 'Depreciações salvas com sucesso.');
         } catch (\Exception $e) {
             Log::error('Erro ao salvar caixa mínimo: ' . $e->getMessage());
