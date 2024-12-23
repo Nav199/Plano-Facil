@@ -75,12 +75,13 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
     Route::get('/estoque/{id}', [EstoqueController::class, 'create'])->name('estoque');
     Route::post('/estoque/{id}', [EstoqueController::class, 'store'])->name('estoque-store');
- 
+  
     Route::get('/investimento-pre/{id}',[InvestimentoPController::class, 'create'])->name('investimentoP');
     Route::post('/investimento-pre/{id}',[InvestimentoPController::class, 'store'])->name('investimentoP');
 
     //rota de investimento total
     Route::get('/investimento-total/{id}',[InvestimentoTController::class,'create'])->name('investimento-total');
+    Route::post('/investimento-total/{id}',[InvestimentoTController::class,'store'])->name('investimento-total');
 
     Route::get('/Faturamento/{id}', [FaturaController::class, 'create'])->name('faturamento');
     Route::post('/Faturamento/{id}', [FaturaController::class, 'store'])->name('faturamento');

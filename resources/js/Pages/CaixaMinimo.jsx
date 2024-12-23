@@ -1,11 +1,22 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useForm, usePage } from "@inertiajs/react";
 import Authenticated from '@/Layouts/AuthenticatedLayout';
 import Button from '@/Components/Button';
 
 const CaixaMinimo = ({ planoId, auth }) => {
   const { props } = usePage();
-  const { caixa } = props || {};
+  const { caixa } = props;
+
+  const custoVariavelMensal = parseFloat(caixa?.custo_variavel_mensal || 0);
+  const custoFixoMensal = parseFloat(caixa?.custo_fixo_mensal || 0);
+  const custoDiario = parseFloat(caixa?.custo_total_diario || 0);
+  const custoTotal = parseFloat(caixa?.custo_total_empresa || 0);
+  const estoque_inicial = parseFloat(caixa?.estoque || 0);
+
+  // Função para calcular a média ponderada
+  const calcularMedia = (arr) => {
+    return arr.reduce((acc, item) => acc + (item.porcentagem / 100) * item.dias, 0);
+  };
 
   // Hook para gerenciar dados do formulário
   const { data, setData, post, processing } = useForm({
@@ -24,34 +35,30 @@ const CaixaMinimo = ({ planoId, auth }) => {
       { nome: "Prazo 5", porcentagem: 0, dias: 0, media: 0 },
     ],
     diasEstoque: '',
-    custoVariavelMensal: parseFloat(caixa?.custo_variavel_mensal) || 0,
-    custoFixoMensal: parseFloat(caixa?.custo_fixo_mensal) || 0,
-    custoDiario: parseFloat(caixa?.custo_total_diario) || 0,
-    custoTotal: parseFloat(caixa?.custo_total_empresa) || 0,
-    estoque_inicial: parseFloat(caixa?.estoque) || 0,
+    necessidadeLiquidaDias: 0,
+    caixaMinimo: 0,
+    capital_giro: 0,
+    estoque_inicial:0
   });
 
-  // Função para calcular a média ponderada
-  const calcularMedia = (arr) => {
-    return arr.reduce((acc, item) => acc + (item.porcentagem / 100) * item.dias, 0);
-  };
-
-  // Cálculos
+  // Cálculos fora do useEffect
   const prazoMedioVendas = calcularMedia(data.prazoVendas);
   const prazoMedioCompras = calcularMedia(data.prazoCompras);
   const subtotal1 = prazoMedioVendas + parseFloat(data.diasEstoque || 0);
   const subtotal2 = prazoMedioCompras;
   const necessidadeLiquidaDias = subtotal1 - subtotal2;
-  const caixaMinimo = necessidadeLiquidaDias * data.custoDiario;
-  const capital_giro = caixaMinimo + data.estoque_inicial;
+  const caixaMinimo = necessidadeLiquidaDias * custoDiario;
+  const capital_giro = caixaMinimo + estoque_inicial;
 
-  const formatarMoeda = (valor) => {
-    return new Intl.NumberFormat('pt-BR', {
-      style: 'currency',
-      currency: 'BRL',
-      minimumFractionDigits: 2,
-    }).format(valor);
-  };
+  // Atualizar o estado com os cálculos no useEffect
+  useEffect(() => {
+    setData({
+      ...data,
+      necessidadeLiquidaDias,
+      caixaMinimo,
+      capital_giro,
+    });
+  }, [data.prazoVendas, data.prazoCompras, data.diasEstoque, custoDiario, estoque_inicial]);
 
   const handlePrazoChange = (index, value, type) => {
     const updatedPrazo = [...data[type]];
@@ -61,24 +68,16 @@ const CaixaMinimo = ({ planoId, auth }) => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-  
-    const payload = {
-      prazoVendas: data.prazoVendas,
-      prazoCompras: data.prazoCompras,
-      diasEstoque: data.diasEstoque,
-      necessidade_liquida_dias: necessidadeLiquidaDias, // Certifique-se de usar o nome correto para o backend
-      caixa_minimo: caixaMinimo, // Certifique-se de usar o nome correto para o backend
-      capitalGiro: capital_giro,
-    };
-  
-    console.log("Payload enviado:", payload);
-  
-    post(route("caixa", { id: planoId }), payload);
+    post(route("caixa", { id: planoId }));
   };
-  
-  
-  
-  
+
+  const formatarMoeda = (valor) => {
+    return new Intl.NumberFormat('pt-BR', {
+      style: 'currency',
+      currency: 'BRL',
+      minimumFractionDigits: 2,
+    }).format(valor);
+  };
   return (
 <Authenticated
           user={auth.user}
@@ -227,19 +226,19 @@ const CaixaMinimo = ({ planoId, auth }) => {
         <tbody>
           <tr>
             <td className="border border-gray-300 px-4 py-2">Custo Fixo Mensal</td>
-            <td className="border border-gray-300 px-4 py-2">{formatarMoeda(data.custoFixoMensal)}</td>
+            <td className="border border-gray-300 px-4 py-2">{formatarMoeda(custoFixoMensal)}</td>
           </tr>
           <tr>
             <td className="border border-gray-300 px-4 py-2">Custo Variável Mensal</td>
-            <td className="border border-gray-300 px-4 py-2">{formatarMoeda(data.custoVariavelMensal)}</td>
+            <td className="border border-gray-300 px-4 py-2">{formatarMoeda(custoVariavelMensal)}</td>
           </tr>
           <tr>
             <td className="border border-gray-300 px-4 py-2">Custo Total da Empresa</td>
-            <td className="border border-gray-300 px-4 py-2">{formatarMoeda(data.custoTotal)}</td>
+            <td className="border border-gray-300 px-4 py-2">{formatarMoeda(custoTotal)}</td>
           </tr>
           <tr>
             <td className="border border-gray-300 px-4 py-2">Custo Total Diário</td>
-            <td className="border border-gray-300 px-4 py-2">{formatarMoeda(data.custoDiario)}</td>
+            <td className="border border-gray-300 px-4 py-2">{formatarMoeda(custoDiario)}</td>
           </tr>
           <tr className="font-bold">
             <td className="border border-gray-300 px-4 py-2">Caixa Mínimo</td>
@@ -262,15 +261,15 @@ const CaixaMinimo = ({ planoId, auth }) => {
         <tbody>
           <tr>
             <td className="border border-gray-300 px-4 py-2">Estoque Inicial</td>
-            <td className="border border-gray-300 px-4 py-2">{formatarMoeda(data.estoque_inicial)}</td>
+            <td className="border border-gray-300 px-4 py-2">{formatarMoeda(estoque_inicial)}</td>
           </tr>
           <tr>
             <td className="border border-gray-300 px-4 py-2">Caixa mínimo</td>
-            <td className="border border-gray-300 px-4 py-2">{formatarMoeda(data.custoDiario*necessidadeLiquidaDias)}</td>
+            <td className="border border-gray-300 px-4 py-2">{formatarMoeda(custoDiario*necessidadeLiquidaDias)}</td>
           </tr>
           <tr>
             <td className="border border-gray-300 px-4 py-2">TOTAL DO CAPITAL DE GIRO</td>
-            <td className="border border-gray-300 px-4 py-2">{formatarMoeda(caixaMinimo+data.estoque_inicial)}</td>
+            <td className="border border-gray-300 px-4 py-2">{formatarMoeda(caixaMinimo+estoque_inicial)}</td>
           </tr>
         </tbody>
       </table>

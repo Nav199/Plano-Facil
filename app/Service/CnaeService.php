@@ -5,7 +5,7 @@ class CnaeService
 {
     public function getCnaeData()
     {
-        // Definindo os dados como um array
+        
      return [
             [
                 "CNAE" => 3250706,

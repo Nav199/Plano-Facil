@@ -1,8 +1,11 @@
 import React from 'react';
 import { usePage, useForm } from '@inertiajs/react';
+import Authenticated from '@/Layouts/AuthenticatedLayout';
+import Button from '@/Components/Button';
+
 
 function Avaliacao() {
-  const { planoId, avaliacao = [], error } = usePage().props;
+  const { planoId, avaliacao = [], error,auth } = usePage().props;
 
   const { data, setData, post, processing, errors, reset } = useForm({
     avaliacao: avaliacao.length > 0 ? avaliacao : [''],
@@ -22,8 +25,15 @@ function Avaliacao() {
   };
 
   return (
+     <Authenticated
+          user={auth.user}
+          header={
+            <h2 className="font-semibold text-xl text-gray-800 leading-tight text-center">
+              Avaliação Geral do Plano
+            </h2>
+          }
+        >
     <div className="container mx-auto p-8">
-      <h1 className="text-3xl font-bold mb-8 text-center">Avaliação Geral do Plano</h1>
 
       {/* Exibe mensagem de erro se houver */}
       {error && <p className="text-red-500 text-center">{error}</p>}
@@ -63,6 +73,7 @@ function Avaliacao() {
         <p className="text-gray-700 text-center">Nenhuma avaliação disponível.</p>
       )}
     </div>
+    </Authenticated>
   );
 }
 

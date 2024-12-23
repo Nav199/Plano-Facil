@@ -8,7 +8,7 @@ export default function Edit({ auth, mustVerifyEmail, status }) {
     return (
         <AuthenticatedLayout
             user={auth.user}
-            header={<h2 className="font-semibold text-xl text-gray-800 leading-tight">Profile</h2>}
+            header={<h2 className="font-semibold text-xl text-gray-800 leading-tight">Perfil</h2>}
         >
             <Head title="Profile" />
 
@@ -20,10 +20,6 @@ export default function Edit({ auth, mustVerifyEmail, status }) {
                             status={status}
                             className="max-w-xl"
                         />
-                    </div>
-
-                    <div className="p-4 sm:p-8 bg-white shadow sm:rounded-lg">
-                        <UpdatePasswordForm className="max-w-xl" />
                     </div>
 
                     <div className="p-4 sm:p-8 bg-white shadow sm:rounded-lg">

@@ -1,9 +1,10 @@
-import React from 'react';
+import React, { Suspense, lazy } from 'react';
 import { usePage } from '@inertiajs/react';
 import Authenticated from '@/Layouts/AuthenticatedLayout';
 
 const Relatorio = ({auth }) => {
   const { plano, status, message,analise,avaliacao } = usePage().props;
+  const DownloadButton = lazy(() => import('@/Components/DownloadButton'));
 
   const formatarPreco = (preco) => {
     return new Intl.NumberFormat('pt-BR', {
@@ -394,7 +395,14 @@ const Relatorio = ({auth }) => {
     )}
   </div>
 </section>
-
+  {/* Botão de Download */}
+  <Suspense fallback={<p>Carregando botão...</p>}>
+              <DownloadButton
+                elementId="relatorio-content"
+                filename={`Plano_de_Negocio_${plano?.nome || 'Desconhecido'}.pdf`}
+                planoNome={plano?.nome}
+              />
+            </Suspense>
           </>
         )}
       </main>

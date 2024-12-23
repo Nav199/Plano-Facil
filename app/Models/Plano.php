@@ -40,6 +40,17 @@ class Plano extends Model
         return $this->hasMany(equipamento::class, 'id_plano');
     }
 
+    public function computador()
+
+    {
+        return $this->hasMany(computador::class,'id_plano');
+    }
+
+    public function moveis()
+    {
+        return $this->hasMany(moveis::class,'id_plano');
+    }
+
     public function Forma()
     {
         return $this->hasMany(Forma::class, 'id_plano');
@@ -110,6 +121,16 @@ class Plano extends Model
     public function socios()
     {
         return $this->hasMany(Socios::class,'id_plano');
+    }
+
+    public function capital_giro()
+    {
+        return $this->hasMany(caixa_minimo::class,'id_plano');
+    }
+
+    public function investimento_total()
+    {
+        return $this->hasMany(investimento_total::class,'id_plano');
     }
 
 }

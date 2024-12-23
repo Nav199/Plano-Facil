@@ -1,12 +1,13 @@
 <?php
 
 namespace App\Http\Controllers;
-
+ 
 use App\Models\Demonstrativo;
+use App\Models\indicadores;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 use Illuminate\Support\Facades\DB;
-
+ 
 class DemonstrativoController extends Controller
 {
     public function create($id)
@@ -16,28 +17,53 @@ class DemonstrativoController extends Controller
             'faturamento' => $this->listar_faturamento($id),
             'apuracao' => $this->listar_apuracao($id),
             'custo_fixo' => $this->listar_custos_fixos($id),
-            'gastos_vendas' => $this->listar_gastos_vendas($id), // Adicionado
+            'gastos_vendas' => $this->listar_gastos_vendas($id),
+            'investimento' => $this->listar_capital($id),
             'status' => session('status'),
         ]);
     }
     
     public function store(Request $request, $id)
     {
+        // Validação dos dados recebidos
         $validated = $request->validate([
             'lucro_operacional' => 'required|numeric',
             'lucro_anual' => 'required|numeric',
             'porcentagem' => 'required|numeric',
+            'indicadores.lucrabilidade_mensal' => 'required|numeric',
+            'indicadores.lucrabilidade_anual' => 'required|numeric',
+            'indicadores.rentabilidade_mensal' => 'required|numeric',
+            'indicadores.rentabilidade_anual' => 'required|numeric',
+            'indicadores.ponto_equilibrio_mensal' => 'required|numeric',
+            'indicadores.ponto_equilibrio_anual' => 'required|numeric',
+            'indicadores.roi_mensal' => 'required|numeric',
+            'indicadores.roi_anual' => 'required|numeric',
         ]);
-    
+
+        // Criação do Demonstrativo
         Demonstrativo::create([
             'id_plano' => $id,
             'resultado_operacional' => $validated['lucro_operacional'],
             'lucro_mensal' => $validated['lucro_anual'],
             'porcentagem_lucro' => $validated['porcentagem'],
         ]);
-    
-        return redirect()->route('analise', [$id])->with('success', 'Demonstrativo salvo com sucesso.');
+
+        // Criação dos Indicadores
+        indicadores::create([
+            'id_plano' => $id,
+            'lucrabilidade_mensal' => $validated['indicadores']['lucrabilidade_mensal'],
+            'lucrabidade_anual' => $validated['indicadores']['lucrabilidade_anual'],
+            'ponto_equilibrio_mensal' => $validated['indicadores']['ponto_equilibrio_mensal'],
+            'ponto_equilibrio_anual' => $validated['indicadores']['ponto_equilibrio_anual'],
+            'rentabilidade_mensal' => $validated['indicadores']['rentabilidade_mensal'],
+            'rentabilidade_anual' => $validated['indicadores']['rentabilidade_anual'],
+            'roi_mensal' => $validated['indicadores']['roi_mensal'],
+            'roi_anual' => $validated['indicadores']['roi_anual'],
+        ]);
+
+        return redirect()->route('analise', [$id])->with('success', 'Demonstrativo e indicadores salvos com sucesso.');
     }
+
     
 
     public function listar_faturamento($id)
@@ -154,6 +180,16 @@ class DemonstrativoController extends Controller
         
     }
     
+    public function listar_capital($id)
+    {
+        $detalhesCapital = DB::table('investimento_total')
+            ->select('id', 'id_plano', 'total_investimento', DB::raw('total_investimento AS total'))
+            ->where('id_plano', $id)
+            ->get();
 
-
+        return [
+            'detalhes' => $detalhesCapital,
+            'total' => $detalhesCapital->first()->total,
+        ];
+    }
 }

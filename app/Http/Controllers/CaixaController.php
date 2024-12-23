@@ -43,15 +43,14 @@ class CaixaController extends Controller
         ];
     }
     
-
+ 
     public function store(Request $request, $id)
     {
         // Validação dos dados recebidos
-        Log::info("Payload recebido no backend:", $request->all());
         //dd($request->all());
         $validated = $request->validate([
-            'necessidade_liquida_dias' => 'required|numeric',
-            'caixa_minimo' => 'required|numeric',
+            'necessidadeLiquidaDias' => 'required|numeric',
+            'caixaMinimo' => 'required|numeric',
             'capital_giro' => 'required|numeric',
             'estoque_inicial' => 'required|numeric',
         ]);
@@ -59,7 +58,7 @@ class CaixaController extends Controller
     
         Log::info($validated);
 
-        try {
+        try { 
             caixa_minimo::create([
                 'id_plano' => $id,
                 'necessidade_estoque' => $validated['necessidadeLiquidaDias'],
@@ -68,7 +67,7 @@ class CaixaController extends Controller
             ]);
     
             return redirect()->route('demonstrativo', [$id])
-                ->with('success', 'Estoque salvo com sucesso.');
+            ->with('success', 'Depreciações salvas com sucesso.');
         } catch (\Exception $e) {
             Log::error('Erro ao salvar caixa mínimo: ' . $e->getMessage());
             return redirect()->back()->withErrors('Erro ao salvar caixa mínimo');

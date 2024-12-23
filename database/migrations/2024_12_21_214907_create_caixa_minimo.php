@@ -14,9 +14,9 @@ return new class extends Migration
         Schema::create('caixa_minimo', function (Blueprint $table) {
             $table->id(); 
             $table->unsignedBigInteger('id_plano'); 
-            $table->decimal('necessidade_estoque', 10, 2)->default(0); 
-            $table->decimal('capital_giro', 10, 2); 
-            $table->decimal('estoque_inicial', 10, 2); 
+            $table->decimal('necessidade_estoque', 20, 10)->default(0); // Ajustado para maior precisão
+            $table->decimal('capital_giro', 20, 10); // Ajustado para maior precisão
+            $table->decimal('estoque_inicial', 20, 10); // Ajustado para maior precisão
             $table->timestamps();
             
             $table->foreign('id_plano')

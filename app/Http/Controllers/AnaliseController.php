@@ -72,8 +72,8 @@ class AnaliseController extends Controller
     /**
      * Processa e retorna os dados para análise SWOT.
      */
-    public function analisarPlanoFrontend($id)
-    {
+    public function analisarPlanoFrontend($id) 
+    { 
         $plano = Plano::with([
             'executivos',
             'veiculo',
@@ -90,7 +90,11 @@ class AnaliseController extends Controller
             'apuracao',
             'custo_fixo',
             'demonstrativo',
-            'socios',
+            'socios', 
+            'capital_giro',
+            'mao_obra',
+            'investimento_total'
+            
         ])->find($id);
     
         if (!$plano) {
@@ -99,22 +103,23 @@ class AnaliseController extends Controller
         }
     
         $dados = [
-            'nome' => $plano->nome,
-            'executivos' => $plano->executivos->toArray(),
-            'veiculo' => $plano->veiculo->toArray(),
-            'faturamento' => $plano->Faturamento->toArray(),
-            'mao de obra'=> $plano->mao_obra->toArray(),
-            'apuração de custo'=> $plano->apuracao->toArray(),
-            'Demonstrativo de resultados'=> $plano->demonstrativo->toArray(),
-            'Apuração de Custo'=> $plano->apuracao->toArray(),
-            'Custo Fixo'=> $plano->custo_fixo->toArray(),
-            'Marketing'=> $plano->marketing->toArray(),
-            'Clientes'=> $plano->clientes->toArray(),
-            'Concorrentes'=> $plano->concorrentes->toArray(),
-            'Fornecedores'=> $plano->fornecedores->toArray(),
-            'Forma'=> $plano->Forma->toArray(),
-            'Socios'=> $plano->socios->toArray(),
-            'Investimento Pré operacional'=> $plano->investimento_pre->toArray(),
+            'nome do empreendimento' => $plano->nome,
+            'Plano executivo' => $plano->executivos->toArray(),
+            'veiculo do empreendimento' => $plano->veiculo->toArray(),
+            'faturamento do empreendimento' => $plano->Faturamento->toArray(),
+            'mao de obra do empreendimento'=> $plano->mao_obra->toArray(),
+            'apuração de custo do empreendimento'=> $plano->apuracao->toArray(),
+            'Demonstrativo de resultados do empreendimento'=> $plano->demonstrativo->toArray(),
+            'Custo Fixo do empreendimento'=> $plano->custo_fixo->toArray(),
+            'Marketing do empreendimento'=> $plano->marketing->toArray(),
+            'Clientes do empreendimento'=> $plano->clientes->toArray(),
+            'Concorrentes do empreendimento'=> $plano->concorrentes->toArray(),
+            'Fornecedores do empreendimento '=> $plano->fornecedores->toArray(),
+            'Forma do empreendimento'=> $plano->Forma->toArray(),
+            'Socios do empreendimento'=> $plano->socios->toArray(),
+            'Investimento Pré operacional do empreendimento'=> $plano->investimento_pre->toArray(),
+            'Capital de Giro do empreendimento'=>$plano->capital_giro->toArray(),
+            'Investimento total do empreendimento'=>$plano->investimento_total->toArray(),
         ];
     
         $geminiService = new ServiceGemini();

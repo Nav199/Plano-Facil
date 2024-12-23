@@ -28,7 +28,7 @@ class InvestimentoFController extends Controller
 
     public function store(Request $request, $id)
     {
-        dd($request->all());
+        //dd($request->all());
         try {
             // Validação
             $validatedData = $request->validate([
@@ -51,7 +51,7 @@ class InvestimentoFController extends Controller
             $this->salvarItens($validatedData['maquinas'], 'maquina', $plano->id); 
             $this->salvarItens($validatedData['equipamentos'], 'equipamento', $plano->id);
             $this->salvarItens($validatedData['veiculos'], 'veiculo', $plano->id);
-            $this->salvarItens($validatedData['moveisUtensilios'], 'moveis', $plano->id);
+            $this->salvarItens($validatedData['moveisUtensilios'], 'moveis_utensilios', $plano->id);
             $this->salvarItens($validatedData['computadores'], 'computador', $plano->id);
 
             // Responder com sucesso
@@ -71,17 +71,21 @@ class InvestimentoFController extends Controller
     {
         foreach ($itens as $item) {
             if (is_array($item)) {
-                // Verifique e converta se necessário
                 $item = (object) $item;
             }
-
+    
+            // Limpar e converter o valorUnitario para float
+            $valorUnitario = floatval(str_replace(['R$', '.', ','], ['', '', '.'], $item->valorUnitario));
+    
             DB::table($tipo)->insert([
-                'descricao' => (string) $item->descricao,  // Garantir que seja string
-                'quantidade' => (int) $item->quantidade,  // Garantir que seja inteiro
-                'valor_unitario' => (float) $item->valorUnitario,  // Garantir que seja float
-                'total' => (float) ($item->quantidade * $item->valorUnitario),
+                'descricao' => (string) $item->descricao,
+                'quantidade' => (int) $item->quantidade,
+                'valor_unitario' => $valorUnitario,
+                'total' => (float) ($item->quantidade * $valorUnitario),
                 'id_plano' => $planoId,
             ]);
         }
     }
+    
+
 }

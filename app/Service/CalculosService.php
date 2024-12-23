@@ -65,7 +65,7 @@ class CalculosService
             'totalComCrescimento' => $totalComCrescimento
         ];
     }
-
+ 
     public function calcular12Meses($itens, $crescimento, $calculoCallback)
     {
         // Converter itens para array caso seja Collection

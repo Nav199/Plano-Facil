@@ -57,6 +57,7 @@ const TabelaInvestimentos = ({ categoria, dados, adicionarItem, removerItem, han
               <td>{formatarMoeda(item.total)}</td>
               <td>
                 <button
+                     type="button"
                   className="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded"
                   onClick={() => removerItem(index)}
                 >
@@ -69,6 +70,7 @@ const TabelaInvestimentos = ({ categoria, dados, adicionarItem, removerItem, han
       </table>
       <div className="text-right font-bold mb-4">SUBTOTAL {categoria}: {calcularSubtotal()}</div>
       <button
+       type="button" 
         className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
         onClick={adicionarItem}
       >

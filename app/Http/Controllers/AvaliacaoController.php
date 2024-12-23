@@ -61,12 +61,19 @@ class AvaliacaoController extends Controller
         'Forma',
         'investimento_pre',
         'Faturamento',
-        'analise',
+        'clientes',
+        'concorrentes',
+        'fornecedores',
+        'marketing',
         'apuracao',
-        'comercializacao',
-        'custo_fixo', 
+        'custo_fixo',
         'demonstrativo',
-        'mao_obra'
+        'socios', 
+        'capital_giro',
+        'mao_obra',
+        'investimento_total',
+        'analise'
+        
     ])->find($id);
  
     if (!$plano) {
@@ -75,16 +82,24 @@ class AvaliacaoController extends Controller
     }
 
     $dados = [
-        'nome' => $plano->nome,
-        'executivos' => $plano->executivos->toArray(),
-        'veiculo' => $plano->veiculo->toArray(),
-        'faturamento' => $plano->Faturamento->toArray(),
-        'analise' => $plano->analise->toArray(),
-        'Estratégia de Comercializacao'=> $plano->comercializacao->toArray(),
-        'Apuração de custo'=> $plano->apuracao->toArray(),
-        'Custos Fixos'=> $plano->custo_fixo->toArray(),
-        'Mão de Obra'=> $plano->mao_obra->toArray(),
-        'Demonstrativo de Resultados' => $plano->demonstrativo->toArray(),
+        'nome do empreendimento' => $plano->nome,
+        'Plano executivo' => $plano->executivos->toArray(),
+        'veiculo do empreendimento' => $plano->veiculo->toArray(),
+        'faturamento do empreendimento' => $plano->Faturamento->toArray(),
+        'mao de obra do empreendimento'=> $plano->mao_obra->toArray(),
+        'apuração de custo do empreendimento'=> $plano->apuracao->toArray(),
+        'Demonstrativo de resultados do empreendimento'=> $plano->demonstrativo->toArray(),
+        'Custo Fixo do empreendimento'=> $plano->custo_fixo->toArray(),
+        'Marketing do empreendimento'=> $plano->marketing->toArray(),
+        'Clientes do empreendimento'=> $plano->clientes->toArray(),
+        'Concorrentes do empreendimento'=> $plano->concorrentes->toArray(),
+        'Fornecedores do empreendimento '=> $plano->fornecedores->toArray(),
+        'Forma do empreendimento'=> $plano->Forma->toArray(),
+        'Socios do empreendimento'=> $plano->socios->toArray(),
+        'Investimento Pré operacional do empreendimento'=> $plano->investimento_pre->toArray(),
+        'Capital de Giro do empreendimento'=>$plano->capital_giro->toArray(),
+        'Investimento total do empreendimento'=>$plano->investimento_total->toArray(),
+        'Análise do empreendimento'=>$plano->analise->toArray(),
     ];
 
     $geminiService = new ServiceGemini();
@@ -110,7 +125,7 @@ class AvaliacaoController extends Controller
         $avaliacaoData = json_decode($cleanedText, true);
 
         if ($avaliacaoData) {
-            return $avaliacaoData; // Retorna os dados diretamente
+            return $avaliacaoData;
         } else {
             Log::warning('O conteúdo retornado não é um JSON válido.', ['avaliacaoDataText' => $avaliacaoDataText]);
             return ['error' => 'Erro ao interpretar a resposta da IA.'];

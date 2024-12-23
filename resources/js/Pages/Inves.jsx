@@ -98,6 +98,7 @@ const Inves = ({ planoId, auth }) => {
         </h2>
       }
     >
+      <form onSubmit={handleSubmit}>
       <div className="container mx-auto p-4 mt-4">
         <TabelaInvestimentos
           categoria="Imóveis"
@@ -117,7 +118,7 @@ const Inves = ({ planoId, auth }) => {
           handlePriceChange={(index, e) => handlePriceChange('maquinas', index, e)}  // Passando a categoria
         />
 
-        <TabelaInvestimentos
+        <TabelaInvestimentos 
           categoria="Equipamentos"
           dados={data.equipamentos}
           adicionarItem={() => handleAddItem('equipamentos')}
@@ -167,6 +168,7 @@ const Inves = ({ planoId, auth }) => {
           </Button>
         </div>
       </div>
+   </form>
     </Authenticated>
   );
 };
