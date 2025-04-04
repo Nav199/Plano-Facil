@@ -32,10 +32,10 @@ class ExecutivoController extends Controller
             'missao' => 'nullable|string|max:1000',
             'setorAtividade' => 'required|string|max:120',
             'formaJuridica' => 'required|string|max:120',
-            'enquadramentoTributario' => 'nullable|string|max:120',
-            'visao' => 'nullable|string|max:100',
-            'valores' => 'nullable|string|max:100',
-            'fonteRecursos' => 'nullable|string|max:1000',
+            'enquadramentoTributario' => 'required|string|max:120',
+            'visao' => 'nullable|string|max:300',
+            'valores' => 'nullable|string|max:300',
+            'fonteRecursos' => 'nullable|string|max:100',
         ]);
     
         // Buscando a descrição do CNAE com base no setor de atividade

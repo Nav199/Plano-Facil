@@ -9,74 +9,80 @@ use Inertia\Inertia;
 
 class CustoFixoController extends Controller
 {
-    //Controller do Custo Fixo
- 
+    /**
+     * Renderiza o formulário de custos fixos com os valores de salários e depreciação carregados.
+     */
     public function create($id)
     {
-        $salario = $this->listar_salario($id);
+        $salario = $this->listar_salario($id); // Obtem o valor total de salários
+        $depreciacao = $this->listar_depre($id); // Obtem o valor total de depreciação
 
-        $depreciacao = $this->listar_depre($id);
-
-        return Inertia::render('CustosFixos',[
-            'Salario'=> $salario,
-            'Depreciacao'=>$depreciacao,
+        return Inertia::render('CustosFixos', [
+            'Salario' => $salario,
+            'Depreciacao' => $depreciacao,
             'planoId' => $id,
-            "status"=> session('status')
+            'status' => session('status')
         ]);
     }
 
+    /**
+     * Processa e armazena os dados de custos fixos enviados pelo formulário.
+     */
     public function store(Request $request, $id)
     {
-       //dd($request->all());
-        // Validação dos dados
+        // Validação dos dados enviados
+        //dd($request->all());
         $validated = $request->validate([
             'custos' => 'required|array',
             'custos.*.descricao' => 'required|string',
-            'custos.*.valor' => 'nullable|numeric',  // Permitir valores nulos
-            'crescimento' => 'nullable|numeric',  // Permitir valores nulos
-            'total' => 'nullable|numeric' // Permitir valores nulos
+            'custos.*.valor' => 'nullable|string', 
+            'crescimento' => 'nullable|numeric',   
+            'total'=>'nullable|numeric'
         ]);
     
-        foreach ($validated['custos'] as &$custo) {
-        
-            $custo['valor'] = $custo['valor'] ?? 0;
-            $custo['crescimento'] = $validated['crescimento'] ?? 0; 
-            $custo['total'] = $validated['total'] ?? 0; 
-        }
+       
+        foreach ($validated['custos'] as $custo) {
+            // Remove os caracteres "R$", espaços e vírgulas para limpar o valor
+            $valorLimpo = preg_replace('/[^\d.-]/', '', $custo['valor']); // Mantém apenas números e ponto/menos
     
-        foreach ($validated['custos'] as $item) {
+            // Verifica se o valor está vazio, se sim, define como 0
+            $valorNumerico = $valorLimpo ? (float) $valorLimpo : 0;
+    
             CustoFixo::create([
-                'id_plano' => $id, 
-                'descricao' => $item['descricao'],
-                'custo' => $item['valor'],
-                'crescimento' => $item['crescimento'],
-                'total' => $item['total']
+                'id_plano' => $id,
+                'descricao' => $custo['descricao'],
+                'custo' => $valorNumerico, // Armazena o valor numérico
+                'crescimento' => $validated['crescimento'] ?? 0, // Crescimento padrão 0
+                'total' => $validated['total']
             ]);
         }
-    return redirect()->route('caixa', [$id])->with('status', 'Custos fixos salvos com sucesso!');
-}
-    public function listar_salario($id)
-    {
-        // Realiza o join entre a tabela 'mao_obra' e a tabela 'planos' (substitua 'planos' pelo nome real da tabela de planos)
-        $salarios = DB::table('mao_obra')
-            ->join('plano_negocios', 'mao_obra.id_plano', '=', 'plano_negocios.id')
-            ->where('mao_obra.id_plano', $id)
-            ->select('mao_obra.total') // Seleciona apenas a coluna 'total'
-            ->get(); // Retorna os resultados
     
-        // Para retornar apenas o total acumulado:
-        $totalSalarios = $salarios->sum('total'); // Soma os totais retornados
-    
-        return $totalSalarios; // Retorna o total acumulado
+        return redirect()->route('caixa', [$id])->with('status', 'Custos fixos salvos com sucesso!');
     }
     
-    
-    
+    /**
+     * Lista o valor total de salários para o plano de negócios especificado.
+     */
+    public function listar_salario($id)
+    {
+        // Soma o total da coluna 'total' na tabela 'mao_obra' para o plano especificado
+        $totalSalarios = DB::table('mao_obra')
+            ->where('id_plano', $id)
+            ->sum('total'); // Retorna a soma de todos os valores de salários
+
+        return $totalSalarios; // Retorna como numérico
+    }
+
+    /**
+     * Lista o valor total de depreciação mensal para o plano de negócios especificado.
+     */
     public function listar_depre($id)
     {
-        $depreciacoes = DB::table('depreciacao')
-        ->where('id_plano', $id)
-        ->sum('total'); // Soma o valor da depreciação
-        return $depreciacoes;
+        // Soma o valor da coluna 'mensal' na tabela 'depreciacao' para o plano especificado
+        $totalDepreciacao = DB::table('depreciacao')
+            ->where('id_plano', $id)
+            ->sum('mensal'); // Soma os valores de depreciação mensal
+
+        return $totalDepreciacao; // Retorna como numérico
     }
 }

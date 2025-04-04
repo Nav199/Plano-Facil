@@ -7,7 +7,7 @@ const Client_form = ({ onChange }) => {
     };
 
     return (
-        <div className="p-4 bg-gray-100 rounded shadow mb-4">
+        <div className="p-4 bg-gray-100 rounded shadow mb-4 text-center">
             <h2 className="text-lg font-semibold mb-2">Estudo do Cliente</h2>
             <div className="grid grid-cols-2 gap-4">
                 <div>
@@ -16,7 +16,7 @@ const Client_form = ({ onChange }) => {
                         type="text"
                         name="perfil"
                         id="perfil"
-                        className="mt-1 p-2 w-full border-gray-300 rounded-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
+                        className="mt-1 p-2 w-3/5 border-gray-300 rounded-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
                         onChange={handleChange}
                     />
                 </div>
@@ -26,7 +26,7 @@ const Client_form = ({ onChange }) => {
                         name="comportamento"
                         id="comportamento"
                         maxLength={200}
-                        className="mt-1 p-2 w-full border-gray-300 rounded-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
+                        className="mt-1 p-2 w-3/5 border-gray-300 rounded-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
                         onChange={handleChange}
                     />
                 </div>
@@ -37,7 +37,7 @@ const Client_form = ({ onChange }) => {
                         name="área"
                         id="área"
                         maxLength={200}
-                        className="mt-1 p-2 w-full border-gray-300 rounded-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
+                        className="mt-1 p-2 w-3/5 border-gray-300 rounded-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
                         onChange={handleChange}
                     />
                 </div>

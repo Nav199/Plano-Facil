@@ -12,8 +12,9 @@ class Fornecedor extends Model
     protected $table = 'fornecedor';
 
     protected $fillable = [
-        'id', 'id_plano','descricao','nome','preco','pagamento','localizacao'
+        'id', 'id_plano', 'descricao', 'nome', 'preco', 'pagamento', 'localizacao', 'prazo_entrega'
     ];
+    
     public function plano()
     {
         return $this->belongsTo(Plano::class,'id_plano');

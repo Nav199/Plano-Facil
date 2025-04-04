@@ -5,7 +5,7 @@ class CnaeService
 {
     public function getCnaeData()
     {
-        
+         
      return [
             [
                 "CNAE" => 3250706,
@@ -63,11 +63,25 @@ class CnaeService
                 "Alíquota" => 6
             ],
 
-            [
+            [ 
                 "CNAE" => 8512100,
                 "Descrição" => "Educação infantil – pré-escola",
                 "Fator R" => "Não",
                 "Alíquota" => 6
+            ],
+
+            [
+                "CNAE" => 4512901,
+                "Descrição" => "Representantes comerciais e agentes do comércio de veículos automotores",
+                "Fator R" => "Sim",
+                "Alíquota" => 15.5
+            ],
+
+            [
+                "CNAE" => 4530703,
+                "Descrição" => "Comércio a varejo de peças e acessórios novos para veículos automotores",
+                "Fator R" => "Não",
+                "Alíquota" => 4
             ],
 
         ];

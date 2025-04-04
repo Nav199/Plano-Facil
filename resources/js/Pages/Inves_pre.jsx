@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
 import { useForm } from '@inertiajs/react';
 import Button from '@/Components/Button'; 
-
-const Inves_pre = ({ planoId }) => {
+import Authenticated from "@/Layouts/AuthenticatedLayout";
+const Inves_pre = ({ planoId,auth }) => {
   const [items, setItems] = useState([{ descricao: '', valor: '' }]);
   
   const { post, data, setData, reset,processing } = useForm({

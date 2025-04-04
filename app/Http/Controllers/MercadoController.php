@@ -19,7 +19,7 @@ class MercadoController extends Controller
         ]);
     } 
  
-    public function store(Request $request, $id)
+    public function store(Request $request, $id) 
 {
     //dd($request->all());
     // Validação dos dados
@@ -41,6 +41,7 @@ class MercadoController extends Controller
         'fornecedor.*.preco_fornecedor' => 'required|numeric',
         'fornecedor.*.pagamento_fornecedor' => 'required|string|max:255',
         'fornecedor.*.localizacao_fornecedor' => 'required|string|max:255',
+        'fornecedor.*.prazo_entrega' => 'nullable|string|max:255',
     ]);
     
     $plano = Plano::findOrFail($id);
@@ -73,13 +74,14 @@ class MercadoController extends Controller
     if (isset($validated['fornecedor'])) {
         foreach ($validated['fornecedor'] as $fornecedorData) {
             Fornecedor::create([
+                'id_plano' => $plano->id,
                 'descricao' => $fornecedorData['descricao_fornecedor'],
                 'nome' => $fornecedorData['nome_fornecedor'],
                 'preco' => $fornecedorData['preco_fornecedor'],
                 'pagamento' => $fornecedorData['pagamento_fornecedor'],
                 'localizacao' => $fornecedorData['localizacao_fornecedor'],
-                'id_plano' => $plano->id
-            ]);
+                'prazo_entrega' => $fornecedorData['prazo_entrega'] ?? null,
+            ]);            
         }
     }
 

@@ -93,6 +93,11 @@ class Plano extends Model
         return $this->hasMany(apuracao::class, 'id_plano');
     }
 
+    public function estoque()
+    {
+        return $this->hasMany(estoque::class, 'id_plano');
+    }
+
     public function mao_obra()
     {
         return $this->hasMany(Obra::class, 'id_plano');
@@ -131,6 +136,11 @@ class Plano extends Model
     public function investimento_total()
     {
         return $this->hasMany(investimento_total::class,'id_plano');
+    }
+
+    public function indicadores()
+    {
+        return $this->hasMany(indicadores::class,'id_plano');
     }
 
     public function depreciacao()

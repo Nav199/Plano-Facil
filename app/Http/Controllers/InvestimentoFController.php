@@ -45,7 +45,7 @@ class InvestimentoFController extends Controller
             if (!$plano) {
                 return redirect()->route('plano.index')->withErrors(['message' => 'Plano não encontrado']);
             }
- 
+  
             // Função para salvar cada item em sua respectiva tabela
             $this->salvarItens($validatedData['imoveis'], 'imoveis', $plano->id);
             $this->salvarItens($validatedData['maquinas'], 'maquina', $plano->id); 

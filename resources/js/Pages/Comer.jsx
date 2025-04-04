@@ -1,7 +1,7 @@
 import { usePage, useForm } from "@inertiajs/react";
 import Button from '@/Components/Button'; 
 import Authenticated from "@/Layouts/AuthenticatedLayout";
-const Comer = ({ planoId }) => {
+const Comer = ({ planoId,auth }) => {
   const { totalFaturamento, aliquota } = usePage().props;
 
   const { data, setData, post, processing, errors, reset } = useForm({
@@ -12,7 +12,7 @@ const Comer = ({ planoId }) => {
       { descricao: "Taxas de Cartões (Gastos com Vendas)", percentual: '', faturamentoEstimado: totalFaturamento, custoTotal: 0 },
     ],
   });
-
+ 
   const handlePercentualChange = (index, newPercentual) => {
     const updatedGastosVendas = data.gastosVendas.map((item, i) => {
       if (i === index) {

@@ -19,6 +19,8 @@ const Demonstrativo = ({ planoId, auth }) => {
   const totalGastosVendas = gastos_vendas?.total ?? 0;
   const gastosVendasAnuais = gastos_vendas?.gastosAnuais ?? 0;
 
+const margem = totalFaturamento+(totalApuracao + totalGastosVendas)
+const margem_anual = faturamentoAnual+(apuracaoAnual + gastosVendasAnuais)
   // Cálculos financeiros
   const valor = totalFaturamento - (totalApuracao + totalGastosVendas + totalCustosFixos);
   const anual_lucro = faturamentoAnual - (apuracaoAnual + gastosVendasAnuais + custosFixosAnuais);
@@ -45,7 +47,7 @@ const Demonstrativo = ({ planoId, auth }) => {
       { descricao: "Custos Variáveis Totais", valor: totalApuracao + totalGastosVendas, anual: apuracaoAnual + gastosVendasAnuais, percentual: (((totalApuracao + totalGastosVendas) / totalFaturamento) * 100).toFixed(2) },
       { descricao: "Custos com Materiais Diretos e/ou CMV", valor: totalApuracao, anual: apuracaoAnual, percentual: ((totalApuracao / totalFaturamento) * 100).toFixed(2) },
       { descricao: "Gastos com Vendas", valor: totalGastosVendas, anual: gastosVendasAnuais, percentual: ((totalGastosVendas / totalFaturamento) * 100).toFixed(2) },
-      { descricao: "Margem de Contribuição", valor: valor, anual: anual_lucro, percentual: percentual_lucro },
+      { descricao: "Margem de Contribuição", valor: margem, anual: margem_anual, percentual: ((margem / totalFaturamento) * 100).toFixed(2) },
       { descricao: "Custos Fixos Totais", valor: totalCustosFixos, anual: custosFixosAnuais, percentual: ((totalCustosFixos / totalFaturamento) * 100).toFixed(2) },
       { descricao: "Resultado Operacional (Lucro)", valor: valor, anual: anual_lucro, percentual: percentual_lucro },
     ],

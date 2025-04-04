@@ -9,33 +9,33 @@ const Fornecedor_Form = ({ onChange}) => {
 
   const handlePriceChange = (e) => {
     let value = e.target.value;
-
+  
     // Remove caracteres não numéricos, mas permite a vírgula como separador decimal
     const numericValue = value.replace(/[^\d,]/g, '').replace(',', '.');
-
-    // Formata para o valor monetário 'R$ 90.000,00'
+  
+    // Formata o valor para exibição
     const formattedValue = "R$ " + numericValue
-      .replace('.', ',') // Substitui o ponto por vírgula para garantir o formato BR
+      .replace('.', ',') // Substitui o ponto por vírgula
       .replace(/\B(?=(\d{3})+(?!\d))/g, "."); // Adiciona ponto como separador de milhar
-
-    setPreco(formattedValue); // Armazena o valor formatado para exibição
-
-    // Passa o valor numérico (sem formatação) para o componente pai
-    onChange('preco_concorrente', numericValue);
+  
+    setPreco(formattedValue); // Exibe o valor formatado no input
+  
+    // Envia apenas o valor numérico para o pai
+    onChange('preco_fornecedor', parseFloat(numericValue));
   };
-
+  
 
   return (
-    <div className="p-4 bg-gray-100 rounded shadow mb-4">
-      <h2 className="text-lg font-semibold mb-2">Estudo dos Fornecedores</h2>
+    <div className="p-4 bg-gray-100 rounded shadow mb-4 text-center">
+      <h2 className="text-lg font-semibold mb-2 text-center">Estudo dos Fornecedores</h2>
       <div className="grid grid-cols-2 gap-4">
         <div>
-          <label htmlFor="nome" className="block text-sm font-medium text-gray-700">Nome</label>
+          <label htmlFor="nome" className="block text-sm font-medium text-gray-700" >Nome</label>
           <input
             type="text"
             id="nome"
             name="nome_fornecedor"
-            className="mt-1 p-2 w-full border-gray-300 rounded-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
+            className="mt-1 p-2 w-3/5 border-gray-300 rounded-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
             onChange={handleChange}
           />
         </div>
@@ -45,7 +45,7 @@ const Fornecedor_Form = ({ onChange}) => {
             type="text"
             id="descricao"
             name="descricao_fornecedor"
-            className="mt-1 p-2 w-full border-gray-300 rounded-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
+            className="mt-1 p-2 w-3/5 border-gray-300 rounded-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
             onChange={handleChange}
           />
         </div>
@@ -54,10 +54,10 @@ const Fornecedor_Form = ({ onChange}) => {
           <input
             type="text"
             id="preco"
-            name="preco_concorrente"
+            name="preco_fornecedor"
             value={preco}
-            className="mt-1 p-2 w-48 border-gray-300 rounded-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
-            onChange={handlePriceChange} // Atualiza o estado e o valor numérico
+            className="mt-1 p-2 w-3/5 border-gray-300 rounded-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
+            onChange={handlePriceChange} 
           />
         </div>
         <div>
@@ -66,7 +66,17 @@ const Fornecedor_Form = ({ onChange}) => {
             type="text"
             id="pagamento"
             name="pagamento_fornecedor"
-            className="mt-1 p-2 w-full border-gray-300 rounded-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
+            className="mt-1 p-2 w-3/5 border-gray-300 rounded-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
+            onChange={handleChange}
+          />
+        </div>
+        <div>
+          <label htmlFor="prazo" className="block text-sm font-medium text-gray-700">Prazo de entrega</label>
+          <input
+            type="text"
+            id="prazo"
+            name="prazo_entrega"
+            className="mt-1 p-2 w-3/5 border-gray-300 rounded-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
             onChange={handleChange}
           />
         </div>
@@ -76,7 +86,7 @@ const Fornecedor_Form = ({ onChange}) => {
             type="text"
             id="localizacao"
             name="localizacao_fornecedor"
-            className="mt-1 p-2 w-full border-gray-300 rounded-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
+            className="mt-1 p-2 w-3/5 border-gray-300 rounded-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
             onChange={handleChange}
           />
         </div>

@@ -124,6 +124,7 @@ const Fatura = ({ planoId, produtos,auth }) => {
                 </h2>
               }
             >
+    <form onSubmit={handleSubmit}>
     <div className="min-h-screen flex flex-col items-center bg-gray-100">
       <div className="bg-white p-6 rounded-lg shadow-lg w-full max-w-4xl">
         <table className="table-auto w-full mb-6 border-collapse text-center">
@@ -145,7 +146,7 @@ const Fatura = ({ planoId, produtos,auth }) => {
                     value={item.descricao}
                     onChange={(e) => handleChange(index, 'descricao', e.target.value)}
                     className="border border-gray-300 p-2 w-full rounded"
-                  />
+                  /> 
                 </td>
                 <td className="p-2">
                   <input
@@ -208,6 +209,7 @@ const Fatura = ({ planoId, produtos,auth }) => {
           </div>
       </div> 
     </div>
+    </form>
     </Authenticated>
   );
 };

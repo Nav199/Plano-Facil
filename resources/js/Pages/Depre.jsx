@@ -2,7 +2,7 @@ import React, { useEffect } from 'react';
 import { useForm } from '@inertiajs/react';
 import Authenticated from "@/Layouts/AuthenticatedLayout";
 import Button from "@/Components/Button";
-const Depre = ({ planoId, total }) => {
+const Depre = ({ planoId, auth,total }) => {
   const { data, setData, post, processing, errors } = useForm({
     ativos: [
       { nome: 'IMÓVEIS', valor: total.imoveis || 0, vidaUtil: 25, depAnual: 0, depMensal: 0 },
@@ -60,7 +60,8 @@ const Depre = ({ planoId, total }) => {
               user={auth.user}
               header={
                 <h2 className="font-semibold text-xl text-gray-800 leading-tight text-center">
-                  Custos Fixos
+                  Custo com
+                  Depreciação
                 </h2>
               }
             >
@@ -95,7 +96,7 @@ const Depre = ({ planoId, total }) => {
               </tr>
             ))}
             <tr className="font-bold">
-              <td className="border border-gray-300 px-4 py-2">Total</td>
+              
               <td className="border border-gray-300 px-4 py-2"></td>
               <td className="border border-gray-300 px-4 py-2"></td>
               <td className="border border-gray-300 px-4 py-2">{formatarValor(totalDepAnual)}</td>

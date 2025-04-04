@@ -46,7 +46,7 @@ class AvaliacaoController extends Controller
             ]);
         }
 
-        return redirect()->route('/dashboard')
+        return redirect()->route('dashboard')
             ->with('success', 'Avaliação enviada com sucesso!');
     }
  
@@ -72,6 +72,8 @@ class AvaliacaoController extends Controller
         'capital_giro',
         'mao_obra',
         'investimento_total',
+        'indicadores',
+        'estoque',
         'analise'
         
     ])->find($id);
@@ -99,11 +101,13 @@ class AvaliacaoController extends Controller
         'Investimento Pré operacional do empreendimento'=> $plano->investimento_pre->toArray(),
         'Capital de Giro do empreendimento'=>$plano->capital_giro->toArray(),
         'Investimento total do empreendimento'=>$plano->investimento_total->toArray(),
+        'Indicadores de Viabilidade'=>$plano->indicadores->toArray(),
+        'Estoque do empreendimento' => $plano->estoque->toArray(),
         'Análise do empreendimento'=>$plano->analise->toArray(),
     ];
 
     $geminiService = new ServiceGemini();
-    $prompt = "Crie uma avaliação sobre o plano de negócio no seguinte formato JSON:
+    $prompt = "Crie uma avaliação geral sobre o plano de negócio no seguinte formato:
         {
             \"avaliacao\": [\"...\"]
         }

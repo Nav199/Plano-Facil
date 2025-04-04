@@ -69,7 +69,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
     Route::get('/Operacional/{id}', [OperacionalController::class, 'create'])->name('plano_operacional');
     Route::post('/Operacional/{id}', [OperacionalController::class, 'store'])->name('plano_operacional');
-
+ 
     Route::get('/investimento-fixo/{id}', [InvestimentoFController::class, 'create'])->name('investimento-fixo');
     Route::post('/investimento-fixo/{id}', [InvestimentoFController::class, 'store'])->name('investimento-fixo');
 

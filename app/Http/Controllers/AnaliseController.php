@@ -94,7 +94,6 @@ class AnaliseController extends Controller
             'capital_giro',
             'mao_obra',
             'investimento_total'
-            
         ])->find($id);
     
         if (!$plano) {
@@ -134,6 +133,8 @@ class AnaliseController extends Controller
         Baseie-se nos seguintes dados: " . json_encode($dados);
     
         $resultado = $geminiService->analyze($dados, $prompt);
+
+        
     
         if (isset($resultado['error']) && $resultado['error']) {
             Log::error('Erro ao obter resposta da API Gemini', ['message' => $resultado['message']]);

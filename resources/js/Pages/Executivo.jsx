@@ -149,18 +149,19 @@ const Executivo = ({ auth }) => {
           <div className="w-full md:w-1/2 px-2 mb-4">
           <label className="block text-sm font-medium text-gray-700">Enquadramento Tributário</label>
           <select
-            name="enquadramentoTributario"
-            value={data.enquadramentoTributario}
-            onChange={handleChange}
-            className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2"
-            required
-          >
-            <option value="Simples Nacional">Simples Nacional</option>
-          </select>
+              name="enquadramentoTributario"
+              value={data.enquadramentoTributario}
+              onChange={handleChange}
+              className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2"
+              required
+            >
+              <option value="">Selecione...</option>
+              <option value="Simples Nacional">Simples Nacional</option>
+            </select>
           {errors.enquadramentoTributario && (
             <div className="text-red-600">{errors.enquadramentoTributario}</div>
-          )}
-        </div>
+          )} 
+        </div> 
 
           <div className="w-full md:w-1/2 px-2 mb-4">
             <label className="block text-sm font-medium text-gray-700">Valores da Empresa</label>

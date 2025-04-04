@@ -7,7 +7,7 @@ const Analise = ({ planoId, auth }) => {
   const { swotData, error } = usePage().props;
 
   // Configuração do formulário
-  const { data, setData, post, processing, errors, reset } = useForm({
+  const { data, setData, post, processing, errors } = useForm({
     swotData: swotData || {
       forcas: [],
       fraquezas: [],
@@ -19,7 +19,7 @@ const Analise = ({ planoId, auth }) => {
 
   const handleEnviar = (e) => {
     e.preventDefault(); // Evita comportamento padrão do botão
-    post(route('analise', { id: planoId }), { onSuccess: () => reset() });
+    post(route('analise', { id: planoId }));
   };
 
   if (error) {

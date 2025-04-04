@@ -11,13 +11,14 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('fornecedor', function (Blueprint $table) {
-            $table->increments('id'); // Cria uma coluna BIGINT UNSIGNED auto-incremental
+            $table->increments('id');
             $table->unsignedBigInteger('id_plano');
             $table->string('descricao', 40);
             $table->string('nome', 40);
             $table->float('preco');
             $table->string('pagamento', 40);
             $table->string('localizacao', 40);
+            $table->string('prazo_entrega')->nullable();
             $table->timestamps();
 
             $table->foreign('id_plano')->references('id')->on('plano_negocios')->onDelete('cascade');
