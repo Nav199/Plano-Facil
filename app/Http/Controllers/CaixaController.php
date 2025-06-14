@@ -25,7 +25,7 @@ class CaixaController extends Controller
     public function calcular_caixa_minimo($id)
     { 
         // Recupera somatórios de custos fixos, custos variáveis e estoque do banco de dados
-        $custos_fixos = DB::selectOne("SELECT SUM(custo) AS total_sum FROM custofixo WHERE id_plano = ?", [$id])->total_sum ?? 0;
+        $custos_fixos = DB::selectOne("SELECT SUM(custo) AS total_sum FROM custo_fixo WHERE id_plano = ?", [$id])->total_sum ?? 0;
         $custos_variaveis = DB::selectOne("SELECT SUM(total) AS total_sum FROM apuracao WHERE id_plano = ?", [$id])->total_sum ?? 0;
         $estoque = DB::selectOne("SELECT SUM(total) AS total_sum FROM estoque WHERE id_plano = ?", [$id])->total_sum ?? 0;
     

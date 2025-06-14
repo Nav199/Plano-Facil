@@ -12,17 +12,18 @@ return new class extends Migration
     {
         Schema::create('operacional', function (Blueprint $table) {
             $table->increments('id');
-            $table->unsignedBigInteger('id_plano')->nullable(); // Certifique-se de que o tipo de dados é compatível
-            $table->string('capacidade', 80);
-            $table->string('volume', 60);
-            $table->string('cargo', 30);
-            $table->string('qualificacao', 60);
+            $table->unsignedBigInteger('id_plano')->nullable(); 
+            $table->string('capacidade', 200);
+            $table->string('volume', 200);
+            $table->string('cargo', 100);
+            $table->string('qualificacao', 100);
+            $table->string('processos', 250);
             $table->timestamps();
 
-            // Adicionando a chave estrangeira
+       
             $table->foreign('id_plano')
                   ->references('id')
-                  ->on('plano_negocios') // Certifique-se de que o nome da tabela está correto
+                  ->on('plano_negocios') 
                   ->onDelete('cascade');
         });
     }

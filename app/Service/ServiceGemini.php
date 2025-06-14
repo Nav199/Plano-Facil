@@ -14,7 +14,7 @@ class ServiceGemini
     {
         // Defina sua chave API aqui ou no .env
         $this->apiKey = 'AIzaSyD7G5JPMzR_npTPMNrbVU9_8xh3T5irU4c'; 
-        $this->baseUrl = 'https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash-latest:generateContent';
+        $this->baseUrl = 'https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent';
     }
 
     /**
@@ -22,7 +22,7 @@ class ServiceGemini
      */
     public function analyze(array $dados, string $prompt)
     {
-        // Construa o payload com o prompt e os dados
+
         $payload = [
             'contents' => [
                 [
@@ -36,9 +36,12 @@ class ServiceGemini
         ];
 
         // Envia a solicitação para a API Gemini
-        $response = Http::withHeaders([
-            'Content-Type' => 'application/json',
-        ])->post("{$this->baseUrl}?key={$this->apiKey}", $payload);
+        $response = Http::withoutVerifying()
+                    ->withHeaders([
+                        'Content-Type' => 'application/json',
+                    ])
+                    ->post("{$this->baseUrl}?key={$this->apiKey}", $payload);
+
 
         // Log da resposta para debug
         Log::info('Resposta da API Gemini', ['response' => $response->body()]);

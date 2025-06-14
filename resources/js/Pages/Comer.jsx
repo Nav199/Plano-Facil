@@ -7,9 +7,9 @@ const Comer = ({ planoId,auth }) => {
   const { data, setData, post, processing, errors, reset } = useForm({
     gastosVendas: [
       { descricao: "SIMPLES (Imposto Federal)", percentual: aliquota, faturamentoEstimado: totalFaturamento, custoTotal: totalFaturamento * aliquota / 100 },
-      { descricao: "Comissões (Gastos com Vendas)", percentual: '', faturamentoEstimado: totalFaturamento, custoTotal: 0 },
-      { descricao: "Propaganda (Gastos com Vendas)", percentual: '', faturamentoEstimado: totalFaturamento, custoTotal: totalFaturamento * 0.02 },
-      { descricao: "Taxas de Cartões (Gastos com Vendas)", percentual: '', faturamentoEstimado: totalFaturamento, custoTotal: 0 },
+      { descricao: "Comissões (Gastos com Vendas)", percentual: 0 , faturamentoEstimado: totalFaturamento, custoTotal: 0 },
+      { descricao: "Propaganda (Gastos com Vendas)", percentual: 0 , faturamentoEstimado: totalFaturamento, custoTotal: 0 },
+      { descricao: "Taxas de Cartões (Gastos com Vendas)", percentual: 0 , faturamentoEstimado: totalFaturamento, custoTotal: 0 },
     ],
   });
  

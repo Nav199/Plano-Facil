@@ -26,6 +26,7 @@ class DemonstrativoController extends Controller
     public function store(Request $request, $id)
     {
         // Validação dos dados recebidos
+        //dd($request->all());
         $validated = $request->validate([
             'lucro_operacional' => 'required|numeric',
             'lucro_anual' => 'required|numeric',
@@ -119,7 +120,7 @@ class DemonstrativoController extends Controller
 
     public function listar_custos_fixos($id)
     {
-        $detalhesCustosFixos = DB::table('custofixo')
+        $detalhesCustosFixos = DB::table('custo_fixo')
             ->select('id', 'id_plano', 'descricao', 'custo', 'crescimento', DB::raw('custo AS total'))
             ->where('id_plano', $id)
             ->get();

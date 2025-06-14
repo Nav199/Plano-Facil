@@ -21,10 +21,12 @@ class InvestimentoPController extends Controller
 
     public function store(Request $request, $id)
     {
+        //dd($request->all());
         $validatedData = $request->validate([
-            'items' => 'required|array|min:1',
+            'items' => 'required|array|min:1', 
             'items.*.descricao' => 'required|string|max:200',
             'items.*.valor' => 'required|numeric|min:0',
+            'total' => 'nullable|numeric'
         ]);
     
         foreach ($validatedData['items'] as $item) {
@@ -32,10 +34,12 @@ class InvestimentoPController extends Controller
                 'id_plano' => $id,
                 'descricao' => $item['descricao'],
                 'valor' => $item['valor'],
+                'total' => $validatedData['total'],
             ]);
         }
     
-        return redirect()->route('faturamento', [$id])->with('status', 'Investimentos salvos com sucesso.');
+        return redirect()->route('faturamento', [$id])
+            ->with('status', 'Investimentos salvos com sucesso.');
     }
     
 }

@@ -9,7 +9,7 @@ class CustoFixo extends Model
 {
     use HasFactory;
 
-    protected $table = 'custofixo';
+    protected $table = 'custo_fixo';
 
     protected $fillable = [
         'id', 'id_plano','descricao','custo','crescimento','total'

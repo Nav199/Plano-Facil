@@ -84,6 +84,13 @@ class CnaeService
                 "Alíquota" => 4
             ],
 
+            [
+                "CNAE" => 6209100,
+                "Descrição" => "Suporte técnico, manutenção e outros serviços em tecnologia da informação",
+                "Fator R" => "Sim",
+                "Alíquota" => 15.5
+            ],
+
         ];
     
     }

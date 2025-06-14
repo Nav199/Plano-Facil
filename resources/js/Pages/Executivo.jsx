@@ -106,7 +106,7 @@ const Executivo = ({ auth }) => {
               name="missao"
               value={data.missao}
               onChange={handleChange}
-               minLength="40"
+               minLength="10"
               className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2"
             />
             {errors.missao && <div className="text-red-600">{errors.missao}</div>}
@@ -169,7 +169,7 @@ const Executivo = ({ auth }) => {
               name="valores"
               value={data.valores}
               onChange={handleChange}
-               minLength="60"
+               minLength="10"
               className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2"
             />
             {errors.visao && <div className="text-red-600">{errors.visao}</div>}
@@ -180,6 +180,7 @@ const Executivo = ({ auth }) => {
               name="fonteRecursos"
               value={data.fonteRecursos}
               onChange={handleChange}
+              minLength="10"
               className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2"
             />
             {errors.fonteRecursos && <div className="text-red-600">{errors.fonteRecursos}</div>}
@@ -190,7 +191,7 @@ const Executivo = ({ auth }) => {
               name="visao"
               value={data.visao}
               onChange={handleChange}
-               minLength="60"
+               minLength="10"
               className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2"
             />
             {errors.visao && <div className="text-red-600">{errors.visao}</div>}

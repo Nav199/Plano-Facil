@@ -13,11 +13,11 @@ return new class extends Migration
     {
         Schema::create('imoveis', function (Blueprint $table) {
             $table->id();
-            $table->string('descricao'); // Descrição do imóvel
-            $table->integer('quantidade'); // Quantidade de imóveis
-            $table->decimal('valor_unitario', 10, 2); // Valor unitário
-            $table->decimal('total', 10, 2); // Total do investimento em imóveis
-            $table->unsignedBigInteger('id_plano')->nullable(); // Chave estrangeira para plano_negocios
+            $table->string('descricao'); 
+            $table->integer('quantidade'); 
+            $table->decimal('valor_unitario', 10, 2); 
+            $table->decimal('total', 10, 2); 
+            $table->unsignedBigInteger('id_plano')->nullable(); 
             $table->timestamps();
 
             $table->foreign('id_plano')->references('id')->on('plano_negocios')->onDelete('cascade');

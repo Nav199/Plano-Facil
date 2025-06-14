@@ -4,7 +4,6 @@ const Analise_component = ({ analise }) => {
   return (
     analise && (
       <section className="bg-white shadow rounded p-4">
-        <h2 className="text-xl font-bold mb-4 text-center">Análise SWOT</h2>
         <table className="table-auto w-full border-collapse border border-gray-300 text-center">
           <thead>
             <tr>

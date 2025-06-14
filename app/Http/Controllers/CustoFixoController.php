@@ -30,30 +30,28 @@ class CustoFixoController extends Controller
      */
     public function store(Request $request, $id)
     {
-        // Validação dos dados enviados
-        //dd($request->all());
         $validated = $request->validate([
             'custos' => 'required|array',
             'custos.*.descricao' => 'required|string',
-            'custos.*.valor' => 'nullable|string', 
-            'crescimento' => 'nullable|numeric',   
-            'total'=>'nullable|numeric'
+            'custos.*.valor' => 'nullable|string',
+            'crescimento' => 'nullable|numeric',
+            'total' => 'nullable|numeric'
         ]);
     
-       
-        foreach ($validated['custos'] as $custo) {
-            // Remove os caracteres "R$", espaços e vírgulas para limpar o valor
-            $valorLimpo = preg_replace('/[^\d.-]/', '', $custo['valor']); // Mantém apenas números e ponto/menos
+        $total = 0;
     
-            // Verifica se o valor está vazio, se sim, define como 0
-            $valorNumerico = $valorLimpo ? (float) $valorLimpo : 0;
+        foreach ($validated['custos'] as $custo) {
+            // Converte o valor para número (caso venha como string com vírgula)
+            $valorNumerico = isset($custo['valor']) ? floatval(str_replace(',', '.', preg_replace('/[^\d,]/', '', $custo['valor']))) : 0;
+    
+            $total += $valorNumerico;
     
             CustoFixo::create([
                 'id_plano' => $id,
                 'descricao' => $custo['descricao'],
-                'custo' => $valorNumerico, // Armazena o valor numérico
-                'crescimento' => $validated['crescimento'] ?? 0, // Crescimento padrão 0
-                'total' => $validated['total']
+                'custo' => $valorNumerico,
+                'crescimento' => $validated['crescimento'] ?? 0,
+                'total' => $total
             ]);
         }
     
@@ -65,12 +63,11 @@ class CustoFixoController extends Controller
      */
     public function listar_salario($id)
     {
-        // Soma o total da coluna 'total' na tabela 'mao_obra' para o plano especificado
         $totalSalarios = DB::table('mao_obra')
             ->where('id_plano', $id)
-            ->sum('total'); // Retorna a soma de todos os valores de salários
+            ->sum('total');
 
-        return $totalSalarios; // Retorna como numérico
+        return $totalSalarios;
     }
 
     /**
@@ -78,11 +75,10 @@ class CustoFixoController extends Controller
      */
     public function listar_depre($id)
     {
-        // Soma o valor da coluna 'mensal' na tabela 'depreciacao' para o plano especificado
         $totalDepreciacao = DB::table('depreciacao')
             ->where('id_plano', $id)
-            ->sum('mensal'); // Soma os valores de depreciação mensal
+            ->sum('mensal');
 
-        return $totalDepreciacao; // Retorna como numérico
+        return $totalDepreciacao;
     }
 }

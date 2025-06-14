@@ -11,16 +11,18 @@ return new class extends Migration
      */
     public function up(): void
     {
-        //
-        Schema::create('custofixo', function (Blueprint $table) {
-            $table->id(); // ID auto-increment
+        Schema::create('investimentopre', function (Blueprint $table) {
+            $table->id();
             $table->unsignedBigInteger('id_plano');
             $table->string('descricao');
-            $table->decimal('custo', 10, 2);
-            $table->integer('crescimento');
-            $table->decimal('total', 10, 2);
+            $table->decimal('valor', 15, 2); 
+            $table->decimal('total', 15, 2)->nullable();
             $table->timestamps();
-            $table->foreign('id_plano')->references('id')->on('plano_negocios')->onDelete('cascade');
+
+            $table->foreign('id_plano')
+                  ->references('id')
+                  ->on('plano_negocios')
+                  ->onDelete('cascade');
         });
     }
 
@@ -29,7 +31,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        //
-        Schema::dropIfExists('custofixo');
+        Schema::dropIfExists('investimentopre');
     }
 };

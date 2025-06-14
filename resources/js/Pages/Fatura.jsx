@@ -9,10 +9,10 @@ const Fatura = ({ planoId, produtos,auth }) => {
   const { data, setData, post, processing, errors } = useForm({
     items: produtos.map((produto) => ({
       descricao: produto.produto,
-      quantidade: 0,
-      valor: 0
+      quantidade: '',
+      valor: ''
     })),
-    crescimento: 0
+    crescimento: ''
   });
 
   const chartRef = useRef(null);
@@ -28,19 +28,29 @@ const Fatura = ({ planoId, produtos,auth }) => {
 
   const handleChange = (index, field, value) => {
     const newItems = [...data.items];
-    newItems[index][field] = value;
+    
+    if (field === 'valor') {
+      // Remove tudo que não for número
+      const onlyNumbers = value.replace(/\D/g, '');
+      const number = parseFloat(onlyNumbers) / 100; // para poder colocar centavos, tipo 4000 => 40,00
+      newItems[index][field] = number.toFixed(2); // salva "4000.00" no form
+    } else {
+      newItems[index][field] = value;
+    }
+  
     setData('items', newItems);
   };
+  ;
 
   const handleCrescimentoChange = (value) => {
     setData('crescimento', value);
   };
 
   const calculateTotal = (item) => {
-    const quantidade = parseInt(item.quantidade, 10) || 0;
+    const quantidade = parseFloat(item.quantidade) || 0;
     const valor = parseFloat(item.valor) || 0;
     return quantidade * valor;
-  };
+  };  
 
   const total = data.items.reduce((acc, item) => acc + calculateTotal(item), 0);
 
@@ -159,13 +169,12 @@ const Fatura = ({ planoId, produtos,auth }) => {
                   />
                 </td>
                 <td className="p-2">
-                  <input
-                    type="number"
+                <input
+                    type="text"
                     placeholder="R$ Valor"
-                    value={item.valor}
+                    value={formatarNumeroBr(item.valor || 0)}
                     onChange={(e) => handleChange(index, 'valor', e.target.value)}
                     className="border border-gray-300 p-2 w-full rounded"
-                    min="0"
                   />
                 </td>
                 <td className="p-2">

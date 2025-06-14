@@ -11,23 +11,27 @@ return new class extends Migration
      */
     public function up(): void
     {
-        //
-        Schema::create('investimentopre', function (Blueprint $table) {
-            $table->id(); // ID auto-increment
+        Schema::create('clientes', function (Blueprint $table) {
+            $table->id();
+            $table->text('perfil');
+            $table->text('comportamento');
+            $table->text('area');
             $table->unsignedBigInteger('id_plano');
-            $table->string('descricao');
-            $table->integer('valor');
             $table->timestamps();
-            $table->foreign('id_plano')->references('id')->on('plano_negocios')->onDelete('cascade');
+        
+            $table->foreign('id_plano')
+                  ->references('id')
+                  ->on('plano_negocios')
+                  ->onDelete('cascade');
         });
+        
     }
 
-    /** 
+    /**
      * Reverse the migrations.
      */
     public function down(): void
     {
-        //
-        Schema::dropIfExists('investimentopre');
+        Schema::dropIfExists('clientes');
     }
 };

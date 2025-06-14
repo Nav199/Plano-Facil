@@ -11,7 +11,7 @@ class Operacional extends Model
     protected $table='operacional';
 
     protected $fillable = [
-        'capacidade','volume','cargo','qualificacao','id_plano'
+        'capacidade','volume','cargo','qualificacao','processos','id_plano'
     ]; 
 
     public function planoNegocios()

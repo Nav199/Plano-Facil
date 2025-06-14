@@ -79,13 +79,15 @@ const Empreendedores = ({ planoId }) => {
   };
 
   const formatarCPF = (e) => {
-    let value = e.target.value.replace(/\D/g, '');
+    let value = e.target.value.replace(/\D/g, ''); // Remove tudo que não for número
+    value = value.slice(0, 11); // Limita para no máximo 11 números
+  
     if (value.length <= 3) return value;
     if (value.length <= 6) return value.replace(/(\d{3})(\d{1,})/, '$1.$2');
     if (value.length <= 9) return value.replace(/(\d{3})(\d{3})(\d{1,})/, '$1.$2.$3');
-    return value.replace(/(\d{3})(\d{3})(\d{3})(\d{1,})/, '$1.$2.$3-$4');
+    return value.replace(/(\d{3})(\d{3})(\d{3})(\d{1,2})/, '$1.$2.$3-$4');
   };
-
+  
   const handleSubmit = (e) => {
     e.preventDefault();
     post(route('socios.store', { id: planoId }));

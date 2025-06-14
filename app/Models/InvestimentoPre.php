@@ -13,6 +13,6 @@ class InvestimentoPre extends Model
 
     
     protected $fillable = [
-        'id_plano','descricao','valor'
+        'id_plano','descricao','valor','total'
     ];
 }

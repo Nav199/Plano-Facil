@@ -11,18 +11,13 @@ const Concorrente_Form = ({ onChange }) => {
   const handlePriceChange = (e) => {
     let value = e.target.value;
 
-    // Remove caracteres não numéricos, mas permite a vírgula como separador decimal
     const numericValue = value.replace(/[^\d,]/g, '').replace(',', '.');
 
-    // Formata para o valor monetário 'R$ 90.000,00'
     const formattedValue = "R$ " + numericValue
-      .replace('.', ',') // Substitui o ponto por vírgula para garantir o formato BR
-      .replace(/\B(?=(\d{3})+(?!\d))/g, "."); // Adiciona ponto como separador de milhar
-
-    setPreco(formattedValue); // Armazena o valor formatado para exibição
-
-    // Passa o valor numérico (sem formatação) para o componente pai
-    onChange('preco_concorrente', numericValue);
+      .replace('.', ',') 
+      .replace(/\B(?=(\d{3})+(?!\d))/g, "."); 
+      setPreco(formattedValue);
+      onChange('preco_concorrente', numericValue);
   };
 
   return (

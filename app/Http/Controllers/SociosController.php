@@ -31,19 +31,15 @@ class SociosController extends Controller
         $validatedData = $request->validate([
             'socios' => 'required|array|min:1',
             'socios.*.nome' => 'required|string|max:255',
-            'socios.*.cpf' => 'required|cpf|unique:socios,cpf',
+            'socios.*.cpf' => 'required|cpf|distinct|unique:socios,cpf',
             'socios.*.curriculo' => 'required|string|max:255',
             'socios.*.rua' => 'required|string|max:255',
             'socios.*.numeroRua' => 'required|string|max:255',
             'socios.*.cidade' => 'required|string|max:255',
             'socios.*.estado' => 'required|string|max:255',
             'socios.*.funcao' => 'required|string|max:255'
-        ], [
-            'socios.*.cpf.required' => 'O CPF é obrigatório.',
-            'socios.*.cpf.cpf' => 'O CPF informado não é válido.',
-            'socios.*.cpf.unique' => 'Este CPF já está cadastrado.',
         ]);
-
+        
         $plano = Plano::findOrFail($id);
 
         foreach ($validatedData['socios'] as $socioData) {

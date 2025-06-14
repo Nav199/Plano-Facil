@@ -41,7 +41,9 @@ class RelatorioController extends Controller
             'forma',
             'depreciacao',
             'custo_unitario',
-            'investimento_total'
+            'investimento_total',
+            'capital_giro',
+            'comercializacao'
         ])->find($id);
 
         $hasData = $plano && (

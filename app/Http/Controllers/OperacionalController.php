@@ -39,6 +39,7 @@ class OperacionalController extends Controller
             'volume' => $request->input('volumeProducao'), 
             'cargo' => $pessoal['cargo'],
             'qualificacao' => $pessoal['qualificacao'],
+            'processos' => $request->input('processosOperacionais'),
             'id_plano' => $plano->id 
         ]);
     }

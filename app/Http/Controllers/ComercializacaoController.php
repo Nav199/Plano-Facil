@@ -36,6 +36,7 @@ class ComercializacaoController extends Controller
 
     public function store(Request $request, $id)
     {
+        
         $validatedData = $request->validate([
             'gastosVendas' => 'required|array',
             'gastosVendas.*.descricao' => 'required|string',
@@ -55,8 +56,7 @@ class ComercializacaoController extends Controller
             }
         }
     
-        DB::beginTransaction();
-    
+      
         try {
             Comercializacao::create([
                 'id_plano' => $id,

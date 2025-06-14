@@ -13,8 +13,8 @@ return new class extends Migration
     {
         Schema::create('marketing', function (Blueprint $table) {
             $table->increments('id');
-            $table->string('produto', 40);
-            $table->string('preco', 40);
+            $table->string('produto', 200);
+            $table->string('preco', 200);
             $table->text('estrategia_promo'); // Campo de texto longo para a estratégia promocional
             $table->text('estrategia_comer'); // Campo de texto longo para a estratégia de comercialização
             $table->string('localizacao', 100); // Limitado a 100 caracteres para o campo de localização

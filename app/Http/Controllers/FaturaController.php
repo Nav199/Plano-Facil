@@ -3,7 +3,6 @@
 namespace App\Http\Controllers;
 
 use App\Models\Faturamento;
-use App\Service\CalculosService;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 use Inertia\Response;
@@ -21,31 +20,39 @@ class FaturaController extends Controller
         ]);
     }
 
-    public function store(Request $request,$id)
+    public function store(Request $request, $id)
     {
-        //dd($request->all());
         $validated = $request->validate([
             'items' => 'required|array',
             'items.*.descricao' => 'required|string',
             'items.*.quantidade' => 'required|integer|min:0',
-            'items.*.valor' => 'required|numeric|min:0',
+            'items.*.valor' => 'required|string|min:1', 
             'crescimento' => 'required|numeric|min:0'
         ]);
-        
+
         foreach ($validated['items'] as $item) {
+            $valor = $this->removerFormatoMoeda($item['valor']); 
+
             Faturamento::create([
                 'id_plano' => $id,
                 'produto' => $item['descricao'],
                 'quantidade' => $item['quantidade'],
-                'valor_unitario' => $item['valor'],
-                'total' => $item['quantidade'] * $item['valor'],
-                'crescimento'=> $validated['crescimento']
+                'valor_unitario' => $valor,
+                'total' => $item['quantidade'] * $valor,
+                'crescimento' => $validated['crescimento']
             ]);
-        } 
-     
+        }
 
         return redirect()->route('custo', [$id])
-        ->with('success', 'Estoque salvo com sucesso.');
+            ->with('success', 'Estoque salvo com sucesso.');
+    }
+
+    private function removerFormatoMoeda($valor)
+    {
+        $valorLimpo = preg_replace('/\D/', '', $valor);  // Remove tudo que não for número
+
+        // Dividir o valor limpo em centavos e transformar para float
+        return floatval($valorLimpo) / 100;
     }
 
     private function listar_produtos($id)
