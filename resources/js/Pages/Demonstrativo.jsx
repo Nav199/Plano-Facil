@@ -3,10 +3,26 @@ import { usePage, useForm } from "@inertiajs/react";
 import Authenticated from "@/Layouts/AuthenticatedLayout";
 import Button from "@/Components/Button";
 
-const Demonstrativo = ({ planoId, auth }) => {
-  const { faturamento, apuracao, custo_fixo, gastos_vendas,investimento } = usePage().props;
+// Funções de formatação
+const formatCurrency = (value) => {
+  const formatted = Math.abs(value).toLocaleString("pt-BR", {
+    style: "currency",
+    currency: "BRL",
+    minimumFractionDigits: 2,
+  });
+  return value < 0 ? `- ${formatted}` : formatted;
+};
 
-  // Dados iniciais
+const formatNumber = (value) => {
+  const number = Number(value);
+  const formatted = Math.abs(number).toFixed(2).replace('.', ',');
+  return number < 0 ? `- ${formatted}` : formatted;
+};
+
+const Demonstrativo = ({ planoId, auth }) => {
+  const { faturamento, apuracao, custo_fixo, gastos_vendas, investimento } = usePage().props;
+
+  // Valores de entrada
   const totalFaturamento = faturamento?.total ?? 0;
   const faturamentoAnual = faturamento?.faturamento_anual ?? 0;
 
@@ -19,37 +35,62 @@ const Demonstrativo = ({ planoId, auth }) => {
   const totalGastosVendas = gastos_vendas?.total ?? 0;
   const gastosVendasAnuais = gastos_vendas?.gastosAnuais ?? 0;
 
-const margem = totalFaturamento+(totalApuracao + totalGastosVendas)
-const margem_anual = faturamentoAnual+(apuracaoAnual + gastosVendasAnuais)
-  // Cálculos financeiros
-  const valor = totalFaturamento - (totalApuracao + totalGastosVendas + totalCustosFixos);
-  const anual_lucro = faturamentoAnual - (apuracaoAnual + gastosVendasAnuais + custosFixosAnuais);
-  const percentual_lucro = totalFaturamento
-    ? ((valor / totalFaturamento) * 100).toFixed(2)
-    : 0;
+  // Cálculo CORRIGIDO da margem e lucro operacional
+  const margem = totalFaturamento - (totalApuracao + totalGastosVendas);
+  const margem_anual = faturamentoAnual - (apuracaoAnual + gastosVendasAnuais);
 
-  const Lucra = ((valor / totalFaturamento) * 100).toFixed(2);
-  const Lucra_anual = ((anual_lucro / faturamentoAnual) * 100).toFixed(2);
-  const Rent = ((totalFaturamento/investimento.total)*100).toFixed(2);
-  const Rent_anual = (faturamentoAnual/investimento.total)*100;
-  const Ponto_equilibrio = (totalCustosFixos / (totalFaturamento - totalApuracao)).toFixed(2);
-  const Ponto_anual = (custosFixosAnuais / (faturamentoAnual - apuracaoAnual)).toFixed(2);
+  const valor = margem - totalCustosFixos;
+  const anual_lucro = margem_anual - custosFixosAnuais;
 
-  const roi = (((totalFaturamento / investimento.total) * 100)).toFixed(2);
-  const roi_anual = (((faturamentoAnual / investimento.total) * 100)).toFixed(2);
-  const roi_mensal = (roi_anual / 12).toFixed(2);
-  
+  const percentual_lucro = totalFaturamento ? ((valor / totalFaturamento) * 100) : 0;
+  const Lucra = percentual_lucro;
+  const Lucra_anual = faturamentoAnual ? ((anual_lucro / faturamentoAnual) * 100) : 0;
+  const Rent = investimento.total ? ((totalFaturamento / investimento.total) * 100) : 0;
+  const Rent_anual = investimento.total ? ((faturamentoAnual / investimento.total) * 100) : 0;
+  const Ponto_equilibrio = (totalFaturamento - totalApuracao) ? (totalCustosFixos / (totalFaturamento - totalApuracao)) : 0;
+  const Ponto_anual = (faturamentoAnual - apuracaoAnual) ? (custosFixosAnuais / (faturamentoAnual - apuracaoAnual)) : 0;
+  const roi_anual = Rent_anual;
+  const roi_mensal = roi_anual / 12;
 
-  // Formulário e dados
-  const { data, setData, post, processing, errors } = useForm({
+  const { data, setData, post, processing } = useForm({
     resumo: [
       { descricao: "Receita Total com Vendas", valor: totalFaturamento, anual: faturamentoAnual, percentual: 100 },
-      { descricao: "Custos Variáveis Totais", valor: totalApuracao + totalGastosVendas, anual: apuracaoAnual + gastosVendasAnuais, percentual: (((totalApuracao + totalGastosVendas) / totalFaturamento) * 100).toFixed(2) },
-      { descricao: "Custos com Materiais Diretos e/ou CMV", valor: totalApuracao, anual: apuracaoAnual, percentual: ((totalApuracao / totalFaturamento) * 100).toFixed(2) },
-      { descricao: "Gastos com Vendas", valor: totalGastosVendas, anual: gastosVendasAnuais, percentual: ((totalGastosVendas / totalFaturamento) * 100).toFixed(2) },
-      { descricao: "Margem de Contribuição", valor: margem, anual: margem_anual, percentual: ((margem / totalFaturamento) * 100).toFixed(2) },
-      { descricao: "Custos Fixos Totais", valor: totalCustosFixos, anual: custosFixosAnuais, percentual: ((totalCustosFixos / totalFaturamento) * 100).toFixed(2) },
-      { descricao: "Resultado Operacional (Lucro)", valor: valor, anual: anual_lucro, percentual: percentual_lucro },
+      {
+        descricao: "Custos Variáveis Totais",
+        valor: totalApuracao + totalGastosVendas,
+        anual: apuracaoAnual + gastosVendasAnuais,
+        percentual: ((totalApuracao + totalGastosVendas) / totalFaturamento) * 100,
+      },
+      {
+        descricao: "Custos com Materiais Diretos e/ou CMV",
+        valor: totalApuracao,
+        anual: apuracaoAnual,
+        percentual: (totalApuracao / totalFaturamento) * 100,
+      },
+      {
+        descricao: "Gastos com Vendas",
+        valor: totalGastosVendas,
+        anual: gastosVendasAnuais,
+        percentual: (totalGastosVendas / totalFaturamento) * 100,
+      },
+      {
+        descricao: "Margem de Contribuição",
+        valor: margem,
+        anual: margem_anual,
+        percentual: (margem / totalFaturamento) * 100,
+      },
+      {
+        descricao: "Custos Fixos Totais",
+        valor: totalCustosFixos,
+        anual: custosFixosAnuais,
+        percentual: (totalCustosFixos / totalFaturamento) * 100,
+      },
+      {
+        descricao: "Resultado Operacional (Lucro)",
+        valor: valor,
+        anual: anual_lucro,
+        percentual: percentual_lucro,
+      },
     ],
     lucro_operacional: valor,
     lucro_anual: anual_lucro,
@@ -68,23 +109,16 @@ const margem_anual = faturamentoAnual+(apuracaoAnual + gastosVendasAnuais)
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    post(route("demonstrativo", { id: planoId }), {
-      onSuccess: () => reset(),
-    });
+    post(route("demonstrativo", { id: planoId }));
   };
 
   return (
-    <Authenticated
-      user={auth.user}
-      header={
-        <h2 className="font-semibold text-xl text-gray-800 leading-tight text-center">
-          Demonstrativo de Resultados
-        </h2>
-      }
+    <Authenticated user={auth.user}
+      header={<h2 className="font-semibold text-xl text-gray-800 leading-tight text-center">Demonstrativo de Resultados</h2>}
     >
       <div className="p-8 bg-gray-100 min-h-screen">
         <form onSubmit={handleSubmit}>
-          {/* Resumo da tabela */}
+          {/* TABELA DE RESULTADOS */}
           <div className="mb-8">
             <table className="w-full bg-white border border-gray-300 rounded shadow">
               <thead>
@@ -99,16 +133,16 @@ const margem_anual = faturamentoAnual+(apuracaoAnual + gastosVendasAnuais)
                 {data.resumo.map((item, index) => (
                   <tr key={index} className="hover:bg-gray-100">
                     <td className="p-2 border-b">{item.descricao}</td>
-                    <td className="p-2 border-b">{`R$ ${item.valor.toFixed(2).replace(".", ",")}`}</td>
-                    <td className="p-2 border-b">{`R$ ${item.anual.toFixed(2).replace(".", ",")}`}</td>
-                    <td className="p-2 border-b">{`${item.percentual}%`}</td>
+                    <td className="p-2 border-b">{formatCurrency(item.valor)}</td>
+                    <td className="p-2 border-b">{formatCurrency(item.anual)}</td>
+                    <td className="p-2 border-b">{formatNumber(item.percentual)}%</td>
                   </tr>
                 ))}
               </tbody>
             </table>
           </div>
 
-          {/* Tabela de Indicadores */}
+          {/* INDICADORES */}
           <div className="p-8 bg-gray-100">
             <h2 className="text-2xl font-bold text-center mb-6">Indicadores</h2>
             <table className="w-full bg-white border border-gray-300 rounded shadow">
@@ -123,37 +157,32 @@ const margem_anual = faturamentoAnual+(apuracaoAnual + gastosVendasAnuais)
               <tbody>
                 <tr className="hover:bg-gray-100">
                   <td className="p-2 border-b">Lucratividade</td>
-                  <td className="p-2 border-b">{`${Lucra}%`}</td>
-                  <td className="p-2 border-b">{`${Lucra_anual}%`}</td>
+                  <td className="p-2 border-b">{formatNumber(Lucra)}%</td>
+                  <td className="p-2 border-b">{formatNumber(Lucra_anual)}%</td>
                   <td className="p-2 border-b">Percentual do lucro sobre a receita</td>
                 </tr>
                 <tr className="hover:bg-gray-100">
                   <td className="p-2 border-b">Ponto de Equilíbrio</td>
-                  <td className="p-2 border-b">{`${Ponto_equilibrio}`}</td>
-                  <td className="p-2 border-b">{`${Ponto_anual}`}</td>
+                  <td className="p-2 border-b">{formatNumber(Ponto_equilibrio)}</td>
+                  <td className="p-2 border-b">{formatNumber(Ponto_anual)}</td>
                   <td className="p-2 border-b">Receita necessária para cobrir custos</td>
                 </tr>
                 <tr className="hover:bg-gray-100">
                   <td className="p-2 border-b">Rentabilidade</td>
-                  <td className="p-2 border-b">{`${Rent}%`}</td>
-                  <td className="p-2 border-b">{`${Rent_anual.toFixed(2)}%`}</td>
+                  <td className="p-2 border-b">{formatNumber(Rent)}%</td>
+                  <td className="p-2 border-b">{formatNumber(Rent_anual)}%</td>
                   <td className="p-2 border-b">Percentual do lucro sobre o investimento</td>
                 </tr>
                 <tr className="hover:bg-gray-100">
                   <td className="p-2 border-b">Prazo de Retorno do Investimento</td>
-                  <td className="p-2 border-b">{`${
-                    roi_mensal < 0 ? "-" : ""
-                  }${Math.abs(roi_mensal).toFixed(2)} Meses`}</td>
-                  <td className="p-2 border-b">{`${
-                    roi_anual < 0 ? "-" : ""
-                  }${Math.abs(roi_anual).toFixed(2)} Anos`}</td>
+                  <td className="p-2 border-b">{formatNumber(roi_mensal)} Meses</td>
+                  <td className="p-2 border-b">{formatNumber(roi_anual)} Anos</td>
                   <td className="p-2 border-b">Tempo para retorno do investimento</td>
                 </tr>
               </tbody>
-
             </table>
           </div>
- 
+
           <div className="flex justify-center mt-4">
             <Button type="submit" processing={processing}>
               Enviar

@@ -26,11 +26,13 @@ class DemonstrativoController extends Controller
     public function store(Request $request, $id)
     {
         // Validação dos dados recebidos
-        //dd($request->all());
         $validated = $request->validate([
-            'lucro_operacional' => 'required|numeric',
-            'lucro_anual' => 'required|numeric',
-            'porcentagem' => 'required|numeric',
+            'resumo' => 'required|array',
+            'resumo.*.descricao' => 'required|string',
+            'resumo.*.valor' => 'required|numeric',
+            'resumo.*.anual' => 'required|numeric',
+            'resumo.*.percentual' => 'required|numeric',
+
             'indicadores.lucrabilidade_mensal' => 'required|numeric',
             'indicadores.lucrabilidade_anual' => 'required|numeric',
             'indicadores.rentabilidade_mensal' => 'required|numeric',
@@ -41,19 +43,32 @@ class DemonstrativoController extends Controller
             'indicadores.roi_anual' => 'required|numeric',
         ]);
 
+        // Extração dos valores principais
+        $resumo = collect($validated['resumo']);
+        $receita = $resumo->firstWhere('descricao', 'Receita Total com Vendas')['valor'] ?? 0;
+        $cmv = $resumo->firstWhere('descricao', 'Custos com Materiais Diretos e/ou CMV')['valor'] ?? 0;
+        $gastosVendas = $resumo->firstWhere('descricao', 'Gastos com Vendas')['valor'] ?? 0;
+        $custosFixos = $resumo->firstWhere('descricao', 'Custos Fixos Totais')['valor'] ?? 0;
+
+        // Cálculo seguro do lucro e percentual
+        $margem = $receita - ($cmv + $gastosVendas);
+        $lucro_operacional = $margem - $custosFixos;
+        $percentual_lucro = $receita > 0 ? ($lucro_operacional / $receita) * 100 : 0;
+
         // Criação do Demonstrativo
         Demonstrativo::create([
             'id_plano' => $id,
-            'resultado_operacional' => $validated['lucro_operacional'],
-            'lucro_mensal' => $validated['lucro_anual'],
-            'porcentagem_lucro' => $validated['porcentagem'],
+            'resumo' => $validated['resumo'], // Armazenar a DRE
+            'resultado_operacional' => round($lucro_operacional, 2),
+            'lucro_mensal' => round($lucro_operacional, 2), // Pode ajustar se desejar
+            'porcentagem_lucro' => round($percentual_lucro, 2),
         ]);
 
         // Criação dos Indicadores
-        indicadores::create([
+        Indicadores::create([
             'id_plano' => $id,
             'lucrabilidade_mensal' => $validated['indicadores']['lucrabilidade_mensal'],
-            'lucrabidade_anual' => $validated['indicadores']['lucrabilidade_anual'],
+            'lucrabilidade_anual' => $validated['indicadores']['lucrabilidade_anual'],
             'ponto_equilibrio_mensal' => $validated['indicadores']['ponto_equilibrio_mensal'],
             'ponto_equilibrio_anual' => $validated['indicadores']['ponto_equilibrio_anual'],
             'rentabilidade_mensal' => $validated['indicadores']['rentabilidade_mensal'],
@@ -64,7 +79,6 @@ class DemonstrativoController extends Controller
 
         return redirect()->route('analise', [$id])->with('success', 'Demonstrativo e indicadores salvos com sucesso.');
     }
-
     
 
     public function listar_faturamento($id)

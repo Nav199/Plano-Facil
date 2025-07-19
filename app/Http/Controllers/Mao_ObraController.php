@@ -34,37 +34,42 @@ class Mao_ObraController extends Controller
 
    
     public function store(Request $request, $id)
-    {
-        // Validação básica (pode personalizar conforme sua necessidade)
-       // dd($request->all());
-        $validatedData = $request->validate([
-            'cargos' => 'required|array', // Certifica-se de que 'cargos' é um array
-            'cargos.*.funcao' => 'required|string', // Alterado para 'funcao'
-            'cargos.*.num_empregados' => 'required|numeric|min:1',
-            'cargos.*.salario_mensal' => 'required|numeric|min:0',
-            'cargos.*.encargos_percentual' => 'required|numeric|min:0',
+{
+    $validatedData = $request->validate([
+        'cargos' => 'required|array',
+        'cargos.*.funcao' => 'required|string',
+        'cargos.*.num_empregados' => 'required|numeric|min:1',
+        'cargos.*.salario_mensal' => 'required|numeric|min:0',
+        'cargos.*.encargos_percentual' => 'required|numeric|min:0',
+    ]);
+
+    $totalGeral = 0;
+
+    foreach ($validatedData['cargos'] as $cargo) {
+        $subtotal = $cargo['num_empregados'] * $cargo['salario_mensal'];
+        $encargos = ($cargo['encargos_percentual'] / 100) * $subtotal;
+        $total = $subtotal + $encargos;
+
+        $totalGeral += $total;
+
+        Obra::create([
+            'id_plano'     => $id,
+            'funcao'       => $cargo['funcao'],
+            'empregado'    => $cargo['num_empregados'],
+            'salario'      => $cargo['salario_mensal'],
+            'encargo'      => $encargos,
+            'total'        => $total,
+            'total_geral'  => 0, // preenchido depois
         ]);
-
-        
-        foreach ($validatedData['cargos'] as $cargo) {
-            $subtotal = $cargo['num_empregados'] * $cargo['salario_mensal'];
-            $encargos = ($cargo['encargos_percentual'] / 100) * $subtotal;
-            $total = $subtotal + $encargos;
-        
-            Obra::create([
-                'id_plano' => $id, // ID do plano de negócios
-                'funcao' => $cargo['funcao'], // Nome do cargo
-                'empregado' => $cargo['num_empregados'],
-                'salario' => $cargo['salario_mensal'],
-                'encargo' => $encargos, // Corrigido aqui
-                'total' => $total, // Total calculado
-                'total_geral' => array_sum(array_column($validatedData['cargos'], 'total')), // Total geral (se aplicável)
-            ]);
-        }
-         
-
-
-        return redirect()->route('depreciacao', [$id])
-        ->with('success', 'Salvo com sucesso.');
     }
+
+    // Atualiza o total_geral em todas as linhas do plano
+    Obra::where('id_plano', $id)->update([
+        'total_geral' => $totalGeral
+    ]);
+
+    return redirect()->route('depreciacao', [$id])
+        ->with('success', 'Salvo com sucesso.');
+}
+
 }
