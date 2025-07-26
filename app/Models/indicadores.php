@@ -13,7 +13,7 @@ class indicadores extends Model
     protected $fillable = [
         'id_plano',
         'lucrabilidade_mensal',
-        'lucrabidade_anual',
+        'lucrabilidade_anual',
         'ponto_equilibrio_mensal',
         'ponto_equilibrio_anual',
         'rentabilidade_mensal',

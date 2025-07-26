@@ -45,12 +45,18 @@ const Demonstrativo = ({ planoId, auth }) => {
   const percentual_lucro = totalFaturamento ? ((valor / totalFaturamento) * 100) : 0;
   const Lucra = percentual_lucro;
   const Lucra_anual = faturamentoAnual ? ((anual_lucro / faturamentoAnual) * 100) : 0;
-  const Rent = investimento.total ? ((totalFaturamento / investimento.total) * 100) : 0;
-  const Rent_anual = investimento.total ? ((faturamentoAnual / investimento.total) * 100) : 0;
-  const Ponto_equilibrio = (totalFaturamento - totalApuracao) ? (totalCustosFixos / (totalFaturamento - totalApuracao)) : 0;
-  const Ponto_anual = (faturamentoAnual - apuracaoAnual) ? (custosFixosAnuais / (faturamentoAnual - apuracaoAnual)) : 0;
-  const roi_anual = Rent_anual;
-  const roi_mensal = roi_anual / 12;
+  const Rent = investimento.total ? ((valor / investimento.total) * 100) : 0;
+  const Rent_anual = investimento.total ? ((anual_lucro / investimento.total) * 100) : 0;
+  const Ponto_equilibrio = totalFaturamento
+  ? (totalCustosFixos / (totalFaturamento - totalApuracao - totalGastosVendas)) / totalFaturamento
+  : 0;
+
+  const Ponto_anual = faturamentoAnual
+    ? (custosFixosAnuais / (faturamentoAnual - apuracaoAnual - gastosVendasAnuais)) / faturamentoAnual
+    : 0;
+
+  const roi_anual = anual_lucro !== 0 ? investimento.total / anual_lucro : 0; // em anos
+  const roi_mensal = valor !== 0 ? investimento.total / valor : 0; // em meses
 
   const { data, setData, post, processing } = useForm({
     resumo: [

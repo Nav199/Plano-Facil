@@ -15,13 +15,13 @@ return new class extends Migration
             $table->id();
             $table->unsignedBigInteger('id_plano'); // Relacionamento com o plano
             $table->foreign('id_plano')
-            ->references('id')
-            ->on('plano_negocios')
-            ->onDelete('cascade');
+                ->references('id')
+                ->on('plano_negocios')
+                ->onDelete('cascade');
 
             // Indicadores financeiros
             $table->decimal('lucrabilidade_mensal', 15, 2);
-            $table->decimal('lucrabidade_anual', 15, 2);
+            $table->decimal('lucrabilidade_anual', 15, 2);
             $table->decimal('ponto_equilibrio_mensal', 15, 2);
             $table->decimal('ponto_equilibrio_anual', 15, 2);
             $table->decimal('rentabilidade_mensal', 5, 2);

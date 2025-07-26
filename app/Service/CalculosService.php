@@ -66,26 +66,23 @@ class CalculosService
         ];
     }
  
-    public function calcular12Meses($itens, $crescimento, $calculoCallback)
-    {
-        // Converter itens para array caso seja Collection
-        $itensArray = $itens instanceof \Illuminate\Support\Collection ? $itens->toArray() : $itens;
+  public function calcular12Meses($itens, $crescimento, $calculoCallback)
+{
+    // Usa Collection diretamente (mantém como objetos)
+    $totalSemCrescimento = $itens->reduce(function ($total, $item) use ($calculoCallback) {
+        return $total + $calculoCallback($item);
+    }, 0);
 
-        // Total inicial sem crescimento
-        $totalSemCrescimento = array_reduce($itensArray, function ($total, $item) use ($calculoCallback) {
-            return $total + $calculoCallback($item); // Usar o cálculo específico para cada item
-        }, 0);
+    // Crescimento composto
+    $crescimentoDecimal = 1 + ($crescimento / 100);
+    $total12Meses = $totalSemCrescimento * ($crescimentoDecimal ** 12);
 
-        // Aplicar crescimento percentual (composto) no total
-        $crescimentoDecimal = 1 + ($crescimento / 100);
-        $total12Meses = $totalSemCrescimento * ($crescimentoDecimal ** 12);
+    return [
+        'totalSemCrescimento' => $totalSemCrescimento,
+        'total12Meses' => $total12Meses,
+    ];
+}
 
-        return [
-            'totalSemCrescimento' => $totalSemCrescimento,
-            'total12Meses' => $total12Meses,
-        ];
-    }
-    
     public function calcularIndicadores($faturamento, $apuracao, $custoFixo, $gastosVendas)
 {
     // Validação para evitar divisão por zero

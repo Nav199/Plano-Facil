@@ -9,7 +9,7 @@ class investimento_total extends Model
 {
     use HasFactory;
     protected $table = 'investimento_total';
- 
+  
     protected $fillable = [
         'id_plano', 'total_investimento'
    ];

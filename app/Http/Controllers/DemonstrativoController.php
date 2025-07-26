@@ -3,6 +3,11 @@
 namespace App\Http\Controllers;
  
 use App\Models\Demonstrativo;
+use App\Models\investimento_total;
+use App\Models\Apuracao;
+use App\Models\CustoFixo;
+use App\Models\Faturamento;
+use App\Models\Comercializacao;
 use App\Models\indicadores;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
@@ -42,7 +47,6 @@ class DemonstrativoController extends Controller
             'indicadores.roi_mensal' => 'required|numeric',
             'indicadores.roi_anual' => 'required|numeric',
         ]);
-
         // Extração dos valores principais
         $resumo = collect($validated['resumo']);
         $receita = $resumo->firstWhere('descricao', 'Receita Total com Vendas')['valor'] ?? 0;
@@ -65,146 +69,124 @@ class DemonstrativoController extends Controller
         ]);
 
         // Criação dos Indicadores
-        Indicadores::create([
-            'id_plano' => $id,
-            'lucrabilidade_mensal' => $validated['indicadores']['lucrabilidade_mensal'],
-            'lucrabilidade_anual' => $validated['indicadores']['lucrabilidade_anual'],
-            'ponto_equilibrio_mensal' => $validated['indicadores']['ponto_equilibrio_mensal'],
-            'ponto_equilibrio_anual' => $validated['indicadores']['ponto_equilibrio_anual'],
-            'rentabilidade_mensal' => $validated['indicadores']['rentabilidade_mensal'],
-            'rentabilidade_anual' => $validated['indicadores']['rentabilidade_anual'],
-            'roi_mensal' => $validated['indicadores']['roi_mensal'],
-            'roi_anual' => $validated['indicadores']['roi_anual'],
-        ]);
+     Indicadores::create([
+        'id_plano' => $id,
+        'lucrabilidade_mensal' => round($validated['indicadores']['lucrabilidade_mensal'], 2),
+        'lucrabilidade_anual' => round($validated['indicadores']['lucrabilidade_anual'], 2),
+        'ponto_equilibrio_mensal' => round($validated['indicadores']['ponto_equilibrio_mensal'], 6),
+        'ponto_equilibrio_anual' => round($validated['indicadores']['ponto_equilibrio_anual'], 6),
+        'rentabilidade_mensal' => round($validated['indicadores']['rentabilidade_mensal'], 2),
+        'rentabilidade_anual' => round($validated['indicadores']['rentabilidade_anual'], 2),
+        'roi_mensal' => round($validated['indicadores']['roi_mensal'], 2),
+        'roi_anual' => round($validated['indicadores']['roi_anual'], 2),
+    ]);
 
         return redirect()->route('analise', [$id])->with('success', 'Demonstrativo e indicadores salvos com sucesso.');
     }
     
 
     public function listar_faturamento($id)
-    {
-        $detalhesFaturamento = DB::table('faturamento')
-            ->select('id', 'produto', 'quantidade', 'valor_unitario', 'crescimento', DB::raw('quantidade * valor_unitario AS total'))
-            ->where('id_plano', $id)
-            ->get();
+{
+    $detalhesFaturamento = Faturamento::where('id_plano', $id)->get();
 
-        $crescimento = floatval($detalhesFaturamento->first()->crescimento ?? 0);
+    $crescimento = floatval($detalhesFaturamento->first()->crescimento ?? 0);
 
-        $calculosService = new \App\Service\CalculosService();
-        $faturamento = $calculosService->calcular12Meses(
-            $detalhesFaturamento,
-            $crescimento,
-            function ($item) {
-                return $item->quantidade * $item->valor_unitario;
-            }
-        );
+    $calculosService = new \App\Service\CalculosService();
+    $faturamento = $calculosService->calcular12Meses(
+        $detalhesFaturamento,
+        $crescimento,
+        function ($item) {
+            return $item->quantidade * $item->valor_unitario;
+        }
+    );
 
-        return [
-            'detalhes' => $detalhesFaturamento,
-            'total' => $faturamento['totalSemCrescimento'],
-            'crescimento_faturamento' => $crescimento,
-            'faturamento_anual' => $faturamento['total12Meses'],
-        ];
-    }
+    return [
+        'detalhes' => $detalhesFaturamento,
+        'total' => $faturamento['totalSemCrescimento'],
+        'crescimento_faturamento' => $crescimento,
+        'faturamento_anual' => $faturamento['total12Meses'],
+    ];
+}
 
-    public function listar_apuracao($id)
-    {
-        $detalhesApuracao = DB::table('apuracao')
-            ->select('id', 'descricao', 'vendas', 'custo', 'crescimento', DB::raw('vendas * custo AS total'))
-            ->where('id_plano', $id)
-            ->get();
 
-        $crescimento = floatval($detalhesApuracao->first()->crescimento ?? 0);
+   public function listar_apuracao($id)
+{
+    $detalhesApuracao = Apuracao::where('id_plano', $id)->get();
 
-        $calculosService = new \App\Service\CalculosService();
-        $apuracao = $calculosService->calcular12Meses(
-            $detalhesApuracao,
-            $crescimento,
-            function ($item) {
-                return $item->vendas * $item->custo;
-            }
-        );
+    $crescimento = floatval($detalhesApuracao->first()->crescimento ?? 0);
 
-        return [
-            'detalhes' => $detalhesApuracao,
-            'total' => $apuracao['totalSemCrescimento'],
-            'apuracao_anual' => $apuracao['total12Meses'],
-        ];
-    }
+    $calculosService = new \App\Service\CalculosService();
+    $apuracao = $calculosService->calcular12Meses(
+        $detalhesApuracao,
+        $crescimento,
+        function ($item) {
+            return $item->vendas * $item->custo;
+        }
+    ); 
 
-    public function listar_custos_fixos($id)
-    {
-        $detalhesCustosFixos = DB::table('custo_fixo')
-            ->select('id', 'id_plano', 'descricao', 'custo', 'crescimento', DB::raw('custo AS total'))
-            ->where('id_plano', $id)
-            ->get();
+    return [
+        'detalhes' => $detalhesApuracao,
+        'total' => $apuracao['totalSemCrescimento'],
+        'apuracao_anual' => $apuracao['total12Meses'],
+    ];
+}
 
-        $crescimento = floatval($detalhesCustosFixos->first()->crescimento ?? 0);
 
-        $calculosService = new \App\Service\CalculosService();
-        $custosFixos = $calculosService->calcular12Meses(
-            $detalhesCustosFixos,
-            $crescimento,
-            function ($item) {
-                return $item->custo;
-            }
-        );
+   public function listar_custos_fixos($id)
+{
+    $detalhesCustosFixos = CustoFixo::where('id_plano', $id)->get();
 
-        return [
-            'detalhes' => $detalhesCustosFixos,
-            'total' => $custosFixos['totalSemCrescimento'],
-            'custosFixosAnuais' => $custosFixos['total12Meses'],
-        ];
-    }
+    $crescimento = floatval($detalhesCustosFixos->first()->crescimento ?? 0);
+
+    $calculosService = new \App\Service\CalculosService();
+    $custosFixos = $calculosService->calcular12Meses(
+        $detalhesCustosFixos,
+        $crescimento,
+        function ($item) {
+            return $item->custo;
+        }
+    );
+
+    return [
+        'detalhes' => $detalhesCustosFixos,
+        'total' => $custosFixos['totalSemCrescimento'],
+        'custosFixosAnuais' => $custosFixos['total12Meses'],
+    ];
+}
 
     public function listar_gastos_vendas($id)
-    {
-        $gastosVendas = DB::table('comercializacao')
-            ->select(
-                'id',
-                'id_plano',
-                'total_impostos',
-                'total_gastos_vendas',
-                'total_geral',
-                'created_at',
-                'updated_at',
-                DB::raw('total_gastos_vendas AS total')
-            )
-            ->where('id_plano', $id)
-            ->get();
+{
+    $gastosVendas = Comercializacao::where('id_plano', $id)->get();
     
-        $crescimento = floatval($gastosVendas->first()->crescimento ?? 0);
-    
-        $calculosService = new \App\Service\CalculosService();
-        $gastosVendasCalculados = $calculosService->calcular12Meses(
-            $gastosVendas,
-            $crescimento,
-            function ($item) {
-                return $item->total_gastos_vendas;
-            }
-        );
-    
-        // Adiciona 1% ao valor anual dos gastos com vendas
-        $gastosVendasCalculados['total12Meses'] *= 1.01;
-    
-        return [
-            'detalhes' => $gastosVendas,
-            'total' => $gastosVendasCalculados['totalSemCrescimento'],
-            'gastosAnuais' => $gastosVendasCalculados['total12Meses'],
-        ];
-        
-    }
+    $crescimento = floatval($gastosVendas->first()->crescimento ?? 0);
+
+    $calculosService = new \App\Service\CalculosService();
+    $gastosVendasCalculados = $calculosService->calcular12Meses(
+        $gastosVendas,
+        $crescimento,
+        function ($item) {
+            return $item->total_gastos_vendas;
+        }
+    );
+
+    // Adiciona 1% ao valor anual dos gastos com vendas
+    $gastosVendasCalculados['total12Meses'] *= 1.01;
+
+    return [
+        'detalhes' => $gastosVendas,
+        'total' => $gastosVendasCalculados['totalSemCrescimento'],
+        'gastosAnuais' => $gastosVendasCalculados['total12Meses'],
+    ];
+}
+
     
     public function listar_capital($id)
     {
-        $detalhesCapital = DB::table('investimento_total')
-            ->select('id', 'id_plano', 'total_investimento', DB::raw('total_investimento AS total'))
-            ->where('id_plano', $id)
-            ->get();
+        $detalhesCapital = investimento_total::where('id_plano', $id)->get();
 
         return [
-            'detalhes' => $detalhesCapital,
-            'total' => $detalhesCapital->first()->total,
-        ];
+        'detalhes' => $detalhesCapital,
+        'total' => $detalhesCapital->first()->total_investimento ?? 0,
+         ];
     }
 }
