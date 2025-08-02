@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Custo_Unitario;
 use App\Models\Plano;
+use App\Models\Marketing;
 use App\Service\CalculosService;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Http\Request;
@@ -43,21 +44,12 @@ class CustoUniController extends Controller
     }
 
     public function listar_produtos($id)
-    { 
-        
-    
-        $produtos = DB::table('marketing')
-            ->join('plano_negocios', 'marketing.id_plano', '=', 'plano_negocios.id')
-            ->select('marketing.id', 'marketing.produto', 'marketing.preco', 
-                     'marketing.estrategia_promo', 'marketing.estrategia_comer', 
-                     'marketing.localizacao', 'marketing.id_plano', 
-                     'marketing.created_at', 'marketing.updated_at')
-            ->where('marketing.id_plano', $id)
+    {
+        return Marketing::where('id_plano', $id)
+            ->select('id', 'produto', 'preco', 'estrategia_promo', 'estrategia_comer', 'localizacao', 'id_plano', 'created_at', 'updated_at')
             ->get();
-    
-        return $produtos; // Retorna a lista de produtos
     }
-    
+
     public function store(Request $request, $id)
     {
         //dd($request->all());

@@ -11,12 +11,12 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::create('veiculo', function (Blueprint $table) {
+        Schema::create('estoque', function (Blueprint $table) {
             $table->id();
             $table->string('descricao');
             $table->integer('quantidade');
-            $table->decimal('valor_unitario', 10, 2);
-            $table->decimal('total', 10, 2);
+            $table->decimal('valor_unitario', 20, 2);
+            $table->decimal('total', 20, 2);
             $table->unsignedBigInteger('id_plano')->nullable();
             $table->timestamps();
 
@@ -26,6 +26,6 @@ return new class extends Migration
 
     public function down()
     {
-        Schema::dropIfExists('veiculo');
+        Schema::dropIfExists('estoque');
     }
 };

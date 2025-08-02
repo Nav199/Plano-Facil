@@ -13,11 +13,11 @@ return new class extends Migration
     {
         Schema::create('imoveis', function (Blueprint $table) {
             $table->id();
-            $table->string('descricao'); 
-            $table->integer('quantidade'); 
-            $table->decimal('valor_unitario', 10, 2); 
-            $table->decimal('total', 10, 2); 
-            $table->unsignedBigInteger('id_plano')->nullable(); 
+            $table->string('descricao', 255);
+            $table->integer('quantidade');
+            $table->decimal('valor_unitario', 15, 2);
+            $table->decimal('total', 15, 2);
+            $table->unsignedBigInteger('id_plano')->nullable();
             $table->timestamps();
 
             $table->foreign('id_plano')->references('id')->on('plano_negocios')->onDelete('cascade');
@@ -26,10 +26,8 @@ return new class extends Migration
 
     /**
      * Reverse the migrations.
-     *
-     * @return void
      */
-    public function down() 
+    public function down()
     {
         Schema::dropIfExists('imoveis');
     }

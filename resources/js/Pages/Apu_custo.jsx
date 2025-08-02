@@ -12,8 +12,8 @@ const ApuCusto = ({ planoId, auth }) => {
   const { data, setData, post, processing, errors } = useForm({
     items: faturamento.map((item) => {
       const custo = custoUnitario.length > 0 ? 
-        parseFloat(custoUnitario.find(c => c.produto === item.produto_servico)?.valor_unitario) || 0 
-        : 0;
+      parseFloat(custoUnitario.find(c => c.produto === item.produto_servico)?.total_geral) || 0 
+      : 0;
 
       return {
         descricao: item.produto_servico,

@@ -17,8 +17,8 @@ return new class extends Migration
             $table->unsignedBigInteger('id_plano');
             $table->string('produto');
             $table->integer('quantidade');
-            $table->decimal('valor_unitario', 10, 2);
-            $table->decimal('total', 10, 2);
+            $table->decimal('valor_unitario', 20, 2);
+            $table->decimal('total', 20, 2);
             $table->decimal('crescimento');
             $table->timestamps();
             $table->foreign('id_plano')->references('id')->on('plano_negocios')->onDelete('cascade');

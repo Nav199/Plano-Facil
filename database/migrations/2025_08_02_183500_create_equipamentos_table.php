@@ -11,12 +11,12 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::create('estoque', function (Blueprint $table) {
+        Schema::create('equipamentos', function (Blueprint $table) {
             $table->id();
-            $table->string('descricao');
+            $table->string('descricao', 255);
             $table->integer('quantidade');
-            $table->decimal('valor_unitario', 10, 2);
-            $table->decimal('total', 10, 2);
+            $table->decimal('valor_unitario', 15, 2);
+            $table->decimal('total', 15, 2);
             $table->unsignedBigInteger('id_plano')->nullable();
             $table->timestamps();
 
@@ -24,8 +24,11 @@ return new class extends Migration
         });
     }
 
+    /**
+     * Reverse the migrations.
+     */
     public function down()
     {
-        Schema::dropIfExists('estoque');
+        Schema::dropIfExists('equipamentos');
     }
 };

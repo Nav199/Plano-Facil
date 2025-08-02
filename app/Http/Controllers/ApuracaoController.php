@@ -53,13 +53,11 @@ class ApuracaoController extends Controller
 
 public function custoUnitario($id)
 {
-    $custoUnitario = Custo_Unitario::where('id_plano', $id)->get();
-
-    if (!$custoUnitario) {
-        return null;
-    }
-    return $custoUnitario;
-} 
+    return Custo_Unitario::where('id_plano', $id)
+        ->select('produto', DB::raw('SUM(total) as total_geral'))
+        ->groupBy('produto')
+        ->get();
+}
 
 // Método para buscar os dados de Faturamento
 public function faturamento($id)

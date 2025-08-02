@@ -3,7 +3,7 @@
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
-
+ 
 return new class extends Migration
 {
     /**
@@ -11,12 +11,12 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::create('moveis_utensilios', function (Blueprint $table) {
+        Schema::create('computadores', function (Blueprint $table) { // Mudei para plural por convenção Laravel
             $table->id();
-            $table->string('descricao');
+            $table->string('descricao', 255); // Aumentei o tamanho aqui também para consistência
             $table->integer('quantidade');
-            $table->decimal('valor_unitario', 10, 2);
-            $table->decimal('total', 10, 2);
+            $table->decimal('valor_unitario', 15, 2); // Aumentei precisão para consistência
+            $table->decimal('total', 15, 2); // Aumentei precisão para consistência
             $table->unsignedBigInteger('id_plano')->nullable();
             $table->timestamps();
 
@@ -24,8 +24,11 @@ return new class extends Migration
         });
     }
 
+    /**
+     * Reverse the migrations.
+     */
     public function down()
     {
-        Schema::dropIfExists('moveis_utensilios');
+        Schema::dropIfExists('computadores'); // Mudei para plural
     }
 };

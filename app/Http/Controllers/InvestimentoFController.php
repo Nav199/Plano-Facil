@@ -40,6 +40,8 @@ class InvestimentoFController extends Controller
                 'computadores' => 'required|array',
             ]);
 
+            \Log::debug('Dados recebidos', $validatedData);
+
             // Verifica se o plano existe
             $plano = Plano::find($id);
             if (!$plano) {
@@ -48,11 +50,11 @@ class InvestimentoFController extends Controller
   
             // Função para salvar cada item em sua respectiva tabela
             $this->salvarItens($validatedData['imoveis'], 'imoveis', $plano->id);
-            $this->salvarItens($validatedData['maquinas'], 'maquina', $plano->id); 
-            $this->salvarItens($validatedData['equipamentos'], 'equipamento', $plano->id);
-            $this->salvarItens($validatedData['veiculos'], 'veiculo', $plano->id);
+            $this->salvarItens($validatedData['maquinas'], 'maquinas', $plano->id); 
+            $this->salvarItens($validatedData['equipamentos'], 'equipamentos', $plano->id);
+            $this->salvarItens($validatedData['veiculos'], 'veiculos', $plano->id);
             $this->salvarItens($validatedData['moveisUtensilios'], 'moveis_utensilios', $plano->id);
-            $this->salvarItens($validatedData['computadores'], 'computador', $plano->id);
+            $this->salvarItens($validatedData['computadores'], 'computadores', $plano->id);
 
             // Responder com sucesso
             return redirect()->route('estoque', [$id])->with('success', 'Dados de mercado salvos com sucesso!');

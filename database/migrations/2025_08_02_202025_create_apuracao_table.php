@@ -12,16 +12,18 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('apuracao', function (Blueprint $table) {
-            $table->id(); 
-            $table->unsignedBigInteger('id_plano');
-            $table->string('descricao');
-            $table->decimal('vendas', 10, 2);
-            $table->decimal('custo', 10, 2);
-            $table->decimal('crescimento', 10, 2);
-            $table->decimal('total', 10, 2);
-            $table->timestamps();
-            $table->foreign('id_plano')->references('id')->on('plano_negocios')->onDelete('cascade');
-        });
+    $table->id(); 
+    $table->unsignedBigInteger('id_plano');
+    $table->string('descricao');
+    $table->decimal('vendas', 20, 2);
+    $table->decimal('custo', 20, 2);
+    $table->decimal('crescimento', 10, 2);
+    $table->decimal('total', 20, 2);
+    $table->timestamps();
+
+    $table->foreign('id_plano')->references('id')->on('plano_negocios')->onDelete('cascade');
+});
+
     }
 
     /**

@@ -11,12 +11,12 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::create('maquina', function (Blueprint $table) {
+        Schema::create('veiculos', function (Blueprint $table) {
             $table->id();
-            $table->string('descricao');
-            $table->integer('quantidade'); 
-            $table->decimal('valor_unitario', 10, 2);
-            $table->decimal('total', 10, 2);
+            $table->string('descricao', 255);
+            $table->integer('quantidade');
+            $table->decimal('valor_unitario', 15, 2);
+            $table->decimal('total', 15, 2);
             $table->unsignedBigInteger('id_plano')->nullable();
             $table->timestamps();
 
@@ -24,8 +24,11 @@ return new class extends Migration
         });
     }
 
+    /**
+     * Reverse the migrations.
+     */
     public function down()
     {
-        Schema::dropIfExists('maquina');
+        Schema::dropIfExists('veiculos');
     }
 };
