@@ -63,9 +63,9 @@ class CaixaController extends Controller
                 'id_plano' => $id,
                 'necessidade_estoque' => $validated['necessidadeLiquidaDias'],
                 'capital_giro' => $validated['capital_giro'],
-                'estoque_inicial' => $validated['estoque_inicial'], // Salvando capital de giro no banco
+                'estoque_inicial' => $validated['estoque_inicial'],
+                'caixa_minimo' => $validated['caixaMinimo'],
             ]);
-    
             return redirect()->route('investimento-total', [$id])
             ->with('success', 'Depreciações salvas com sucesso.');
         } catch (\Exception $e) {

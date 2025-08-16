@@ -9,7 +9,7 @@ class computador extends Model
 {
     use HasFactory;
 
-    protected $table = 'computador';
+    protected $table = 'computadores';
 
     protected $fillable = [
         'descricao', 'quantidade', 'valor_unitario', 'total', 'id_plano'

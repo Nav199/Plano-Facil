@@ -9,7 +9,7 @@ class maquina extends Model
 {
     use HasFactory; 
 
-    protected $table = 'maquina';
+    protected $table = 'maquinas';
 
     protected $fillable = [
         'descricao', 'quantidade', 'valor_unitario', 'total', 'id_plano'

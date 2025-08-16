@@ -57,11 +57,11 @@ class DepreciacaoController extends Controller
     {
         return [
             'imoveis' => DB::table('imoveis')->where('id_plano', $id)->sum('total'),
-            'maquinas' => DB::table('maquina')->where('id_plano', $id)->sum('total'),
-            'equipamentos' => DB::table('equipamento')->where('id_plano', $id)->sum('total'),
+            'maquinas' => DB::table('maquinas')->where('id_plano', $id)->sum('total'),
+            'equipamentos' => DB::table('equipamentos')->where('id_plano', $id)->sum('total'),
             'moveis_utensilios' => DB::table('moveis_utensilios')->where('id_plano', $id)->sum('total'),
-            'veiculos' => DB::table('veiculo')->where('id_plano', $id)->sum('total'),
-            'computadores' => DB::table('computador')->where('id_plano', $id)->sum('total'),
+            'veiculos' => DB::table('veiculos')->where('id_plano', $id)->sum('total'),
+            'computadores' => DB::table('computadores')->where('id_plano', $id)->sum('total'),
         ];
     }
 }

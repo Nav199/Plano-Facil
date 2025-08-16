@@ -10,9 +10,13 @@ class caixa_minimo extends Model
     use HasFactory;
     protected $table = 'caixa_minimo';
 
-    protected $fillable = [
-        'id', 'id_plano','necessidades_estoque','capital_giro','estoque_inicial',
-    ];
+   protected $fillable = [
+    'id_plano',
+    'necessidade_estoque',
+    'capital_giro',
+    'estoque_inicial',
+    'caixa_minimo',
+];
 
     public function plano()
     {
