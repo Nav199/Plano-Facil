@@ -5,33 +5,38 @@ import Button from '@/Components/Button';
 
 
 function Avaliacao() {
-  const { planoId, avaliacao = [], error,auth } = usePage().props;
+  const { planoId, avaliacao = [], error, auth } = usePage().props;
+
+  const avaliacaoUnica = avaliacao.join('\n\n');
 
   const { data, setData, post, processing, errors, reset } = useForm({
-    avaliacao: avaliacao.length > 0 ? avaliacao : [''],
+    avaliacaoTexto: avaliacaoUnica,
   });
 
-  // Função para lidar com a mudança na avaliação
-  const handleChange = (e, index) => {
-    const newAvaliacao = [...data.avaliacao];
-    newAvaliacao[index] = e.target.value;
-    setData('avaliacao', newAvaliacao);
+  const handleChange = (e) => {
+    setData('avaliacaoTexto', e.target.value);
   };
 
   // Função para enviar o formulário
   const handleSubmit = (e) => {
     e.preventDefault();
-    post(route('avaliacao', { id: planoId }), { onSuccess: () => reset() }); 
+    
+    const dataToPost = { avaliacao: [data.avaliacaoTexto] };
+    
+    post(route('avaliacao', { id: planoId }), { 
+        data: dataToPost,
+        onSuccess: () => reset() 
+    }); 
   };
 
   return (
-     <Authenticated
-          user={auth.user}
-          header={
-            <h2 className="font-semibold text-xl text-gray-800 leading-tight text-center">
-              Avaliação Geral do Plano
-            </h2>
-          }
+      <Authenticated
+           user={auth.user}
+           header={
+             <h2 className="font-semibold text-xl text-gray-800 leading-tight text-center">
+               Avaliação Geral do Plano
+             </h2>
+           }
         >
     <div className="container mx-auto p-8">
 
@@ -44,16 +49,18 @@ function Avaliacao() {
             <h2 className="text-xl font-bold text-center">Avaliação da IA Gemini</h2>
           </div>
           <div className="p-4 space-y-4">
-            {data.avaliacao.map((item, index) => (
-              <div key={index} className="flex items-center space-x-4">
-                <textarea
-                  className="w-full p-2 border border-gray-300 rounded-md"
-                  value={item}
-                  onChange={(e) => handleChange(e, index)}
-                  placeholder={`Avaliação ${index + 1}`}
-                />
-              </div> 
-            ))}
+            {/* Bloco Único de Avaliação */}
+            <div className="flex items-center space-x-4">
+              <textarea
+                // Aumentando o tamanho para comportar todo o texto
+                className="w-full p-2 border border-gray-300 rounded-md min-h-64"
+                value={data.avaliacaoTexto}
+                onChange={handleChange}
+                placeholder={`Avaliação Geral`}
+                rows={15} // Define uma altura considerável
+              />
+            </div> 
+            {/* Fim do Bloco Único */}
           </div>
         </div>
 
@@ -68,8 +75,8 @@ function Avaliacao() {
         </div>
       </form>
 
-      {/* Caso não haja avaliações */}
-      {data.avaliacao.length === 0 && !error && (
+      {/* Caso não haja avaliações (agora avaliacaoUnica) */}
+      {avaliacaoUnica.length === 0 && !error && (
         <p className="text-gray-700 text-center">Nenhuma avaliação disponível.</p>
       )}
     </div>

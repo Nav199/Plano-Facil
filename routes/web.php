@@ -127,6 +127,8 @@ Route::middleware(['auth', 'verified'])->group(function () {
     // Relatório do Plano de Negócio
     Route::get('/relatorio/{id}', [RelatorioController::class, 'create'])->name('relatorio');
  
+    // Gerar PDF do plano de negócio
+Route::get('/relatorio/pdf/{id}', [RelatorioController::class, 'exportarPdf'])->name('relatorio.pdf');
 
     // Rota da Tabela Cnae
     Route::get('/cnae', [CnaeController::class, 'index']);

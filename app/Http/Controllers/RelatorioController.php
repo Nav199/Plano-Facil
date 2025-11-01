@@ -7,6 +7,7 @@ use Inertia\Inertia;
 use App\Models\Plano;
 use App\Service\JsonDecode;
 use Illuminate\Support\Facades\Log;
+use Barryvdh\DomPDF\Facade\Pdf;
 
 class RelatorioController extends Controller
 {
@@ -17,6 +18,7 @@ class RelatorioController extends Controller
         $this->JsonDecode = $JsonDecode;
     }
 
+    // Exibe relatório no React via Inertia
     public function create($id)
     {
         $plano = Plano::with([
@@ -25,6 +27,8 @@ class RelatorioController extends Controller
             'maquina',
             'imoveis',
             'equipamento',
+            'computador',
+            'moveis',
             'Forma',
             'investimento_pre',
             'Faturamento',
@@ -38,53 +42,60 @@ class RelatorioController extends Controller
             'avaliacao',
             'demonstrativo',
             'socios',
-            'forma',
             'depreciacao',
             'custo_unitario',
             'investimento_total',
             'capital_giro',
             'comercializacao'
-        ])->find($id);
+        ])->findOrFail($id);
 
-        $hasData = $plano && (
-            $plano->executivos->isNotEmpty() ||
-            $plano->veiculo->isNotEmpty() ||
-            $plano->maquina->isNotEmpty() ||
-            $plano->imoveis->isNotEmpty() ||
-            $plano->equipamento->isNotEmpty() ||
-            $plano->Forma->isNotEmpty() ||
-            $plano->investimento_pre->isNotEmpty() ||
-            $plano->Faturamento->isNotEmpty() ||
-            $plano->clientes->isNotEmpty() ||
-            $plano->concorrentes->isNotEmpty() ||
-            $plano->fornecedores->isNotEmpty() ||
-            $plano->marketing->isNotEmpty() ||
-            $plano->apuracao->isNotEmpty() ||
-            $plano->analise->isNotEmpty() ||
-            $plano->avaliacao->isNotEmpty() ||
-            $plano->custo_fixo->isNotEmpty()||
-            $plano->demonstrativo->isNotEmpty() ||
-            $plano->socios->isNotEmpty()
-        ); 
-        Log::info($plano->analise);
-        Log::info($plano->avaliacao);
- 
+
         $analise = $this->JsonDecode->processarAnalise($plano->analise);
         $avaliacao = $this->JsonDecode->processar_avaliacao($plano->avaliacao);
 
-        Log::info($analise);
-        Log::info($avaliacao);
-
-        $message = $hasData 
-            ? null
-            : 'Não há dados disponíveis para exibir neste plano.';
-
         return Inertia::render('Relatorio/Relatorio', [
-            'status' => session('status'),
             'plano' => $plano,
             'analise' => $analise,
-            'avaliacao'=>$avaliacao,
-            'message' => $message,
+            'avaliacao' => $avaliacao,
         ]);
+    }
+
+    // Gera o PDF completo do Plano de Negócio
+    public function exportarPdf($id)
+    {
+        $plano = Plano::with([
+            'executivos',
+            'veiculo',
+            'maquina',
+            'imoveis',
+            'equipamento',
+            'computador',
+            'moveis',
+            'Forma',
+            'investimento_pre',
+            'Faturamento',
+            'clientes',
+            'concorrentes',
+            'fornecedores',
+            'marketing',
+            'apuracao',
+            'custo_fixo',
+            'analise',
+            'avaliacao',
+            'demonstrativo',
+            'socios',
+            'depreciacao',
+            'custo_unitario',
+            'investimento_total',
+            'capital_giro',
+            'comercializacao'
+        ])->findOrFail($id);
+
+        $pdf = Pdf::loadView('pdf.relatorio', compact('plano'))
+            ->setPaper('a4', 'portrait');
+
+        $filename = 'Plano_de_Negocio_' . str_replace(' ', '_', $plano->nome) . '.pdf';
+
+        return $pdf->download($filename);
     }
 }
