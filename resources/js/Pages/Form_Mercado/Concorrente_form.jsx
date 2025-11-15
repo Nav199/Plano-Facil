@@ -1,103 +1,62 @@
 import React, { useState } from 'react';
 
-const Concorrente_Form = ({ onChange }) => {
-  const [preco, setPreco] = useState('');
+const Concorrente_Form = ({ data, onChange }) => {
+    const [preco, setPreco] = useState('');
 
-  const handleChange = (e) => {
-    const { name, value } = e.target;
-    onChange(name, value);
-  };
+    const handlePriceChange = (e) => {
+        let value = e.target.value;
+        let numeric = value.replace(/[^\d,]/g, '').replace(',', '.');
 
-  const handlePriceChange = (e) => {
-    let value = e.target.value;
+        setPreco("R$ " + numeric.replace('.', ','));
+        onChange('preco_concorrente', numeric);
+    };
 
-    const numericValue = value.replace(/[^\d,]/g, '').replace(',', '.');
+    const handleChange = (e) => {
+        onChange(e.target.name, e.target.value);
+    };
 
-    const formattedValue = "R$ " + numericValue
-      .replace('.', ',') 
-      .replace(/\B(?=(\d{3})+(?!\d))/g, "."); 
-      setPreco(formattedValue);
-      onChange('preco_concorrente', numericValue);
-  };
+    return (
+        <div className="bg-white shadow-lg rounded-2xl p-8 border border-gray-200 space-y-8">
+            <h2 className="text-2xl font-semibold text-gray-800 text-center">
+                Estudo dos Concorrentes
+            </h2>
 
-  return (
-    <div className="p-4 bg-gray-100 rounded shadow mb-4 text-center">
-      <h2 className="text-lg font-semibold mb-2 text-center">Estudo dos Concorrentes</h2>
-      <div className="grid grid-cols-2 gap-4">
-        <div>
-          <label htmlFor="nome" className="block text-sm font-medium text-gray-700">Nome</label>
-          <input
-            type="text"
-            id="nome"
-            name="nome_concorrente"
-            className="mt-1 p-2 w-3/5 border-gray-300 rounded-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
-            onChange={handleChange}
-          />
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+
+                {/** Nome */}
+                <Input label="Nome" name="nome_concorrente" onChange={handleChange} />
+
+                <Input label="Qualidade" name="qualidade_concorrente" onChange={handleChange} />
+
+                <Input
+                    label="Preço"
+                    value={preco}
+                    name="preco_concorrente"
+                    onChange={handlePriceChange}
+                />
+
+                <Input label="Condições de Pagamento" name="pagamento_concorrente" onChange={handleChange} />
+
+                <Input label="Localização" name="localizacao_concorrente" onChange={handleChange} />
+
+                <Input label="Garantias" name="garantias_concorrente" onChange={handleChange} />
+
+                <Input label="Serviço" name="servico_concorrente" onChange={handleChange} />
+
+            </div>
         </div>
-        <div>
-          <label htmlFor="qualidade" className="block text-sm font-medium text-gray-700">Qualidade</label>
-          <input
-            type="text"
-            id="qualidade"
-            name="qualidade_concorrente"
-            className="mt-1 p-2 w-3/5 border-gray-300 rounded-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
-            onChange={handleChange}
-          />
-        </div>
-        <div>
-          <label htmlFor="preco" className="block text-sm font-medium text-gray-700">Preço</label>
-          <input
-            type="text"
-            id="preco"
-            name="preco_concorrente"
-            value={preco}
-            className="mt-1 p-2  w-3/5 border-gray-300 rounded-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
-            onChange={handlePriceChange} // Atualiza o estado e o valor numérico
-          />
-        </div>
-        <div>
-          <label htmlFor="pagamento" className="block text-sm font-medium text-gray-700">Condições de Pagamento</label>
-          <input
-            type="text"
-            id="pagamento"
-            name="pagamento_concorrente"
-            className="mt-1 p-2 w-3/5 border-gray-300 rounded-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
-            onChange={handleChange}
-          />
-        </div>
-        <div>
-          <label htmlFor="localizacao" className="block text-sm font-medium text-gray-700">Localização</label>
-          <input
-            type="text"
-            id="localizacao"
-            name="localizacao_concorrente"
-            className="mt-1 p-2 w-3/5 border-gray-300 rounded-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
-            onChange={handleChange}
-          />
-        </div>
-        <div>
-          <label htmlFor="garantias" className="block text-sm font-medium text-gray-700">Garantias</label>
-          <input
-            type="text"
-            id="garantias"
-            name="garantias_concorrente"
-            className="mt-1 p-2 w-3/5 border-gray-300 rounded-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
-            onChange={handleChange}
-          />
-        </div>
-        <div>
-          <label htmlFor="servico" className="block text-sm font-medium text-gray-700">Serviço</label>
-          <input
-            type="text"
-            id="servico"
-            name="servico_concorrente"
-            className="mt-1 p-2 w-3/5 border-gray-300 rounded-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
-            onChange={handleChange}
-          />
-        </div>
-      </div>
-    </div>
-  );
+    );
 };
+
+const Input = ({ label, ...props }) => (
+    <div>
+        <label className="text-gray-700 font-medium">{label}</label>
+        <input
+            {...props}
+            className="w-full mt-1 px-4 py-2 border border-gray-300 rounded-xl 
+                       focus:ring-2 focus:ring-indigo-500 shadow-sm"
+        />
+    </div>
+);
 
 export default Concorrente_Form;

@@ -27,16 +27,17 @@ class ExecutivoController extends Controller
     {
         // Validação dos dados
         $validated = $request->validate([
-            'nome' => 'required|string|max:125',
+            'nome' => 'required|string|max:255',
             'cpfCnpj' => 'required|string|max:20',
-            'missao' => 'nullable|string|max:1000',
-            'setorAtividade' => 'required|string|max:120',
-            'formaJuridica' => 'required|string|max:120',
-            'enquadramentoTributario' => 'required|string|max:120',
-            'visao' => 'nullable|string|max:300',
-            'valores' => 'nullable|string|max:300',
-            'fonteRecursos' => 'nullable|string|max:100',
+            'missao' => 'nullable|string|max:5000',
+            'setorAtividade' => 'required|string|max:2000',
+            'formaJuridica' => 'required|string|max:2000',
+            'enquadramentoTributario' => 'required|string|max:2000',
+            'visao' => 'nullable|string|max:5000',
+            'valores' => 'nullable|string|max:5000',
+            'fonteRecursos' => 'nullable|string|max:5000',
         ]);
+
     
         // Buscando a descrição do CNAE com base no setor de atividade
         $cnaeData = app(\App\Service\CnaeService::class)->getCnaeData();

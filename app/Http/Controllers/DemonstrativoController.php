@@ -62,9 +62,9 @@ class DemonstrativoController extends Controller
         // Criação do Demonstrativo
         Demonstrativo::create([
             'id_plano' => $id,
-            'resumo' => $validated['resumo'], // Armazenar a DRE
-            'resultado_operacional' => round($lucro_operacional, 2),
-            'lucro_mensal' => round($lucro_operacional, 2), // Pode ajustar se desejar
+            'resumo' => $validated['resumo'], 
+            'lucro_valor' => round($lucro_operacional, 2),
+            'lucro_anual' => round($lucro_operacional, 2), 
             'porcentagem_lucro' => round($percentual_lucro, 2),
         ]);
 

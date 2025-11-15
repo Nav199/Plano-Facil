@@ -1,49 +1,58 @@
 import React from 'react';
 
-const Client_form = ({ onChange }) => { 
+const Client_Form = ({ data, onChange }) => {
     const handleChange = (e) => {
         const { name, value } = e.target;
         onChange(name, value);
     };
 
     return (
-        <div className="p-4 bg-gray-100 rounded shadow mb-4 text-center">
-            <h2 className="text-lg font-semibold mb-2">Estudo do Cliente</h2>
-            <div className="grid grid-cols-2 gap-4">
+        <div className="bg-white shadow-lg rounded-2xl p-8 border border-gray-200 space-y-8">
+            <h2 className="text-2xl font-semibold text-gray-800 text-center">
+                Estudo do Cliente
+            </h2>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+
                 <div>
-                    <label htmlFor="perfil" className="block text-sm font-medium text-gray-700">Público Alvo</label>
+                    <label className="text-gray-700 font-medium">Público Alvo</label>
                     <input
                         type="text"
                         name="perfil"
-                        id="perfil"
-                        className="mt-1 p-2 w-3/5 border-gray-300 rounded-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
+                        value={data.perfil}
                         onChange={handleChange}
+                        className="w-full mt-1 px-4 py-2 border border-gray-300 rounded-xl 
+                                   focus:ring-2 focus:ring-indigo-500 shadow-sm"
                     />
                 </div>
+
                 <div>
-                    <label htmlFor="comportamento" className="block text-sm font-medium text-gray-700">Comportamento dos Clientes</label>
+                    <label className="text-gray-700 font-medium">Comportamento dos Clientes</label>
                     <textarea
                         name="comportamento"
-                        id="comportamento"
-                        maxLength={200}
-                        className="mt-1 p-2 w-3/5 border-gray-300 rounded-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
+                        value={data.comportamento}
                         onChange={handleChange}
-                    />
+                        rows="4"
+                        className="w-full mt-1 px-4 py-2 border border-gray-300 rounded-xl 
+                                   focus:ring-2 focus:ring-indigo-500 shadow-sm"
+                    ></textarea>
                 </div>
-                <div>
-                    <label htmlFor="área" className="block text-sm font-medium text-gray-700">Área de Abrangência</label>
+
+                <div className="md:col-span-2">
+                    <label className="text-gray-700 font-medium">Área de Abrangência</label>
                     <input
                         type="text"
                         name="área"
-                        id="área"
-                        maxLength={200}
-                        className="mt-1 p-2 w-3/5 border-gray-300 rounded-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
+                        value={data.área}
                         onChange={handleChange}
+                        className="w-full mt-1 px-4 py-2 border border-gray-300 rounded-xl 
+                                   focus:ring-2 focus:ring-indigo-500 shadow-sm"
                     />
                 </div>
+
             </div>
         </div>
     );
 };
 
-export default Client_form;
+export default Client_Form;

@@ -13,17 +13,19 @@ return new class extends Migration
     {
         Schema::create('executivo', function (Blueprint $table) {
             $table->increments('id');
-            $table->string('fonte_recursos');
-            $table->string('visao');
-            $table->string('valores');
-            $table->string('missao');
-            $table->string('setor_atividade');
+            $table->text('fonte_recursos');
+            $table->text('visao');
+            $table->text('valores');
+            $table->text('missao');
+            $table->text('setor_atividade');
             $table->string('cpf_cnpj', 18);
-            $table->string('nome_empresa');
+            $table->text('nome_empresa');
             $table->timestamps();
-
             $table->unsignedBigInteger('id_plano')->nullable();
-            $table->foreign('id_plano')->references('id')->on('plano_negocios')->onDelete('cascade');
+            $table->foreign('id_plano')
+                ->references('id')
+                ->on('plano_negocios')
+                ->onDelete('cascade');
         });
     }
 

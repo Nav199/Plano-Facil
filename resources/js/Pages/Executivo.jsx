@@ -4,7 +4,7 @@ import axios from 'axios';
 import Authenticated from '@/Layouts/AuthenticatedLayout';
 
 const Executivo = ({ auth }) => {
-  const { data, setData, post, processing, errors, reset } = useForm({
+  const { data, setData, post, processing, errors } = useForm({
     nome: '',
     cpfCnpj: '',
     missao: '',
@@ -17,17 +17,10 @@ const Executivo = ({ auth }) => {
   });
 
   const [cnaeOptions, setCnaeOptions] = useState([]);
-  const [cpfCnpjValido, setCpfCnpjValido] = useState(false);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-    if (name === 'cpfCnpj') {
-      const formattedValue = formatarCPFouCNPJ(value);
-      setData(name, formattedValue);
-      validarCPFouCNPJ(value);
-    } else {
-      setData(name, value);
-    }
+    setData(name, value);
   };
 
   useEffect(() => {
@@ -43,172 +36,193 @@ const Executivo = ({ auth }) => {
     fetchCnae();
   }, []);
 
-  const formatarCPFouCNPJ = (valor) => {
-    let value = valor.replace(/\D/g, '');
-    if (value.length <= 11) {
-      // Formatar como CPF
-      if (value.length <= 3) return value;
-      if (value.length <= 6) return value.replace(/(\d{3})(\d{1,})/, '$1.$2');
-      if (value.length <= 9) return value.replace(/(\d{3})(\d{3})(\d{1,})/, '$1.$2.$3');
-      return value.replace(/(\d{3})(\d{3})(\d{3})(\d{1,})/, '$1.$2.$3-$4');
-    } else {
-      // Formatar como CNPJ
-      if (value.length <= 2) return value;
-      if (value.length <= 5) return value.replace(/(\d{2})(\d{1,})/, '$1.$2');
-      if (value.length <= 8) return value.replace(/(\d{2})(\d{3})(\d{1,})/, '$1.$2.$3');
-      if (value.length <= 12) return value.replace(/(\d{2})(\d{3})(\d{3})(\d{1,})/, '$1.$2.$3/$4');
-      return value.replace(/(\d{2})(\d{3})(\d{3})(\d{4})(\d{1,})/, '$1.$2.$3/$4-$5');
-    }
-  };
-
   const handleSubmit = (e) => {
     e.preventDefault();
     post('/Executivo');
   };
 
   return (
-    <Authenticated user={auth.user} header={<h2 className="font-semibold text-xl text-gray-800 leading-tight text-center">Plano Executivo</h2>}>
-    <div className="p-4 max-w-2xl mx-auto">
-      <form onSubmit={handleSubmit} className="space-y-4">
-        <div className="flex flex-wrap -mx-2">
-          <div className="w-full md:w-1/2 px-2 mb-4">
-            <label className="block text-sm font-medium text-gray-700">Nome da Empresa</label>
-            <input
-              type="text"
-              name="nome"
-              value={data.nome}
-              onChange={handleChange}
-              className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2"
-              required
-            />
-            {errors.nome && <div className="text-red-600">{errors.nome}</div>}
-          </div>
-          <div className="w-full md:w-1/2 px-2 mb-4">
-              <label className="block text-sm font-medium text-gray-700">CPF ou CNPJ</label>
-              <input
-                type="text"
-                name="cpfCnpj"
-                value={data.cpfCnpj}
-                onChange={handleChange}
-                className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2"
-                required
-              />
-              {cpfCnpjValido && (
-                <div className="text-green-600 mt-1 text-sm">
-                  CPF ou CNPJ identificado com sucesso.
-                </div>
-              )}
-              {errors.cpfCnpj && <div className="text-red-600">{errors.cpfCnpj}</div>}
-            </div>
-          <div className="w-full md:w-1/2 px-2 mb-4">
-            <label className="block text-sm font-medium text-gray-700">Missão da Empresa</label>
-            <textarea
-              name="missao"
-              value={data.missao}
-              onChange={handleChange}
-               minLength="10"
-              className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2"
-            />
-            {errors.missao && <div className="text-red-600">{errors.missao}</div>}
-          </div>
-          <div className="w-full md:w-1/2 px-2 mb-4">
-            <label className="block text-sm font-medium text-gray-700">Setor de Atividade</label>
-            <select
-              name="setorAtividade"
-              value={data.setorAtividade}
-              onChange={handleChange}
-              className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2"
-              required
-            >
-             <option value="">Selecione...</option>
-            {cnaeOptions.map((cnae, index) => (
-              <option key={index} value={cnae.CNAE}>
-                {cnae.Descrição}
-              </option>
-            ))}
-            </select>
-            {errors.setorAtividade && <div className="text-red-600">{errors.setorAtividade}</div>}
-          </div>
-          <div className="w-full md:w-1/2 px-2 mb-4">
-            <label className="block text-sm font-medium text-gray-700">Forma Jurídica</label>
-            <select
-              name="formaJuridica"
-              value={data.formaJuridica}
-              onChange={handleChange}
-              className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2"
-              required
-            >
-              <option value="">Selecione...</option>
-              <option value="MEI">Microempreendedor Individual – MEI</option>
-              <option value="Empresário Individual">Empresário Individual</option>
-              <option value="EIRELI">Empresa Individual de Responsabilidade Limitada – EIRELI</option>
-              <option value="Sociedade Limitada">Sociedade Limitada</option>
-            </select>
-            {errors.formaJuridica && <div className="text-red-600">{errors.formaJuridica}</div>}
-          </div>
-          <div className="w-full md:w-1/2 px-2 mb-4">
-          <label className="block text-sm font-medium text-gray-700">Enquadramento Tributário</label>
-          <select
-              name="enquadramentoTributario"
-              value={data.enquadramentoTributario}
-              onChange={handleChange}
-              className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2"
-              required
-            >
-              <option value="">Selecione...</option>
-              <option value="Simples Nacional">Simples Nacional</option>
-            </select>
-          {errors.enquadramentoTributario && (
-            <div className="text-red-600">{errors.enquadramentoTributario}</div>
-          )} 
-        </div> 
+    <Authenticated
+      user={auth.user}
+      header={
+        <h2 className="font-bold text-3xl text-gray-800 tracking-tight text-center py-6">
+          Plano Executivo
+        </h2>
+      }
+    >
+      <div className="max-w-5xl mx-auto px-6 py-10">
+        <div className="bg-white shadow-xl rounded-2xl p-10 border border-gray-200">
 
-          <div className="w-full md:w-1/2 px-2 mb-4">
-            <label className="block text-sm font-medium text-gray-700">Valores da Empresa</label>
-            <textarea
-              name="valores"
-              value={data.valores}
-              onChange={handleChange}
-               minLength="10"
-              className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2"
-            />
-            {errors.visao && <div className="text-red-600">{errors.visao}</div>}
-          </div>
-          <div className="w-full md:w-1/2 px-2 mb-4">
-            <label className="block text-sm font-medium text-gray-700">Fonte de Recursos</label>
-            <textarea
-              name="fonteRecursos"
-              value={data.fonteRecursos}
-              onChange={handleChange}
-              minLength="10"
-              className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2"
-            />
-            {errors.fonteRecursos && <div className="text-red-600">{errors.fonteRecursos}</div>}
-          </div>
-          <div className="w-full md:w-1/2 px-2 mb-4">
-            <label className="block text-sm font-medium text-gray-700">Visão da Empresa</label>
-            <textarea
-              name="visao"
-              value={data.visao}
-              onChange={handleChange}
-               minLength="10"
-              className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2"
-            />
-            {errors.visao && <div className="text-red-600">{errors.visao}</div>}
-          </div>
+          <form onSubmit={handleSubmit} className="space-y-8">
+
+            {/* GRID */}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+
+              {/* Nome */}
+              <div>
+                <label className="text-gray-700 font-medium">Nome da Empresa</label>
+                <input
+                  type="text"
+                  name="nome"
+                  value={data.nome}
+                  onChange={handleChange}
+                  className="w-full mt-1 px-4 py-2 border border-gray-300 rounded-xl
+                             focus:ring-2 focus:ring-indigo-500 shadow-sm"
+                  required
+                />
+                {errors.nome && <p className="text-red-600 text-sm">{errors.nome}</p>}
+              </div>
+
+              {/* CPF / CNPJ */}
+              <div>
+                <label className="text-gray-700 font-medium">CPF ou CNPJ</label>
+                <input
+                  type="text"
+                  name="cpfCnpj"
+                  value={data.cpfCnpj}
+                  onChange={handleChange}
+                  className="w-full mt-1 px-4 py-2 border border-gray-300 rounded-xl
+                             focus:ring-2 focus:ring-indigo-500 shadow-sm"
+                  required
+                />
+                {errors.cpfCnpj && <p className="text-red-600 text-sm">{errors.cpfCnpj}</p>}
+              </div>
+
+              {/* Missão */}
+              <div>
+                <label className="text-gray-700 font-medium">Missão da Empresa</label>
+                <textarea
+                  name="missao"
+                  value={data.missao}
+                  onChange={handleChange}
+                  rows="4"
+                  className="w-full mt-1 px-4 py-2 border border-gray-300 rounded-xl
+                             focus:ring-2 focus:ring-indigo-500 shadow-sm"
+                />
+                {errors.missao && <p className="text-red-600 text-sm">{errors.missao}</p>}
+              </div>
+
+              {/* Setor */}
+              <div>
+                <label className="text-gray-700 font-medium">Setor de Atividade</label>
+                <select
+                  name="setorAtividade"
+                  value={data.setorAtividade}
+                  onChange={handleChange}
+                  className="w-full mt-1 px-4 py-2 border border-gray-300 rounded-xl
+                             focus:ring-2 focus:ring-indigo-500 shadow-sm"
+                  required
+                >
+                  <option value="">Selecione...</option>
+                  {cnaeOptions.map((cnae, index) => (
+                    <option key={index} value={cnae.CNAE}>
+                      {cnae.Descrição}
+                    </option>
+                  ))}
+                </select>
+                {errors.setorAtividade && (
+                  <p className="text-red-600 text-sm">{errors.setorAtividade}</p>
+                )}
+              </div>
+
+              {/* Forma Jurídica */}
+              <div>
+                <label className="text-gray-700 font-medium">Forma Jurídica</label>
+                <select
+                  name="formaJuridica"
+                  value={data.formaJuridica}
+                  onChange={handleChange}
+                  className="w-full mt-1 px-4 py-2 border border-gray-300 rounded-xl
+                             focus:ring-2 focus:ring-indigo-500 shadow-sm"
+                  required
+                >
+                  <option value="">Selecione...</option>
+                  <option value="MEI">Microempreendedor Individual – MEI</option>
+                  <option value="Empresário Individual">Empresário Individual</option>
+                  <option value="EIRELI">EIRELI</option>
+                  <option value="Sociedade Limitada">Sociedade Limitada</option>
+                </select>
+                {errors.formaJuridica && (
+                  <p className="text-red-600 text-sm">{errors.formaJuridica}</p>
+                )}
+              </div>
+
+              {/* Enquadramento */}
+              <div>
+                <label className="text-gray-700 font-medium">Enquadramento Tributário</label>
+                <select
+                  name="enquadramentoTributario"
+                  value={data.enquadramentoTributario}
+                  onChange={handleChange}
+                  className="w-full mt-1 px-4 py-2 border border-gray-300 rounded-xl
+                             focus:ring-2 focus:ring-indigo-500 shadow-sm"
+                  required
+                >
+                  <option value="">Selecione...</option>
+                  <option value="Simples Nacional">Simples Nacional</option>
+                </select>
+                {errors.enquadramentoTributario && (
+                  <p className="text-red-600 text-sm">{errors.enquadramentoTributario}</p>
+                )}
+              </div>
+
+              {/* Valores */}
+              <div>
+                <label className="text-gray-700 font-medium">Valores da Empresa</label>
+                <textarea
+                  name="valores"
+                  value={data.valores}
+                  onChange={handleChange}
+                  rows="4"
+                  className="w-full mt-1 px-4 py-2 border border-gray-300 rounded-xl
+                             focus:ring-2 focus:ring-indigo-500 shadow-sm"
+                />
+              </div>
+
+              {/* Fonte de Recursos */}
+              <div>
+                <label className="text-gray-700 font-medium">Fonte de Recursos</label>
+                <textarea
+                  name="fonteRecursos"
+                  value={data.fonteRecursos}
+                  onChange={handleChange}
+                  rows="4"
+                  className="w-full mt-1 px-4 py-2 border border-gray-300 rounded-xl
+                             focus:ring-2 focus:ring-indigo-500 shadow-sm"
+                />
+              </div>
+
+              {/* Visão */}
+              <div className="md:col-span-2">
+                <label className="text-gray-700 font-medium">Visão da Empresa</label>
+                <textarea
+                  name="visao"
+                  value={data.visao}
+                  onChange={handleChange}
+                  rows="4"
+                  className="w-full mt-1 px-4 py-2 border border-gray-300 rounded-xl
+                             focus:ring-2 focus:ring-indigo-500 shadow-sm"
+                />
+                {errors.visao && <p className="text-red-600 text-sm">{errors.visao}</p>}
+              </div>
+            </div>
+
+            {/* BOTÃO */}
+            <div className="flex justify-center pt-4">
+              <button
+                type="submit"
+                disabled={processing}
+                className="bg-indigo-600 hover:bg-indigo-700 text-white font-semibold
+                           py-3 px-10 rounded-xl shadow-md transition-all"
+              >
+                {processing ? "Enviando..." : "Enviar"}
+              </button>
+            </div>
+
+          </form>
+
         </div>
-        <div className="flex justify-center">
-          <button
-            type="submit"
-            className="mt-4 bg-blue-500 text-white py-2 px-4 rounded"
-            disabled={processing}
-          >
-            {processing ? "Enviando..." : "Enviar"}
-          </button>
-          
-        </div>
-      </form>
-    </div>
+      </div>
     </Authenticated>
   );
 };

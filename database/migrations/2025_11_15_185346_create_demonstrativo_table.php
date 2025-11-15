@@ -14,8 +14,8 @@ return new class extends Migration
         Schema::create('demonstrativo', function (Blueprint $table) {
             $table->id();
             $table->unsignedBigInteger('id_plano'); 
-            $table->decimal('resultado_operacional', 15, 2); 
-            $table->decimal('lucro_mensal', 15, 2); 
+            $table->decimal('lucro_valor', 15, 2); 
+            $table->decimal('lucro_anual', 15, 2); 
             $table->decimal('porcentagem_lucro', 10, 3); 
             $table->timestamps(); 
             $table->foreign('id_plano')->references('id')->on('plano_negocios')->onDelete('cascade');
