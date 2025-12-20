@@ -37,7 +37,9 @@ class SociosController extends Controller
             'socios.*.numeroRua' => 'required|string|max:255',
             'socios.*.cidade' => 'required|string|max:255',
             'socios.*.estado' => 'required|string|max:255',
-            'socios.*.funcao' => 'required|string|max:255'
+            'socios.*.funcao' => 'required|string|max:255',
+            'socios.*.capitalInvestido' => 'required|numeric|min:0',
+            'socios.*.participacao' => 'required|numeric|min:0|max:100',
         ]);
         
         $plano = Plano::findOrFail($id);
@@ -61,10 +63,14 @@ class SociosController extends Controller
                 'cpf' => $socioData['cpf'],
                 'curriculo' => $socioData['curriculo'],
                 'funcao' => $socioData['funcao'],
+                'capital_investido' => $socioData['capitalInvestido'],
+                'participacao' => $socioData['participacao']
+
             ]);
         }
 
         return redirect()->route('plano_mercado', [$plano->id])
                          ->with('status', 'Sócios cadastrados com sucesso!');
     }
+
 }

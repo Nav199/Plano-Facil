@@ -4,6 +4,7 @@ use App\Http\Controllers\Analise;
 use App\Http\Controllers\AnaliseController;
 use App\Http\Controllers\ApuracaoController;
 use App\Http\Controllers\Avaliacao;
+use App\Http\Controllers\CepController;
 use App\Http\Controllers\AvaliacaoController;
 use App\Http\Controllers\CaixaController;
 use App\Http\Controllers\CnaeController;
@@ -40,6 +41,8 @@ Route::get('/', function () {
     ]);
 });
 
+// rota de cep
+Route::get('/cep/{cep}', [CepController::class, 'buscar'])->name('cep.buscar');
 
 Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('/dashboard', function () {
@@ -60,7 +63,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
     //rota de socios
     Route::get('/socios/{id}', [SociosController::class, 'create'])->name('socios.create');
     Route::post('/socios/{id}', [SociosController::class, 'store'])->name('socios.store');    
-    
+
     Route::get('/Mercado/{id}', [MercadoController::class, 'create'])->name('plano_mercado');
     Route::post('/Mercado/{id}', [MercadoController::class, 'store'])->name('plano_mercado');
   

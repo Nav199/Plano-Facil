@@ -13,16 +13,25 @@ return new class extends Migration
     {
         Schema::create('socios', function (Blueprint $table) {
             $table->id();
-            $table->unsignedBigInteger('id_plano');  // Relação com o plano de negócios
+            
+            $table->unsignedBigInteger('id_plano'); 
+            $table->unsignedBigInteger('endereco_id');  
             $table->string('nome');
-            $table->unsignedBigInteger('endereco_id');  // Chave estrangeira para o endereço
             $table->string('cpf');
             $table->string('curriculo');
             $table->string('funcao');
+            $table->decimal('capital_investido', 15, 2)->default(0);
+            $table->decimal('participacao', 5, 2)->default(0);
+
             $table->timestamps();
 
-            $table->foreign('id_plano')->references('id')->on('plano_negocios')->onDelete('cascade'); // Relação com a tabela de plano de negócios
-            $table->foreign('endereco_id')->references('id')->on('enderecos')->onDelete('cascade');  // Relacionamento com a tabela de endereços
+            $table->foreign('id_plano')
+                ->references('id')->on('plano_negocios')
+                ->onDelete('cascade');
+
+            $table->foreign('endereco_id')
+                ->references('id')->on('enderecos')
+                ->onDelete('cascade');
         });
     }
 

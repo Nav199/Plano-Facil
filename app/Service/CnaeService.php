@@ -216,6 +216,18 @@ class CnaeService
                 "Fator R" => "Não",
                 "Alíquota" => 6
             ],
+            [
+            "CNAE" => "6311-9/00",
+            "Descrição" => "Tratamento de dados, provedores de serviços de aplicação e serviços de hospedagem na internet",
+            "Fator R" => "Sim",
+            "Alíquota" => 6 // No Anexo III (com Fator R) ou 15,5% no Anexo V
+                    ],
+            [
+        "CNAE" => "6311-9/00",
+        "Descrição" => "Tratamento de dados, provedores de serviços de aplicação e serviços de hospedagem na internet",
+        "Fator R" => "Sim",
+        "Alíquota" => 6 // No Anexo III (com Fator R) ou 15,5% no Anexo V
+            ],
 
         ];
     
