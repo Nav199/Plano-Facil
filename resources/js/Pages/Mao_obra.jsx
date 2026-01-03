@@ -11,163 +11,140 @@ const Mao_obra = ({ planoId, auth }) => {
       funcao: item.cargo,
       num_empregados: 0,
       salario_mensal: 0,
-      encargos_percentual: 80
+      encargos_percentual: 80,
     })),
-    totalGeral: 0
   });
 
-  // Função para formatar valores como moeda (R$)
-  const formatCurrency = (value) => {
-    return value.toLocaleString('pt-BR', {
+  const formatCurrency = (value) =>
+    value.toLocaleString('pt-BR', {
       style: 'currency',
       currency: 'BRL',
-      minimumFractionDigits: 2,
     });
-  };
 
-  // Função que trata a mudança no campo salário mensal
   const handlePriceChange = (e, index) => {
-    let value = e.target.value;
-
-    // Remove caracteres não numéricos
-    let numericValue = value.replace(/[^\d]/g, '');
-
-    // Converte para float ajustando os centavos
-    let floatValue = parseFloat(numericValue) / 100 || 0;
-
-    // Atualiza o estado com o valor numérico
-    handleInputChange(index, 'salario_mensal', floatValue);
+    const numericValue = e.target.value.replace(/[^\d]/g, '');
+    const value = parseFloat(numericValue) / 100 || 0;
+    handleInputChange(index, 'salario_mensal', value);
   };
 
-  // Função para atualizar o valor nos campos do estado
   const handleInputChange = (index, field, value) => {
-    const newCargos = [...data.cargos];
-    newCargos[index][field] = Number(value);
-    setData('cargos', newCargos);
+    const updated = [...data.cargos];
+    updated[index][field] = Number(value);
+    setData('cargos', updated);
   };
 
-  // Função para enviar os dados para o backend
-  const handleSubmit = (e) => {
-    e.preventDefault();
-
-    // Calcular o total geral
-    const totalGeral = data.cargos.reduce((acc, emp) => {
+  const calcularTotalGeral = () =>
+    data.cargos.reduce((acc, emp) => {
       const subtotal = emp.num_empregados * emp.salario_mensal;
-      const encargos_sociais = (emp.encargos_percentual / 100) * subtotal;
-      return acc + subtotal + encargos_sociais;
+      const encargos = (emp.encargos_percentual / 100) * subtotal;
+      return acc + subtotal + encargos;
     }, 0);
 
-    post(route('mao-obra-store', { id: planoId, totalGeral }));
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    post(route('mao-obra-store', { id: planoId, totalGeral: calcularTotalGeral() }));
   };
 
   return (
     <Authenticated
       user={auth.user}
       header={
-        <h2 className="font-semibold text-xl text-gray-800 leading-tight text-center">
-          Custos de mão-de-obra
+        <h2 className="font-semibold text-xl text-gray-800 text-center">
+          Custos de Mão de Obra
         </h2>
       }
     >
-      <div className="min-h-screen flex flex-col items-center bg-gray-100 mt-16">
-        <div className="bg-white p-6 rounded-lg shadow-lg w-full max-w-4xl">
+      <div className="container mx-auto p-6 mt-6">
+        <div className="bg-white rounded-lg shadow-lg p-6">
           <form onSubmit={handleSubmit}>
-            <table className="table-auto w-full mb-6 border-collapse">
-              <thead>
+            <table className="w-full text-sm border border-gray-200 rounded-lg overflow-hidden">
+              <thead className="bg-gray-100 text-gray-700">
                 <tr>
-                  <th className="text-left p-2"></th>
-                  <th className="text-left p-2">Função</th>
-                  <th className="text-left p-2">Nº Empregados</th>
-                  <th className="text-left p-2">Salário Mensal</th>
-                  <th className="text-left p-2">Subtotal</th>
-                  <th className="text-left p-2">(%) de Encargos Sociais</th>
-                  <th className="text-left p-2">Encargos Sociais</th>
-                  <th className="text-left p-2">Total</th>
+                  <th className="p-3 text-left">Função</th>
+                  <th className="p-3 text-center">Qtd</th>
+                  <th className="p-3 text-right">Salário Mensal</th>
+                  <th className="p-3 text-right">Subtotal</th>
+                  <th className="p-3 text-center">% Encargos</th>
+                  <th className="p-3 text-right">Encargos</th>
+                  <th className="p-3 text-right">Total</th>
                 </tr>
               </thead>
               <tbody>
-                {data.cargos && data.cargos.length > 0 ? (
-                  data.cargos.map((item, index) => {
-                    const { num_empregados, salario_mensal, encargos_percentual } = item;
-                    const subtotal = num_empregados * salario_mensal;
-                    const encargos_sociais = (encargos_percentual / 100) * subtotal;
-                    const total = subtotal + encargos_sociais;
+                {data.cargos.map((item, index) => {
+                  const subtotal = item.num_empregados * item.salario_mensal;
+                  const encargos = (item.encargos_percentual / 100) * subtotal;
+                  const total = subtotal + encargos;
 
-                    return (
-                      <tr className="border-t" key={index}>
-                        <td className="p-2"></td>
-                        <td className="p-2">{item.funcao}</td>
-                        <td className="p-2">
-                          <input
-                            type="number"
-                            name="num_empregados"
-                            placeholder="Nº Empregados"
-                            value={num_empregados}
-                            onChange={(e) => handleInputChange(index, 'num_empregados', e.target.value)}
-                            className="border border-gray-300 p-2 w-full rounded"
-                          />
-                        </td>
-                        <td className="p-2">
-                          <input
-                            type="text"
-                            name="salario_mensal"
-                            placeholder="Salário Mensal"
-                            value={formatCurrency(salario_mensal)} // Formata o valor para exibição
-                            onChange={(e) => handlePriceChange(e, index)} // Atualiza o estado
-                            className="border border-gray-300 p-2 w-full rounded"
-                          />
-                        </td>
-                        <td className="p-2">{formatCurrency(subtotal)}</td>
-                        <td className="p-2">
-                          <input
-                            type="number"
-                            name="encargos_percentual"
-                            placeholder="Encargos (%)"
-                            value={encargos_percentual}
-                            onChange={(e) => handleInputChange(index, 'encargos_percentual', e.target.value)}
-                            className="border border-gray-300 p-2 w-full rounded"
-                          />
-                        </td>
-                        <td className="p-2">{formatCurrency(encargos_sociais)}</td>
-                        <td className="p-2">{formatCurrency(total)}</td>
-                      </tr>
-                    );
-                  })
-                ) : (
-                  <tr>
-                    <td colSpan="8" className="text-center p-4">Nenhum cargo encontrado</td>
-                  </tr>
-                )}
+                  return (
+                    <tr key={index} className="border-t hover:bg-gray-50">
+                      <td className="p-3">{item.funcao}</td>
+
+                      <td className="p-3">
+                        <input
+                          type="number"
+                          min="0"
+                          value={item.num_empregados}
+                          onChange={(e) =>
+                            handleInputChange(index, 'num_empregados', e.target.value)
+                          }
+                          className="w-full border rounded px-2 py-1 text-center"
+                        />
+                      </td>
+
+                      <td className="p-3">
+                        <input
+                          type="text"
+                          value={formatCurrency(item.salario_mensal)}
+                          onChange={(e) => handlePriceChange(e, index)}
+                          className="w-full border rounded px-2 py-1 text-right"
+                        />
+                      </td>
+
+                      <td className="p-3 text-right font-medium">
+                        {formatCurrency(subtotal)}
+                      </td>
+
+                      <td className="p-3">
+                        <input
+                          type="number"
+                          min="0"
+                          value={item.encargos_percentual}
+                          onChange={(e) =>
+                            handleInputChange(index, 'encargos_percentual', e.target.value)
+                          }
+                          className="w-full border rounded px-2 py-1 text-center"
+                        />
+                      </td>
+
+                      <td className="p-3 text-right">
+                        {formatCurrency(encargos)}
+                      </td>
+
+                      <td className="p-3 text-right font-semibold">
+                        {formatCurrency(total)}
+                      </td>
+                    </tr>
+                  );
+                })}
               </tbody>
             </table>
 
-            <div className="flex justify-between items-center mb-4">
-              <div></div>
-              <h3 className="font-bold text-xl">
-                Total: {formatCurrency(
-                  data.cargos.reduce((acc, emp) => {
-                    const subtotal = emp.num_empregados * emp.salario_mensal;
-                    const encargos_sociais = (emp.encargos_percentual / 100) * subtotal;
-                    return acc + subtotal + encargos_sociais;
-                  }, 0)
-                )}
-              </h3>
+            <div className="flex justify-end mt-6">
+              <div className="bg-gray-100 px-6 py-3 rounded-lg text-xl font-bold">
+                Total Geral: {formatCurrency(calcularTotalGeral())}
+              </div>
             </div>
 
-            <div className="flex justify-center">
-              <Button
-                type="submit"
-                processing={processing}
-                className="extra-classes-if-needed"
-              >
+            <div className="flex justify-center mt-6">
+              <Button type="submit" processing={processing}>
                 Enviar
               </Button>
             </div>
 
             {errors.cargos && (
-              <div className="text-red-500 mt-2">
-                {errors.cargos.map((error, index) => (
-                  <p key={index}>{error}</p>
+              <div className="text-red-500 mt-4">
+                {errors.cargos.map((error, i) => (
+                  <p key={i}>{error}</p>
                 ))}
               </div>
             )}

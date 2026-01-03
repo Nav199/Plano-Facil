@@ -2,20 +2,23 @@ import React from 'react';
 import { useForm } from '@inertiajs/react';
 import Produto from './Form_Marketing/Form_produto/Produto';
 import Authenticated from '@/Layouts/AuthenticatedLayout';
-import Button from '@/Components/Button';
 
 const Marketing = ({ planoId, auth }) => {
-  const { data, setData, post, processing, errors } = useForm({
+  const { data, setData, post, processing } = useForm({
     produtos: [{ name: '', price: '' }],
     estrategia_promo: '',
     estrategia_comer: '',
     localizacao: ''
   });
 
+  const inputBase =
+    "w-full mt-1 px-4 py-2 border border-gray-300 rounded-xl shadow-sm " +
+    "focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition";
+
   const handleProductChange = (index, key, value) => {
-    const updatedProducts = [...data.produtos];
-    updatedProducts[index][key] = value;
-    setData('produtos', updatedProducts);
+    const updated = [...data.produtos];
+    updated[index][key] = value;
+    setData('produtos', updated);
   };
 
   const addProduct = () => {
@@ -23,8 +26,10 @@ const Marketing = ({ planoId, auth }) => {
   };
 
   const removeProduct = (index) => {
-    const updatedProducts = data.produtos.filter((_, i) => i !== index);
-    setData('produtos', updatedProducts);
+    setData(
+      'produtos',
+      data.produtos.filter((_, i) => i !== index)
+    );
   };
 
   const handleSubmit = (e) => {
@@ -36,97 +41,130 @@ const Marketing = ({ planoId, auth }) => {
     <Authenticated
       user={auth.user}
       header={
-        <h2 className="font-semibold text-xl text-gray-800 leading-tight text-center">
+        <h2 className="font-bold text-3xl text-gray-800 tracking-tight text-center py-6">
           Plano de Marketing
         </h2>
       }
     >
-      <div className="container mx-auto p-4">
-        <form onSubmit={handleSubmit}>
-          <div className="mb-4">
-            <h2 className="text-lg font-semibold mb-2">Produtos</h2>
-            {data.produtos.map((product, index) => (
-              <Produto
-                key={index}
-                index={index}
-                product={product}
-                handleProductChange={handleProductChange}
-                removeProduct={removeProduct}
-              />
-            ))}
-            <button
-              type="button"
-              onClick={addProduct}
-              className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded mt-2"
-            >
-              Adicionar Produto
-            </button>
-          </div>
+      <div className="max-w-5xl mx-auto px-6 py-10">
+        <div className="bg-white shadow-xl rounded-2xl p-10 border border-gray-200">
 
-          {/* Grid para Estratégias */}
-          <div className="grid grid-cols-2 gap-4 mb-4">
-            <div>
-              <label htmlFor="promoStrategies" className="block text-sm font-medium text-gray-700 text-center">
-                Estratégias Promocionais
-              </label>
-              <textarea
-                id="promoStrategies"
-                name="estrategia_promo"
-                value={data.estrategia_promo}
-                onChange={(e) => setData('estrategia_promo', e.target.value)}
-                maxLength={1500}
-                className="mt-1 p-2 w-full border-gray-300 rounded-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
-              ></textarea>
-              <p className="text-sm text-gray-500 mt-2">
-                Descreva as estratégias promocionais que serão adotadas para promover os produtos.
-              </p>
+          <form onSubmit={handleSubmit} className="space-y-12">
+
+            {/* 🔹 PRODUTOS */}
+            <section>
+              <h3 className="text-xl font-semibold text-gray-800 mb-6">
+                Produtos
+              </h3>
+
+              <div className="space-y-6">
+                {data.produtos.map((product, index) => (
+                  <Produto
+                    key={index}
+                    index={index}
+                    product={product}
+                    handleProductChange={handleProductChange}
+                    removeProduct={removeProduct}
+                  />
+                ))}
+              </div>
+
+              <button
+                type="button"
+                onClick={addProduct}
+                className="mt-6 inline-flex items-center gap-2
+                           bg-indigo-100 text-indigo-700 font-medium
+                           px-6 py-2 rounded-xl hover:bg-indigo-200 transition"
+              >
+                + Adicionar Produto
+              </button>
+            </section>
+
+            {/* 🔹 ESTRATÉGIAS */}
+            <section>
+              <h3 className="text-xl font-semibold text-gray-800 mb-6">
+                Estratégias de Marketing
+              </h3>
+
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+
+                <div>
+                  <label className="text-sm font-medium text-gray-600">
+                    Estratégias Promocionais
+                  </label>
+                  <textarea
+                    name="estrategia_promo"
+                    value={data.estrategia_promo}
+                    onChange={(e) => setData('estrategia_promo', e.target.value)}
+                    rows={5}
+                    maxLength={1500}
+                    className={inputBase}
+                  />
+                  <p className="text-sm text-gray-500 mt-2">
+                    Como os produtos serão promovidos.
+                  </p>
+                </div>
+
+                <div>
+                  <label className="text-sm font-medium text-gray-600">
+                    Estratégias de Comercialização
+                  </label>
+                  <textarea
+                    name="estrategia_comer"
+                    value={data.estrategia_comer}
+                    onChange={(e) => setData('estrategia_comer', e.target.value)}
+                    rows={5}
+                    maxLength={1500}
+                    className={inputBase}
+                  />
+                  <p className="text-sm text-gray-500 mt-2">
+                    Como os produtos serão vendidos e distribuídos.
+                  </p>
+                </div>
+
+              </div>
+            </section>
+
+            {/* 🔹 LOCALIZAÇÃO */}
+            <section>
+              <h3 className="text-xl font-semibold text-gray-800 mb-6">
+                Localização
+              </h3>
+
+              <div className="max-w-md">
+                <label className="text-sm font-medium text-gray-600">
+                  Área de Atuação
+                </label>
+                <input
+                  type="text"
+                  name="localizacao"
+                  value={data.localizacao}
+                  onChange={(e) => setData('localizacao', e.target.value)}
+                  maxLength={100}
+                  className={inputBase}
+                />
+                <p className="text-sm text-gray-500 mt-2">
+                  Cidade, região ou área onde o marketing será aplicado.
+                </p>
+              </div>
+            </section>
+
+            {/* 🔹 AÇÃO */}
+            <div className="flex justify-end pt-6">
+              <button
+                type="submit"
+                disabled={processing}
+                className="bg-indigo-600 hover:bg-indigo-700 text-white font-semibold
+                           py-3 px-12 rounded-xl shadow-lg transition-all
+                           disabled:opacity-50"
+              >
+                {processing ? 'Enviando...' : 'Enviar'}
+              </button>
             </div>
-            <div>
-              <label htmlFor="salesStrategies" className="block text-sm font-medium text-gray-700">
-                Estratégias de Comercialização
-              </label>
-              <textarea
-                id="salesStrategies"
-                name="estrategia_comer"
-                value={data.estrategia_comer}
-                maxLength={1500}
-                onChange={(e) => setData('estrategia_comer', e.target.value)}
-                className="mt-1 p-2 w-full border-gray-300 rounded-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
-              ></textarea>
-              <p className="text-sm text-gray-500 mt-2">
-                Descreva as estratégias de comercialização para os produtos.
-              </p>
-            </div>
-          </div>
 
-          <div className="mb-4">
-            <label htmlFor="location" className="block text-sm font-medium text-gray-700">
-              Localização
-            </label>
-            <input
-              type="text"
-              id="location"
-              name="localizacao"
-              value={data.localizacao}
-              onChange={(e) => setData('localizacao', e.target.value)}
-              maxLength={100}
-              className="mt-1 p-2 w-1/2 border-gray-300 rounded-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
-            />
-            <p className="text-sm text-gray-500 mt-2">
-              Informe a localização onde o marketing será aplicado.
-            </p>
-          </div>
+          </form>
 
-          <div className="flex justify-center">
-            <Button
-              type="submit"
-              processing={processing}
-              className="extra-classes-if-needed"
-            >
-              Enviar
-            </Button>
-          </div>
-        </form>
+        </div>
       </div>
     </Authenticated>
   );

@@ -4,13 +4,22 @@ import Authenticated from "@/Layouts/AuthenticatedLayout";
 import Button from "@/Components/Button";
 
 const Depre = ({ planoId, auth, total }) => {
+
   const parseValor = (valor) => {
     if (typeof valor === 'string') {
       return parseFloat(
-        valor.replace(/\s/g, '').replace('R$', '').replace(/\./g, '').replace(',', '.')
-      ) || 0;
+        valor.replace(/\D/g, '')
+      ) / 100 || 0;
     }
     return valor || 0;
+  };
+
+  const formatarValor = (valor) => {
+    return valor.toLocaleString('pt-BR', {
+      style: 'currency',
+      currency: 'BRL',
+      minimumFractionDigits: 2
+    });
   };
 
   const { data, setData, post, processing } = useForm({
@@ -24,14 +33,8 @@ const Depre = ({ planoId, auth, total }) => {
     ],
   });
 
-  const formatarValor = (valor) =>
-    new Intl.NumberFormat('pt-BR', {
-      style: 'currency',
-      currency: 'BRL',
-    }).format(valor);
-
-  const handleValorChange = (index, valorStr) => {
-    const valorNumerico = parseValor(valorStr);
+  const handleValorChange = (index, e) => {
+    const valorNumerico = parseValor(e.target.value);
     const novosAtivos = [...data.ativos];
     novosAtivos[index].valor = valorNumerico;
     setData('ativos', novosAtivos);
@@ -43,27 +46,28 @@ const Depre = ({ planoId, auth, total }) => {
     return { depAnual, depMensal };
   };
 
-  const totalDepAnual = data.ativos.reduce((acc, item) => acc + (item.valor / item.vidaUtil), 0);
+  const totalDepAnual = data.ativos.reduce(
+    (acc, item) => acc + (item.valor / item.vidaUtil), 0
+  );
+
   const totalDepMensal = totalDepAnual / 12;
 
   const handleSubmit = (e) => {
     e.preventDefault();
 
-    const ativosCalculados = data.ativos.map((item) => {
+    const ativosCalculados = data.ativos.map(item => {
       const depAnual = item.valor / item.vidaUtil;
       const depMensal = depAnual / 12;
 
       return {
-        nome: item.nome,
-        valor: item.valor,
-        vidaUtil: item.vidaUtil,
-        depAnual: parseFloat(depAnual.toFixed(2)),
-        depMensal: parseFloat(depMensal.toFixed(2)),
+        ...item,
+        depAnual: Number(depAnual.toFixed(2)),
+        depMensal: Number(depMensal.toFixed(2)),
       };
     });
 
     post(route('depreciacao', { id: planoId }), {
-      ativos: ativosCalculados,
+      ativos: ativosCalculados
     });
   };
 
@@ -83,7 +87,7 @@ const Depre = ({ planoId, auth, total }) => {
               <tr>
                 <th className="border px-4 py-2">Ativos Fixos</th>
                 <th className="border px-4 py-2">Valor do bem</th>
-                <th className="border px-4 py-2">Vida útil em Anos</th>
+                <th className="border px-4 py-2">Vida útil (anos)</th>
                 <th className="border px-4 py-2">Depreciação Anual</th>
                 <th className="border px-4 py-2">Depreciação Mensal</th>
               </tr>
@@ -91,23 +95,27 @@ const Depre = ({ planoId, auth, total }) => {
             <tbody>
               {data.ativos.map((item, index) => {
                 const { depAnual, depMensal } = calcularDepreciacao(item.valor, item.vidaUtil);
+
                 return (
                   <tr key={index}>
                     <td className="border px-4 py-2">{item.nome}</td>
+
                     <td className="border px-4 py-2">
                       <input
                         type="text"
                         value={formatarValor(item.valor)}
-                        onChange={(e) => handleValorChange(index, e.target.value)}
-                        className="w-full p-1 border border-gray-300"
+                        onChange={(e) => handleValorChange(index, e)}
+                        className="w-full p-2 border border-gray-300 rounded"
                       />
                     </td>
-                    <td className="border px-4 py-2">{item.vidaUtil}</td>
+
+                    <td className="border px-4 py-2 text-center">{item.vidaUtil}</td>
                     <td className="border px-4 py-2">{formatarValor(depAnual)}</td>
                     <td className="border px-4 py-2">{formatarValor(depMensal)}</td>
                   </tr>
                 );
               })}
+
               <tr className="font-bold bg-gray-100">
                 <td colSpan={3} className="border px-4 py-2 text-right">Total:</td>
                 <td className="border px-4 py-2">{formatarValor(totalDepAnual)}</td>
@@ -115,7 +123,8 @@ const Depre = ({ planoId, auth, total }) => {
               </tr>
             </tbody>
           </table>
-          <div className="flex justify-center mt-4">
+
+          <div className="flex justify-center mt-6">
             <Button type="submit" processing={processing}>
               Enviar
             </Button>

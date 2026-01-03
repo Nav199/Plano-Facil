@@ -2,104 +2,142 @@ import React from 'react';
 import { useForm } from '@inertiajs/react';
 import Necessidade from './Form_Operacional/Form_Necessidade/Necessidade';
 import Authenticated from "@/Layouts/AuthenticatedLayout";
-import Button from "@/Components/Button";
-const Operacional = ({ planoId,auth }) => {
-  const { data, setData, post, processing, errors } = useForm({
+
+const Operacional = ({ planoId, auth }) => {
+  const { data, setData, post, processing } = useForm({
     capacidadeProdutiva: '',
-    volumeProducao: '', 
+    volumeProducao: '',
     processosOperacionais: '',
     pessoal: [{ cargo: '', qualificacao: '' }],
   });
 
+  const inputBase =
+    "w-full mt-1 px-4 py-2 border border-gray-300 rounded-xl shadow-sm " +
+    "focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition";
+
   const handlePessoalChange = (index, key, value) => {
-    const updatedPessoal = [...data.pessoal];
-    updatedPessoal[index][key] = value;
-    setData('pessoal', updatedPessoal);
+    const updated = [...data.pessoal];
+    updated[index][key] = value;
+    setData('pessoal', updated);
   };
 
   const addRow = () => {
     setData('pessoal', [...data.pessoal, { cargo: '', qualificacao: '' }]);
-  }; 
+  };
 
   const removeRow = (index) => {
-    const updatedPessoal = data.pessoal.filter((_, i) => i !== index);
-    setData('pessoal', updatedPessoal);
+    setData(
+      'pessoal',
+      data.pessoal.filter((_, i) => i !== index)
+    );
   };
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    post(route('plano_operacional', { id: planoId })); 
+    post(route('plano_operacional', { id: planoId }));
   };
 
   return (
-     <Authenticated
-              user={auth.user}
-              header={
-                <h2 className="font-semibold text-xl text-gray-800 leading-tight text-center">
-                  Plano Operacional
-                </h2>
-              }
-            >
-    <div className="container mx-auto p-4">
-      <form onSubmit={handleSubmit}>
-        <div className="mb-4">
-          <label htmlFor="capacidadeProdutiva" className="block text-sm font-medium text-gray-700">
-            Capacidade Produtiva
-          </label>
-          <input
-            type="text"
-            id="capacidadeProdutiva"
-            name="capacidadeProdutiva"
-            value={data.capacidadeProdutiva}
-            onChange={(e) => setData('capacidadeProdutiva', e.target.value)}
-            className="mt-1 p-2 w-full border-gray-300 rounded-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
-          />
-          <p className="text-sm text-gray-500 mt-1">
-            Qual será a capacidade máxima de produção (ou serviços) e comercialização?
-          </p>
+    <Authenticated
+      user={auth.user}
+      header={
+        <h2 className="font-bold text-3xl text-gray-800 tracking-tight text-center py-6">
+          Plano Operacional
+        </h2>
+      }
+    >
+      <div className="max-w-5xl mx-auto px-6 py-10">
+        <div className="bg-white shadow-xl rounded-2xl p-10 border border-gray-200">
+
+          <form onSubmit={handleSubmit} className="space-y-12">
+
+            {/* 🔹 CAPACIDADE E PRODUÇÃO */}
+            <section>
+              <h3 className="text-xl font-semibold text-gray-800 mb-6">
+                Capacidade e Produção
+              </h3>
+
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+
+                <div>
+                  <label className="text-sm font-medium text-gray-600">
+                    Capacidade Produtiva
+                  </label>
+                  <input
+                    type="text"
+                    value={data.capacidadeProdutiva}
+                    onChange={(e) => setData('capacidadeProdutiva', e.target.value)}
+                    className={inputBase}
+                  />
+                  <p className="text-sm text-gray-500 mt-2">
+                    Capacidade máxima de produção ou serviços.
+                  </p>
+                </div>
+
+                <div>
+                  <label className="text-sm font-medium text-gray-600">
+                    Volume de Produção Inicial
+                  </label>
+                  <input
+                    type="text"
+                    value={data.volumeProducao}
+                    onChange={(e) => setData('volumeProducao', e.target.value)}
+                    className={inputBase}
+                  />
+                  <p className="text-sm text-gray-500 mt-2">
+                    Volume inicial de produção ou comercialização.
+                  </p>
+                </div>
+
+              </div>
+            </section>
+
+            {/* 🔹 PROCESSOS */}
+            <section>
+              <h3 className="text-xl font-semibold text-gray-800 mb-6">
+                Processos Operacionais
+              </h3>
+
+              <textarea
+                value={data.processosOperacionais}
+                onChange={(e) => setData('processosOperacionais', e.target.value)}
+                rows={5}
+                className={inputBase}
+                placeholder="Descreva como funcionam os processos operacionais da empresa."
+              />
+            </section>
+
+            {/* 🔹 PESSOAL */}
+            <section>
+              <h3 className="text-xl font-semibold text-gray-800 mb-6">
+                Estrutura de Pessoal
+              </h3>
+
+              <Necessidade
+                pessoal={data.pessoal}
+                handlePessoalChange={handlePessoalChange}
+                addRow={addRow}
+                removeRow={removeRow}
+              />
+            </section>
+
+            {/* 🔹 AÇÃO */}
+            <div className="flex justify-end pt-6">
+              <button
+                type="submit"
+                disabled={processing}
+                className="bg-indigo-600 hover:bg-indigo-700 text-white font-semibold
+                           py-3 px-12 rounded-xl shadow-lg transition-all
+                           disabled:opacity-50"
+              >
+                {processing ? 'Enviando...' : 'Enviar'}
+              </button>
+            </div>
+
+          </form>
+
         </div>
-        <div className="mb-4">
-          <label htmlFor="volumeProducao" className="block text-sm font-medium text-gray-700">
-            Volume de Produção
-          </label>
-          <input
-            type="text"
-            id="volumeProducao"
-            name="volumeProducao"
-            value={data.volumeProducao}
-            onChange={(e) => setData('volumeProducao', e.target.value)}
-            className="mt-1 p-2 w-full border-gray-300 rounded-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
-          />
-          <p className="text-sm text-gray-500 mt-1">
-            Qual será o volume de produção (ou serviços) e comercialização iniciais?
-          </p>
-        </div>
-        <div className="mb-4">
-          <label htmlFor="processosOperacionais" className="block text-sm font-medium text-gray-700">
-            Processos Operacionais
-          </label>
-          <textarea
-            id="processosOperacionais"
-            name="processosOperacionais"
-            value={data.processosOperacionais}
-            onChange={(e) => setData('processosOperacionais', e.target.value)}
-            className="mt-1 p-2 w-full border-gray-300 rounded-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
-          ></textarea>
-        </div>
-        <Necessidade
-          pessoal={data.pessoal}
-          handlePessoalChange={handlePessoalChange}
-          addRow={addRow}
-          removeRow={removeRow}
-        />
-      
-      <div className="flex justify-center mt-4">
-            <Button type="submit" processing={processing}>
-              Enviar
-            </Button>
-          </div>
-      </form>
-    </div>
+      </div>
     </Authenticated>
   );
 };

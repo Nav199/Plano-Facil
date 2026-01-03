@@ -1,138 +1,148 @@
-import React, { useState } from 'react';
+import React, { useEffect } from 'react';
 import { useForm } from '@inertiajs/react';
-import Button from '@/Components/Button'; 
+import Button from '@/Components/Button';
 import Authenticated from "@/Layouts/AuthenticatedLayout";
-const Inves_pre = ({ planoId,auth }) => {
-  const [items, setItems] = useState([{ descricao: '', valor: '' }]);
-  
-  const { post, data, setData, reset,processing } = useForm({
+
+const Inves_pre = ({ planoId, auth }) => {
+  const { data, setData, post, processing, reset } = useForm({
     items: [{ descricao: '', valor: '' }],
     total: 0,
   });
 
   const handleAddItem = () => {
-    const newItems = [...items, { descricao: '', valor: '' }];
-    setItems(newItems);
-    setData('items', newItems);  // Atualize o data.items do Inertia
+    setData('items', [...data.items, { descricao: '', valor: '' }]);
   };
 
   const handleRemoveItem = (index) => {
-    const newItems = items.filter((_, i) => i !== index);
-    setItems(newItems);
-    setData('items', newItems);  // Atualize o data.items do Inertia
+    setData(
+      'items',
+      data.items.filter((_, i) => i !== index)
+    );
   };
 
-  const formatCurrency = (value) => {
-    return new Intl.NumberFormat('pt-BR', {
-      style: 'currency',
-      currency: 'BRL',
-    }).format(value);
-  };
+  const handleInputChange = (index, field, value) => {
+    const items = [...data.items];
 
-  const handleChange = (index, field, value) => {
-    const newItems = [...items];
     if (field === 'valor') {
-      const numericValue = parseFloat(value.replace(/\D/g, '')) / 100;
-      newItems[index][field] = isNaN(numericValue) ? '' : numericValue;
-    } else {
-      newItems[index][field] = value;
+      value = value.replace(/[^\d,]/g, '').replace(',', '.');
     }
-    setItems(newItems);
-    setData('items', newItems);  // Atualize o data.items do Inertia
-    setData('total', calculateTotal(newItems));
+
+    items[index][field] = value;
+    setData('items', items);
   };
 
-  const calculateTotal = (items) => {
-    return items.reduce((acc, item) => acc + (item.valor || 0), 0);
+  const calcularTotal = () => {
+    return data.items.reduce(
+      (acc, item) => acc + (parseFloat(item.valor) || 0),
+      0
+    );
   };
+
+  useEffect(() => {
+    setData('total', calcularTotal());
+  }, [data.items]);
 
   const handleSubmit = (e) => {
     e.preventDefault();
+
+    const formattedItems = data.items.map(item => ({
+      ...item,
+      valor: parseFloat(item.valor) || 0,
+    }));
+
+    setData('items', formattedItems);
+
     post(route('investimentoP', { id: planoId }), {
       onSuccess: () => reset(),
     });
   };
 
   return (
-       <Authenticated
-                  user={auth.user}
-                  header={
-                    <h2 className="font-semibold text-xl text-gray-800 leading-tight text-center">
-                      Investimento Pré-Operacional
-                    </h2>
-                  }
-                >
-    <div className="min-h-screen flex flex-col items-center bg-gray-100">
-      <form onSubmit={handleSubmit} className="bg-white p-6 rounded-lg shadow-lg w-full max-w-4xl">
-        <table className="table-auto w-full mb-6 border-collapse">
-          <thead>
-            <tr>
-              <th className="text-left p-2">
-                <button
-                  type="button"
-                  onClick={handleAddItem}
-                  className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-1 px-4 rounded"
-                >
-                  Adicionar
-                </button>
-              </th>
-              <th className="text-left p-2">Descrição</th>
-              <th className="text-left p-2">Valor</th>
-              <th className="text-left p-2">Ações</th>
-            </tr>
-          </thead>
-          <tbody>
-            {items.map((item, index) => (
-              <tr key={index} className="border-t">
-                <td className="p-2"></td>
-                <td className="p-2">
-                  <input
-                    type="text"
-                    name="descricao"
-                    placeholder="Descrição"
-                    value={item.descricao}
-                    onChange={(e) => handleChange(index, 'descricao', e.target.value)}
-                    className="border border-gray-300 p-2 w-full rounded"
-                  />
-                </td>
-                <td className="p-2">
-                  <input
-                    type="text"
-                    name="valor"
-                    placeholder="Valor"
-                    value={item.valor ? formatCurrency(item.valor) : ''}
-                    onChange={(e) => handleChange(index, 'valor', e.target.value)}
-                    className="border border-gray-300 p-2 w-full rounded"
-                  />
-                </td>
-                <td className="p-2">
-                  <button
-                    type="button"
-                    onClick={() => handleRemoveItem(index)}
-                    className="bg-red-500 hover:bg-red-700 text-white font-bold py-1 px-4 rounded"
-                  > 
-                    Remover
-                  </button>
-                </td>
+    <Authenticated
+      user={auth.user}
+      header={
+        <h2 className="font-semibold text-xl text-gray-800 leading-tight text-center">
+          Investimento Pré-Operacional
+        </h2>
+      }
+    >
+      <div className="container mx-auto p-4 mt-4">
+        <form onSubmit={handleSubmit}>
+          <table className="table-auto w-full mb-4 border border-gray-300">
+            <thead>
+              <tr>
+                <th className="border px-4 py-2">Descrição</th>
+                <th className="border px-4 py-2">Valor</th>
+                <th className="border px-4 py-2">Ações</th>
               </tr>
-            ))}
-          </tbody>
-        </table>
+            </thead>
+            <tbody>
+              {data.items.map((item, index) => (
+                <tr key={index}>
+                  <td className="border px-2 py-1">
+                    <input
+                      type="text"
+                      value={item.descricao}
+                      onChange={(e) =>
+                        handleInputChange(index, 'descricao', e.target.value)
+                      }
+                      className="border px-2 py-1 w-full"
+                    />
+                  </td>
+                  <td className="border px-2 py-1">
+                    <input
+                      type="text"
+                      value={
+                        item.valor
+                          ? Number(item.valor).toLocaleString('pt-BR', {
+                              style: 'currency',
+                              currency: 'BRL',
+                            })
+                          : ''
+                      }
+                      onChange={(e) =>
+                        handleInputChange(index, 'valor', e.target.value)
+                      }
+                      className="border px-2 py-1 w-full"
+                    />
+                  </td>
+                  <td className="border px-2 py-1 text-center">
+                    <button
+                      type="button"
+                      onClick={() => handleRemoveItem(index)}
+                      className="bg-red-500 text-white px-3 py-1 rounded hover:bg-red-600"
+                    >
+                      Remover
+                    </button>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
 
-        <div className="flex justify-between items-center mt-4">
-          <h3 className="font-bold text-xl">Total: {formatCurrency(calculateTotal(items))}</h3>
-        </div>
-        <div className="flex justify-center">
-            <Button
-              type="submit"
-              processing={processing}
-              className="extra-classes-if-needed"
-            >
+          <button
+            type="button"
+            onClick={handleAddItem}
+            className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600"
+          >
+            Adicionar Item
+          </button>
+
+          <div className="text-right font-bold text-xl mt-4">
+            Total:{' '}
+            {data.total.toLocaleString('pt-BR', {
+              style: 'currency',
+              currency: 'BRL',
+            })}
+          </div>
+
+          <div className="flex justify-center mt-6">
+            <Button type="submit" processing={processing}>
               Enviar
             </Button>
           </div>
-      </form>
-    </div>
+        </form>
+      </div>
     </Authenticated>
   );
 };
